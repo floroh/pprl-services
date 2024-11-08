@@ -1,0 +1,95 @@
+{
+  "@class" : ".DatasetBasedBatchMatcher",
+  "blocker" : {
+    "@class" : ".StandardBlocking",
+    "blockingKeyExtractors" : [
+      {
+        "@class" : ".EqualityMulti",
+        "id" : "eqYOBFN",
+        "attributeKeys" : [
+          "YEAROFBIRTH_DEV",
+          "FIRSTNAME_DEV"
+        ]
+      },
+      {
+        "@class" : ".EqualityMulti",
+        "id" : "eqYOBLN",
+        "attributeKeys" : [
+          "YEAROFBIRTH_DEV",
+          "LASTNAME_DEV"
+        ]
+      },
+      {
+        "@class" : ".SoundexMulti",
+        "id" : "eqFNLN",
+        "attributeKeys" : [
+          "FIRSTNAME_DEV",
+          "LASTNAME_DEV"
+        ]
+      }
+    ]
+  },
+  "clusterer" : {
+    "@class" : ".ConnectedComponents"
+  },
+  "linker" : {
+    "@class" : ".DefaultLinker",
+    "recordSimilarityCalculator" : {
+      "@class" : ".DefaultRecordSimilarityCalculator",
+      "missingSimilarityStrategy" : {
+        "@class" : ".AttributeDependentReplacement",
+        "affectedAttributes" : [
+          "FIRSTNAME",
+          "LASTNAME",
+          "YEAROFBIRTH"
+        ],
+        "strategy" : {
+          "@class" : ".FixedReplacement",
+          "replacement" : 0.0
+        }
+      },
+      "similarityCalculator" : {
+        "@class" : ".BitVectorSimilarityCalculator",
+        "similarityMethod" : "DICE",
+        "useWeightCurve" : false
+      },
+      "similarityAggregator" : {
+        "@class" : ".WeightedSimilarityAggregator",
+        "weights" : {
+          "FIRSTNAME" : 13,
+          "LASTNAME" : 13,
+          "YEAROFBIRTH" : 13,
+          "DATEOFBIRTH" : 13,
+          "CITY" : 7,
+          "PLZ" : 6,
+          "MIDDLENAME" : 7,
+          "PLACEOFBIRTH" : 7
+        }
+      }
+    },
+    "classifier" : {
+      "@class" : ".WekaClassifier",
+      "config" : {
+        "attributeNames" : [ "FIRSTNAME", "LASTNAME", "DATEOFBIRTH", "YEAROFBIRTH", "CITY", "PLZ",
+          "MIDDLENAME", "PLACEOFBIRTH","EQUAL_FIRSTNAME_FRQLABEL",
+          "EQUAL_LASTNAME_FRQLABEL", "EQUAL_CITY_FRQLABEL"],
+        "certaintyThreshold" : 0.8,
+        "classAttributeName" : "match",
+        "classAttributeValues" : [ "false", "true" ],
+        "classifierMethod" : "WEKA_EXP_RANDOM_FOREST",
+        "classBalancerMethod": "NONE",
+        "instanceWeightMethod": "NONE",
+        "classifierOptions": "-P 70 -attribute-importance -I 10 -J 10 -N 100 -num-slots 1 -K 0 -M 1.0 -V 0.001 -S 1 -depth 6",
+        "trainingDataOutputDirectory": "/tmp/weka/trainingsdata"
+      },
+      "serializedClassifier" : null
+    },
+    "recordPairTester" : {
+      "@class" : ".SimilarityBasedTester",
+      "minimalSimilarity" : 0.70
+    }
+  },
+  "linksPostprocessor" : {
+    "@class" : ".MaxBoth"
+  }
+}

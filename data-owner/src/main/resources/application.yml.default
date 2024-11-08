@@ -1,0 +1,36 @@
+server:
+  port: 8081
+  address: localhost
+
+logging:
+  level:
+    root: info
+    de.unileipzig.dbs.pprl: debug
+    org.springframework.boot.autoconfigure.mongo.embedded: warn
+
+spring:
+  profiles.active: mongo
+  jpa.hibernate.ddl-auto: update
+
+management:
+  jmx:
+    metrics:
+      export:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "health,metrics,info,mappings"
+
+pprl:
+  encoder:
+    defaultEncoder: "encodingAddrBasic"
+  ks:
+    location: "src/main/resources/pprl-data-owner.jks"
+    password: "secret-ks-password"
+
+# Uncomment to populate the database with dummy data
+#dataset:
+#  csv:
+#    location: "src/main/resources/data/DS_Time.csv"
+#    source: "dup"

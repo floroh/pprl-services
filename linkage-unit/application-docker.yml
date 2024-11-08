@@ -1,0 +1,35 @@
+server:
+  port: 8082
+  address: 0.0.0.0
+
+logging:
+  level:
+    root: info
+    de.unileipzig.dbs.pprl: info
+    org.springframework.boot.autoconfigure.mongo.embedded: warn
+    de.unileipzig.dbs.pprl.core.matcher.evaluation: warn
+
+spring:
+  data.mongodb:
+      uri: mongodb://luadmin:luadminpw@pprl-services-mongo-db-btw2025:27017/?authSource=admin
+      database: pprllu
+
+management:
+  jmx:
+    metrics:
+      export:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "health,metrics,info,mappings"
+
+pprl:
+  matchers:
+    paths:
+      - "/pprl-lu-service/configs"
+  reporting:
+    includeAdditionalResultsByDefault: true
+  lu:
+    reporting:
+      skip-blocking-reports: true

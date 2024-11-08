@@ -1,0 +1,45 @@
+server:
+  port: 8081
+  address: 0.0.0.0
+
+logging:
+  level:
+    root: info
+    de.unileipzig.dbs.pprl: debug
+    org.springframework.boot.autoconfigure.mongo.embedded: warn
+
+spring:
+  data.mongodb:
+      uri: mongodb://doadmin:doadminpw@pprl-services-mongo-db-btw2025:27017/?authSource=admin
+      database: pprldo
+
+management:
+  jmx:
+    metrics:
+      export:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "health,metrics,info,mappings"
+
+pprl:
+  encodings:
+    paths:
+      - "/pprl-do-service/configs"
+  ks:
+    location: "/pprl-do-service/pprl-data-owner.jks"
+    password: "secret-ks-password"
+
+#dataset:
+#  csv:
+#    datasetConfigs:
+#      -
+#        location: "/pprl-do-service/data/DS_Time.csv"
+#        datasetId: -1
+#        source: "org"
+#      -
+#        location: "/pprl-do-service/data/DS_Time.csv"
+#        datasetId: -2
+#        source: "dup"
+#    replace-existing: true

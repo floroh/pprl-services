@@ -1,0 +1,14 @@
+services:
+
+  mongo:
+    image: mongo:7.0
+    container_name: pprl-services-mongo-db
+    restart: always
+    ports:
+      - "127.0.0.1:27017:27017"
+    volumes:
+      - ./mongo-storage:/data/db    # Storage location of MongoDB
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example

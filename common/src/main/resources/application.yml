@@ -1,0 +1,8 @@
+server:
+  port: 9081
+
+management:
+  metrics:
+    export:
+      elastic:
+        enabled: false

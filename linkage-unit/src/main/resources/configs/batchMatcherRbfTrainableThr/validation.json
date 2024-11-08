@@ -1,0 +1,9 @@
+{
+  "supportedEncodingMethods": ["DBSLeipzig/RBF/FNLNDOB"],
+  "attributes": [
+    {
+      "name": "RBF",
+      "validations": ["field.missing"]
+    }
+  ]
+}

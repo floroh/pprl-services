@@ -1,0 +1,14 @@
+#spring:
+#  data:
+#    mongodb:
+#      username: doadmin
+#      password: doadminpw
+#      port: 27019
+de.flapdoodle.mongodb.embedded.version: 4.14.0
+dataset:
+  csv:
+    datasetConfigs:
+      - location: "src/main/resources/data/DS_Time.csv"
+        #        source: "dup"
+        datasetId: -1
+    replace-existing: true

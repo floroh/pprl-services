@@ -1,0 +1,36 @@
+server:
+  port: 8082
+  address: localhost
+  servlet:
+    session:
+      timeout: 30m
+
+logging:
+  level:
+    root: info
+    de.unileipzig.dbs.pprl: info
+    org.springframework.boot.autoconfigure.mongo.embedded: warn
+
+spring:
+  profiles:
+    active: mongo
+  jpa.hibernate.ddl-auto: update
+
+management:
+  jmx:
+    metrics:
+      export:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "health,metrics,info,mappings"
+
+pprl:
+  matcher:
+    incremental-name: "DBSLeipzig/RBF/Inc"
+  reporting:
+    includeAdditionalResultsByDefault: true
+  lu:
+    reporting:
+      skip-blocking-reports: true

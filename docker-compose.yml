@@ -1,0 +1,62 @@
+services:
+
+  mongo:
+    image: mongo:7.0
+    container_name: pprl-services-mongo-db-btw2025
+    restart: always
+    ports:
+      - "127.0.0.1:27017:27017"
+    volumes:
+      - ./btw-mongo-storage:/data/db    # Storage location of MongoDB
+      - ./dev/mongodb/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    networks:
+      - backend
+
+  pprl-do:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: pprl-do-runner
+    restart: always
+    ports:
+      - "127.0.0.1:8081:8081"
+    volumes:
+      - ./logs/do:/pprl-do-service/logs
+#      - ./data-owner/application-docker.yml:/pprl-do-service/application.yml
+    networks:
+      - backend
+
+  pprl-lu:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: pprl-lu-runner
+    restart: always
+    ports:
+      - "127.0.0.1:8082:8082"
+    volumes:
+      - ./logs/lu:/pprl-lu-service/logs
+#      - ./linkage-unit/application-docker.yml:/pprl-lu-service/application.yml
+    networks:
+      - backend
+
+  pprl-pm:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: pprl-pm-runner
+    restart: always
+    ports:
+      - "127.0.0.1:8085:8085"
+    volumes:
+      - ./logs/pm:/pprl-pm-service/logs
+      - ../datasets:/datasets
+      - ./protocol-manager/application-docker.yml:/pprl-pm-service/application.yml
+    networks:
+      - backend
+networks:
+  backend:
+    internal: false

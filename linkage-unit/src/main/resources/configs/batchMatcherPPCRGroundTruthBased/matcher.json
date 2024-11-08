@@ -1,0 +1,33 @@
+{
+  "@class" : ".DatasetBasedBatchMatcher",
+  "blocker" : {
+    "@class" : ".StandardBlocking",
+    "blockingKeyExtractors" : [
+      {
+        "@class" : ".IdBlocker",
+        "id" : "blkId",
+        "idName" : "BLOCK_ID"
+      }
+    ]
+  },
+  "clusterer" : {
+    "@class" : ".ConnectedComponents"
+  },
+  "linker" : {
+    "@class" : ".DefaultLinker",
+    "recordSimilarityCalculator" : {
+      "@class" : ".DummyRecordSimilarityCalculator"
+    },
+    "classifier" : {
+      "@class" : "de.unileipzig.dbs.pprl.service.linkageunit.dataset.GroundTruthBasedClassifier",
+      "errorRate" : 0.0
+    },
+    "recordPairTester" : {
+      "@class" : ".MatchGradeBasedTester",
+      "minimalMatchGrade" : "NON_MATCH"
+    }
+  },
+  "linksPostprocessor" : {
+    "@class" : ".MaxBoth"
+  }
+}

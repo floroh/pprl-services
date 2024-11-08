@@ -1,0 +1,19 @@
+{
+  "attributes": [
+    {
+      "name": "FIRSTNAME",
+      "required": true,
+      "validations": ["field.missing", "IS_EMPTY_PLACEHOLDER", "INCLUDES_SPACE"]
+    },
+    {
+      "name": "LASTNAME",
+      "required": true,
+      "validations": ["field.missing", "IS_EMPTY_PLACEHOLDER", "INCLUDES_SPACE", "INCLUDES_HYPHEN"]
+    },
+    {
+      "name": "YEAROFBIRTH",
+      "required": true,
+      "validations": ["field.missing", "IS_EMPTY_PLACEHOLDER"]
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://USER:PASSWORD@localhost:27017/?authSource=admin
+      database: pprl-protocol
+      auto-index-creation: true

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>de.unileipzig.dbs</groupId>
+        <artifactId>pprl-core-parent</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>pprl-core-matcher</artifactId>
+    <packaging>jar</packaging>
+
+    <name>PPRL-Core - Matcher</name>
+
+    <properties>
+        <dep.commons-collections.version>4.4</dep.commons-collections.version>
+        <dep.debatty.string-similarity.version>2.0.0</dep.debatty.string-similarity.version>
+        <dep.jgrapht.version>1.5.2</dep.jgrapht.version>
+        <dep.weka.version>3.8.6</dep.weka.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>de.unileipzig.dbs</groupId>
+            <artifactId>pprl-core-common</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>de.unileipzig.dbs</groupId>
+            <artifactId>pprl-core-encoder</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>info.debatty</groupId>
+            <artifactId>java-string-similarity</artifactId>
+            <version>${dep.debatty.string-similarity.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jgrapht</groupId>
+            <artifactId>jgrapht-core</artifactId>
+            <version>${dep.jgrapht.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>${dep.commons-collections.version}</version>
+        </dependency>
+        <!-- Machine learning -->
+        <dependency>
+            <groupId>nz.ac.waikato.cms.weka</groupId>
+            <artifactId>weka-stable</artifactId>
+            <version>${dep.weka.version}</version>
+        </dependency>
+
+    </dependencies>
+    <repositories>
+        <repository>
+            <id>maven_central</id>
+            <name>Maven Central</name>
+            <url>https://repo.maven.apache.org/maven2/</url>
+        </repository>
+    </repositories>
+</project>

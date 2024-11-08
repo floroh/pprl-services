@@ -1,0 +1,24 @@
+{
+  "@class" : ".DefaultMatcher",
+  "blocker" : {
+    "@class" : ".CrossProduct"
+  },
+  "recordSimilarityCalculator" : {
+    "@class" : ".DefaultRecordSimilarityCalculator",
+    "similarityCalculator" : {
+      "@class" : ".StringSimilarityCalculator",
+      "similarityMethod" : "DICE"
+    },
+    "similarityAggregator" : {
+      "@class" : ".DefaultSimilarityAggregator",
+      "aggregationMethod" : "AVERAGE"
+    }
+  },
+  "classifier" : {
+    "@class" : ".SingleThresholdClassifier",
+    "threshold" : 0.85
+  },
+  "recordPairTester" : {
+      "minimalMatchGrade" : "PROBABLE_MATCH"
+    }
+}

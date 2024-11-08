@@ -1,0 +1,32 @@
+{
+  "@class" : ".DefaultMatcher",
+  "linker" : {
+    "@class" : ".DefaultLinker",
+    "blocker" : {
+      "@class" : ".FullBlocking"
+    },
+    "recordSimilarityCalculator" : {
+      "@class" : ".DefaultRecordSimilarityCalculator",
+      "similarityCalculator" : {
+        "@class" : ".BitVectorSimilarityCalculator",
+        "similarityMethod" : "JACCARD",
+        "useWeightCurve" : false
+      },
+      "similarityAggregator" : {
+        "@class" : ".DefaultSimilarityAggregator",
+        "aggregationMethod" : "AVERAGE"
+      }
+    },
+    "classifier" : {
+      "@class" : ".SingleThresholdClassifier",
+      "threshold" : 0.85
+    },
+    "recordPairTester" : {
+      "minimalMatchGrade" : "PROBABLE_MATCH"
+    },
+    "earlyFiltering" : true
+  },
+  "clusterer" : {
+    "@class" : ".ConnectedComponents"
+  }
+}

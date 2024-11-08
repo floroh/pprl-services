@@ -1,0 +1,4 @@
+{
+  "@class" : ".SelectivePlainProvider",
+  "globalAttributeNames" : [ "FIRSTNAME","MIDDLENAME","LASTNAME","YEAROFBIRTH","PLACEOFBIRTH","PLZ","CITY" ]
+}

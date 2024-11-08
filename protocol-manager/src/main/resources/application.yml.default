@@ -1,0 +1,27 @@
+server:
+  port: 8085
+  address: localhost
+
+logging:
+  level:
+    root: info
+    de.unileipzig.dbs.pprl: info
+spring:
+  profiles:
+    active: mongo
+  jpa.hibernate.ddl-auto: update
+
+management:
+  jmx:
+    metrics:
+      export:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "health,metrics,info,mappings"
+
+pprl:
+  services:
+    data-owner-endpoint: "http://localhost:8081"
+    linkage-unit-endpoint: "http://localhost:8082"

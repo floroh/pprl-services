@@ -35,3 +35,19 @@ build/
 
 ### VS Code ###
 .vscode/
+
+data-owner/src/main/resources/application.yml
+data-owner/src/main/resources/application-mongo.yml
+linkage-unit/src/main/resources/application.yml
+linkage-unit/src/main/resources/application-mongo.yml
+protocol-manager/src/main/resources/application.yml
+protocol-manager/src/main/resources/application-mongo.yml
+
+mongo-storage/
+
+*.log
+logs/
+/results
+/datasets
+btw-mongo-storage
+btw-mongo-storage.old

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>de.unileipzig.dbs</groupId>
+        <artifactId>pprl-core-parent</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>pprl-core-common</artifactId>
+    <packaging>jar</packaging>
+
+    <name>PPRL Core - Common components</name>
+
+    <properties>
+        <dep.commons.lang3.version>3.17.0</dep.commons.lang3.version>
+        <dep.combinatoricslib3.version>3.4.0</dep.combinatoricslib3.version>
+        <dep.alphanumeric.comparator.version>1.4.1</dep.alphanumeric.comparator.version>
+        <dep.commons-codec.version>1.17.0</dep.commons-codec.version>
+    </properties>
+
+    <dependencies>
+        <!-- StringUtils -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.15.0</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>${dep.commons-codec.version}</version>
+        </dependency>
+
+        <!-- Collections -->
+        <dependency>
+            <groupId>com.github.dpaukov</groupId>
+            <artifactId>combinatoricslib3</artifactId>
+            <version>${dep.combinatoricslib3.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>se.sawano.java</groupId>
+            <artifactId>alphanumeric-comparator</artifactId>
+            <version>${dep.alphanumeric.comparator.version}</version>
+        </dependency>
+    </dependencies>
+    <repositories>
+        <repository>
+            <id>maven_central</id>
+            <name>Maven Central</name>
+            <url>https://repo.maven.apache.org/maven2/</url>
+        </repository>
+    </repositories>
+</project>

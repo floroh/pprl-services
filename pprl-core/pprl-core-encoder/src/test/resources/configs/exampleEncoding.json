@@ -1,0 +1,95 @@
+{
+  "@class" : ".DefaultRecordEncoder",
+  "encoderGroups" : [ {
+    "@class" : ".MultiAttributeEncoderGroup",
+    "id" : "aeg2",
+    "attributeEncoders" : {
+      "DATEOFBIRTH" : {
+        "@class" : ".DefaultAttributeEncoder",
+        "id" : "ae2",
+        "bvLength" : 64,
+        "featureExtractor" : {
+          "@class" : ".NGramTokenizer",
+          "nGram" : 2,
+          "usePadding" : false,
+          "paddingCharacter" : "#"
+        },
+        "featureEncoder" : {
+          "@class" : ".DoubleHashing",
+          "numHashFunctions" : 4
+        }
+      },
+      "LASTNAME" : {
+        "@class" : ".DefaultAttributeEncoder",
+        "id" : "ae2",
+        "bvLength" : 64,
+        "featureExtractor" : {
+          "@class" : ".NGramTokenizer",
+          "nGram" : 2,
+          "usePadding" : false,
+          "paddingCharacter" : "#"
+        },
+        "featureEncoder" : {
+          "@class" : ".DoubleHashing",
+          "numHashFunctions" : 4
+        }
+      },
+      "FIRSTNAME" : {
+        "@class" : ".DefaultAttributeEncoder",
+        "id" : "ae1",
+        "bvLength" : 64,
+        "featureExtractor" : {
+          "@class" : ".NGramTokenizer",
+          "nGram" : 2,
+          "usePadding" : false,
+          "paddingCharacter" : "#"
+        },
+        "featureEncoder" : {
+          "@class" : ".DoubleHashing",
+          "numHashFunctions" : 2
+        }
+      }
+    },
+    "attributeMerger" : {
+      "@class" : ".BitVectorUnion"
+    }
+  }, {
+    "@class" : ".DefaultAttributeEncoderGroup",
+    "id" : "aeg1",
+    "attributeEncoders" : {
+      "LASTNAME" : {
+        "@class" : ".DefaultAttributeEncoder",
+        "id" : "ae2",
+        "bvLength" : 64,
+        "featureExtractor" : {
+          "@class" : ".NGramTokenizer",
+          "nGram" : 2,
+          "usePadding" : false,
+          "paddingCharacter" : "#"
+        },
+        "featureEncoder" : {
+          "@class" : ".DoubleHashing",
+          "numHashFunctions" : 4
+        }
+      },
+      "FIRSTNAME" : {
+        "@class" : ".DefaultAttributeEncoder",
+        "id" : "ae1",
+        "bvLength" : 64,
+        "featureExtractor" : {
+          "@class" : ".NGramTokenizer",
+          "nGram" : 2,
+          "usePadding" : false,
+          "paddingCharacter" : "#"
+        },
+        "featureEncoder" : {
+          "@class" : ".DoubleHashing",
+          "numHashFunctions" : 2
+        }
+      }
+    },
+    "attributeMerger" : {
+      "@class" : ".BitVectorUnion"
+    }
+  } ]
+}

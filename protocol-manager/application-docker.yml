@@ -1,0 +1,28 @@
+server:
+  port: 8085
+  address: 0.0.0.0
+
+logging:
+  level:
+    root: info
+    de.unileipzig.dbs.pprl: info
+
+spring:
+  data.mongodb:
+      uri: mongodb://pmadmin:pmadminpw@pprl-services-mongo-db-btw2025:27017/?authSource=admin
+      database: pprl-protocol
+
+management:
+  jmx:
+    metrics:
+      export:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "health,metrics,info,mappings"
+
+pprl:
+  services:
+    data-owner-endpoint: "http://pprl-do:8081"
+    linkage-unit-endpoint: "http://pprl-lu:8082"

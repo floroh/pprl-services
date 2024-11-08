@@ -1,0 +1,60 @@
+{
+  "@class" : ".DatasetBasedBatchMatcher",
+  "blocker" : {
+    "@class" : ".StandardBlocking",
+    "blockingKeyExtractors" : [
+      {
+        "@class" : ".EqualityMulti",
+        "id" : "eqYOBFN",
+        "attributeKeys" : [
+          "YEAROFBIRTH_DEV",
+          "FIRSTNAME_DEV"
+        ]
+      },
+      {
+        "@class" : ".EqualityMulti",
+        "id" : "eqYOBLN",
+        "attributeKeys" : [
+          "YEAROFBIRTH_DEV",
+          "LASTNAME_DEV"
+        ]
+      },
+      {
+        "@class" : ".SoundexMulti",
+        "id" : "eqFNLN",
+        "attributeKeys" : [
+          "FIRSTNAME_DEV",
+          "LASTNAME_DEV"
+        ]
+      }
+    ]
+  },
+  "linker" : {
+    "@class" : ".DefaultLinker",
+    "recordSimilarityCalculator" : {
+      "@class" : ".SingleAttributeRecordSimilarityCalculator",
+      "attributeName" : "RBF",
+      "similarityCalculator" : {
+        "@class" : ".BitVectorSimilarityCalculator",
+        "similarityMethod" : "DICE",
+        "useWeightCurve" : false
+      }
+    },
+    "classifier" : {
+      "@class" : ".TrainableThresholdClassifier",
+      "threshold" : 0.80,
+      "maximalShift": 0.10,
+      "shiftPerUpdate": 0.02
+    },
+    "recordPairTester" : {
+      "@class" : ".SimilarityBasedTester",
+      "minimalSimilarity" : 0.60
+    }
+  },
+  "linksPostprocessor" : {
+    "@class" : ".MaxBoth"
+  },
+  "clusterer" : {
+    "@class" : ".ConnectedComponents"
+  }
+}

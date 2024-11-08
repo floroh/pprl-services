@@ -1,0 +1,288 @@
+{
+  "@class": ".DefaultRecordEncoder",
+  "encoderGroups": [
+    {
+      "@class": ".SingleAttributeEncoderGroup",
+      "id": "FIRSTNAME",
+      "attributeId": "FIRSTNAME",
+      "attributeEncoder": {
+        "@class": ".BitVectorEncoder",
+        "id": "aeFN",
+        "bvLength": 256,
+        "preprocessor": {
+          "@class": ".CompoundAttributePreprocessor",
+          "preprocessors": [
+            {
+              "@class": ".StringSubstitution",
+              "strings" : [ "ä", "ö", "ü", "Ä", "Ö", "Ü", "ß" ],
+              "replacements" : [ "ae", "oe", "ue", "Ae", "Oe", "Ue", "ss" ]
+            },
+            {
+              "@class": ".StringNormalizer",
+              "trim": true,
+              "deleteWhitespace": false,
+              "toLowerCase": true,
+              "stripAccents": true
+            }
+          ]
+        },
+        "featureExtractor": {
+          "@class": ".NGramTokenizer",
+          "nGram": 2,
+          "usePadding": true,
+          "paddingCharacter": "F"
+        },
+        "featureEncoder": {
+          "@class": ".KeyStoreRandomHashing",
+          "numHashFunctions": 18,
+          "keyName": "SECRET_FN"
+        }
+      }
+    },
+    {
+      "@class": ".SingleAttributeEncoderGroup",
+      "id": "PLZ",
+      "attributeId": "PLZ",
+      "attributeEncoder": {
+        "@class": ".BitVectorEncoder",
+        "id": "aePLZ",
+        "bvLength": 256,
+        "preprocessor": {
+          "@class": ".CompoundAttributePreprocessor",
+          "preprocessors": [
+            {
+              "@class": ".StringSubstitution",
+              "strings" : [ "ä", "ö", "ü", "Ä", "Ö", "Ü", "ß" ],
+              "replacements" : [ "ae", "oe", "ue", "Ae", "Oe", "Ue", "ss" ]
+            },
+            {
+              "@class": ".StringNormalizer",
+              "trim": true,
+              "deleteWhitespace": false,
+              "toLowerCase": true,
+              "stripAccents": true
+            }
+          ]
+        },
+        "featureExtractor": {
+          "@class": ".NGramTokenizer",
+          "nGram": 2,
+          "usePadding": true,
+          "paddingCharacter": "P"
+        },
+        "featureEncoder": {
+          "@class": ".KeyStoreRandomHashing",
+          "numHashFunctions": 21,
+          "keyName": "SECRET_PLZ"
+        }
+      }
+    },
+    {
+      "@class": ".SingleAttributeEncoderGroup",
+      "id": "YEAROFBIRTH",
+      "attributeId": "YEAROFBIRTH",
+      "recordPreprocessor" : {
+        "@class" : ".DateSplitter",
+        "attributeId" : "DATEOFBIRTH",
+        "keepFullDate" : true
+      },
+      "attributeEncoder": {
+        "@class": ".BitVectorEncoder",
+        "id": "aeYOB",
+        "bvLength": 256,
+        "preprocessor": {
+          "@class": ".CompoundAttributePreprocessor",
+          "preprocessors": [
+            {
+              "@class": ".StringSubstitution",
+              "strings" : [ "ä", "ö", "ü", "Ä", "Ö", "Ü", "ß" ],
+              "replacements" : [ "ae", "oe", "ue", "Ae", "Oe", "Ue", "ss" ]
+            },
+            {
+              "@class": ".StringNormalizer",
+              "trim": true,
+              "deleteWhitespace": false,
+              "toLowerCase": true,
+              "stripAccents": true
+            }
+          ]
+        },
+        "featureExtractor": {
+          "@class": ".NGramTokenizer",
+          "nGram": 2,
+          "usePadding": true,
+          "paddingCharacter": "Y"
+        },
+        "featureEncoder": {
+          "@class": ".KeyStoreRandomHashing",
+          "numHashFunctions": 26,
+          "keyName": "SECRET_YOB"
+        }
+      }
+    },
+    {
+      "@class": ".SingleAttributeEncoderGroup",
+      "id": "LASTNAME",
+      "attributeId": "LASTNAME",
+      "attributeEncoder": {
+        "@class": ".BitVectorEncoder",
+        "id": "aeLN",
+        "bvLength": 256,
+        "preprocessor": {
+          "@class": ".CompoundAttributePreprocessor",
+          "preprocessors": [
+            {
+              "@class": ".StringSubstitution",
+              "strings" : [ "ä", "ö", "ü", "Ä", "Ö", "Ü", "ß" ],
+              "replacements" : [ "ae", "oe", "ue", "Ae", "Oe", "Ue", "ss" ]
+            },
+            {
+              "@class": ".StringNormalizer",
+              "trim": true,
+              "deleteWhitespace": false,
+              "toLowerCase": true,
+              "stripAccents": true
+            }
+          ]
+        },
+        "featureExtractor": {
+          "@class": ".NGramTokenizer",
+          "nGram": 2,
+          "usePadding": true,
+          "paddingCharacter": "L"
+        },
+        "featureEncoder": {
+          "@class": ".KeyStoreRandomHashing",
+          "numHashFunctions": 17,
+          "keyName": "SECRET_LN"
+        }
+      }
+    },
+    {
+      "@class": ".SingleAttributeEncoderGroup",
+      "id": "CITY",
+      "attributeId": "CITY",
+      "attributeEncoder": {
+        "@class": ".BitVectorEncoder",
+        "id": "aeCITY",
+        "bvLength": 256,
+        "preprocessor": {
+          "@class": ".CompoundAttributePreprocessor",
+          "preprocessors": [
+            {
+              "@class": ".StringSubstitution",
+              "strings" : [ "ä", "ö", "ü", "Ä", "Ö", "Ü", "ß" ],
+              "replacements" : [ "ae", "oe", "ue", "Ae", "Oe", "Ue", "ss" ]
+            },
+            {
+              "@class": ".StringNormalizer",
+              "trim": true,
+              "deleteWhitespace": false,
+              "toLowerCase": true,
+              "stripAccents": true
+            }
+          ]
+        },
+        "featureExtractor": {
+          "@class": ".NGramTokenizer",
+          "nGram": 2,
+          "usePadding": true,
+          "paddingCharacter": "C"
+        },
+        "featureEncoder": {
+          "@class": ".KeyStoreRandomHashing",
+          "numHashFunctions": 13,
+          "keyName": "SECRET_CITY"
+        }
+      }
+    },    {
+      "@class": ".SingleAttributeEncoderGroup",
+      "id": "PLACEOFBIRTH",
+      "attributeId": "PLACEOFBIRTH",
+      "attributeEncoder": {
+        "@class": ".BitVectorEncoder",
+        "id": "aePOB",
+        "bvLength": 256,
+        "preprocessor": {
+          "@class": ".CompoundAttributePreprocessor",
+          "preprocessors": [
+            {
+              "@class": ".StringSubstitution",
+              "strings" : [ "ä", "ö", "ü", "Ä", "Ö", "Ü", "ß" ],
+              "replacements" : [ "ae", "oe", "ue", "Ae", "Oe", "Ue", "ss" ]
+            },
+            {
+              "@class": ".StringNormalizer",
+              "trim": true,
+              "deleteWhitespace": false,
+              "toLowerCase": true,
+              "stripAccents": true
+            }
+          ]
+        },
+        "featureExtractor": {
+          "@class": ".NGramTokenizer",
+          "nGram": 2,
+          "usePadding": true,
+          "paddingCharacter": "p"
+        },
+        "featureEncoder": {
+          "@class": ".KeyStoreRandomHashing",
+          "numHashFunctions": 43,
+          "keyName": "SECRET_POB"
+        }
+      }
+    },
+    {
+      "@class": ".SingleAttributeEncoderGroup",
+      "id": "MIDDLENAME",
+      "attributeId": "MIDDLENAME",
+      "attributeEncoder": {
+        "@class": ".BitVectorEncoder",
+        "id": "aeMN",
+        "bvLength": 256,
+        "preprocessor": {
+          "@class": ".CompoundAttributePreprocessor",
+          "preprocessors": [
+            {
+              "@class": ".StringSubstitution",
+              "strings" : [ "ä", "ö", "ü", "Ä", "Ö", "Ü", "ß" ],
+              "replacements" : [ "ae", "oe", "ue", "Ae", "Oe", "Ue", "ss" ]
+            },
+            {
+              "@class": ".StringNormalizer",
+              "trim": true,
+              "deleteWhitespace": false,
+              "toLowerCase": true,
+              "stripAccents": true
+            }
+          ]
+        },
+        "featureExtractor": {
+          "@class": ".NGramTokenizer",
+          "nGram": 2,
+          "usePadding": true,
+          "paddingCharacter": "M"
+        },
+        "featureEncoder": {
+          "@class": ".KeyStoreRandomHashing",
+          "numHashFunctions": 21,
+          "keyName": "SECRET_MN"
+        }
+      }
+    }, {
+      "@class" : ".AttributeFrequencyEncoderGroup",
+      "frequencyLookupProvider" : {
+        "@class" : "de.unileipzig.dbs.pprl.service.common.dataset.MongoAttributesFrequencyLookupProvider",
+        "datasetId" : 2032,
+        "transformAttributes" : false,
+        "useRelativeFrequencies" : false,
+        "filter" : { }
+      },
+      "attributeNames" : [ "FIRSTNAME", "MIDDLENAME", "LASTNAME", "YEAROFBIRTH", "PLZ", "CITY", "PLACEOFBIRTH" ],
+      "includeRelativeFrequency" : true,
+      "includeRelativeRank" : true,
+      "includeFrequencyLabel" : true
+    }
+  ]
+}
