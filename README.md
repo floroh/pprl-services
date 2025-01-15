@@ -1,4 +1,14 @@
-# PPRL services
+# PPRL Services (BTW 2025 edition)
+
+This repository contains the code for the paper
+_"Multi-Layer Privacy-Preserving Record Linkage with Clerical Review based on gradual information disclosure"_
+by Florens Rohde, Victor Christen, Martin Franke and Erhard Rahm.
+The paper is accepted at the [BTW 2025](https://btw2025.gi.de/) conference.
+The datasets used for the experimental evaluation are available
+[here](https://cloud.scadsai.uni-leipzig.de/index.php/s/wZyRnRkP9EaMqsM/download/datasets-btw2025-pprl.zip).
+
+The services are developed by the [Database Group](https://dbs.uni-leipzig.de/research/projects/pprl) of the University of Leipzig, Germany.
+Please note, that the documentation is still under construction.
 
 ## Prerequisites
 - Docker
