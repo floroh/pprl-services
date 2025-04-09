@@ -3,8 +3,8 @@
 ## Prerequisites
 - Docker
 - OR
-- Java 21
-- Maven
+  - Java 21
+  - Maven
 
 ## Docker
 Run both services locally
@@ -25,13 +25,18 @@ docker compose up mongo pprl-do
 ```
 
 ## Dev
-The vanilla repositories for the Data Owner and Linkage Unit do not contain application.yml that are 
+The vanilla repository does not contain application.yml that are 
 needed for running the services, because they are frequently changed in development and are therefore 
 included in the gitignore. However, the repositories contain application.yml.default files, that should 
 work out-of-the-box and have to be copied/renamed and can be changed if needed.
 ```bash
 cp data-owner/src/main/resources/application.yml.default data-owner/src/main/resources/application.yml
 cp linkage-unit/src/main/resources/application.yml.default linkage-unit/src/main/resources/application.yml
+cp protocol-manager/src/main/resources/application.yml.default protocol-manager/src/main/resources/application.yml
+
+cp data-owner/src/main/resources/application-mongo.yml.default data-owner/src/main/resources/application-mongo.yml
+cp linkage-unit/src/main/resources/application-mongo.yml.default linkage-unit/src/main/resources/application-mongo.yml
+cp protocol-manager/src/main/resources/application-mongo.yml.default protocol-manager/src/main/resources/application-mongo.yml
 ```
 
 To build and start the services run the following commands from the base directory of the project
@@ -39,6 +44,7 @@ To build and start the services run the following commands from the base directo
 mvn clean install -DskipTests
 mvn -f data-owner spring-boot:run
 mvn -f linkage-unit spring-boot:run
+mvn -f protocol-manager spring-boot:run
 ```
 
 ## Use
