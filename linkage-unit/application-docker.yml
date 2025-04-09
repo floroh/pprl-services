@@ -11,7 +11,7 @@ logging:
 
 spring:
   data.mongodb:
-      uri: mongodb://luadmin:luadminpw@pprl-services-mongo-db-btw2025:27017/?authSource=admin
+      uri: mongodb://luadmin:luadminpw@pprl-services-mongo:27017/?authSource=admin
       database: pprllu
 
 management:

@@ -10,7 +10,7 @@ logging:
 
 spring:
   data.mongodb:
-      uri: mongodb://doadmin:doadminpw@pprl-services-mongo-db-btw2025:27017/?authSource=admin
+      uri: mongodb://doadmin:doadminpw@pprl-services-mongo:27017/?authSource=admin
       database: pprldo
 
 management:

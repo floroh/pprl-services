@@ -2,13 +2,13 @@ services:
 
   mongo:
     image: mongo:7.0
-    container_name: pprl-services-mongo-db-btw2025
+    container_name: pprl-services-mongo
     restart: always
     ports:
       - "127.0.0.1:27017:27017"
     volumes:
-      - ./btw-mongo-storage:/data/db    # Storage location of MongoDB
-      - ./dev/mongodb/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - ./mongo-storage:/data/db    # Storage location of MongoDB
+      - ./dev/mongodb/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro  # Init service-specific collections and users
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
@@ -53,8 +53,8 @@ services:
       - "127.0.0.1:8085:8085"
     volumes:
       - ./logs/pm:/pprl-pm-service/logs
-      - ../datasets:/datasets
-      - ./protocol-manager/application-docker.yml:/pprl-pm-service/application.yml
+      - ./data/datasets:/datasets
+#      - ./protocol-manager/application-docker.yml:/pprl-pm-service/application.yml
     networks:
       - backend
 networks:

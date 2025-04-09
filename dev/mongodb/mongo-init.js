@@ -4,7 +4,7 @@ db.createCollection("meta")
 db = db.getSiblingDB('pprldo')
 db.createCollection("meta")
 
-db = db.getSiblingDB('pprl-protocol')
+db = db.getSiblingDB('pprlpm')
 db.createCollection("meta")
 
 db = db.getSiblingDB('admin')
@@ -27,6 +27,6 @@ db.createUser(
   {
     user: "pmadmin",
     pwd:  "pmadminpw",
-    roles: [ { role: "readWrite", db: "pprl-protocol" } ]
+    roles: [ { role: "readWrite", db: "pprlpm" } ]
   }
 )

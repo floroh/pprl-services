@@ -47,7 +47,4 @@ mongo-storage/
 
 *.log
 logs/
-/results
-/datasets
-btw-mongo-storage
-btw-mongo-storage.old
+/data
