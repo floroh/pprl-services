@@ -1,0 +1,23 @@
+{
+  "@class": ".DefaultRecordEncoder",
+  "encoderGroups": [
+    {
+      "@class" : ".SelectivePlainProviderGroup",
+      "globalAttributeNames" : [ "FIRSTNAME","MIDDLENAME","LASTNAME","YEAROFBIRTH","PLACEOFBIRTH","PLZ","CITY" ]
+    },
+    {
+      "@class" : ".AttributeFrequencyEncoderGroup",
+      "frequencyLookupProvider" : {
+        "@class" : "de.unileipzig.dbs.pprl.service.common.dataset.MongoAttributesFrequencyLookupProvider",
+        "datasetId" : 2032,
+        "transformAttributes" : false,
+        "useRelativeFrequencies" : false,
+        "filter" : { }
+      },
+      "attributeNames" : [ "FIRSTNAME", "MIDDLENAME", "LASTNAME", "YEAROFBIRTH", "PLZ", "CITY", "PLACEOFBIRTH" ],
+      "includeRelativeFrequency" : false,
+      "includeRelativeRank" : false,
+      "includeFrequencyLabel" : true
+    }
+  ]
+}
