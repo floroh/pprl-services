@@ -17,7 +17,7 @@ import java.util.Collection;
 @Schema(description = "Ground truth links of a dataset")
 public class GroundTruthDto {
 
-  private int datasetId;
+  private long datasetId;
 
   private Collection<RecordIdPairDto> recordIdPairs;
 

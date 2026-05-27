@@ -3,6 +3,7 @@ package de.unileipzig.dbs.pprl.service.protocol.workflow.steps;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.unileipzig.dbs.pprl.service.common.data.dto.reporting.ReportGroup;
 import de.unileipzig.dbs.pprl.service.linkageunit.data.mongo.PhaseProgress;
+import de.unileipzig.dbs.pprl.service.protocol.model.mongo.Layer;
 import de.unileipzig.dbs.pprl.service.protocol.service.MultiLayerProtocolRunner;
 import de.unileipzig.dbs.pprl.service.protocol.workflow.MultiLayerActiveLearningWorkflow;
 import de.unileipzig.dbs.pprl.service.protocol.workflow.ProcessingStep;
@@ -46,6 +47,12 @@ public class ReportImprovedPairsStep extends ProcessingStep {
     int numberOfReportedPairs = runner.getMatcher().reportPairs(projectId);
     getProperties().put("numberOfReportedPairs", String.valueOf(numberOfReportedPairs));
     runner.fetchProject(projectId, true);
+
+    // Update parent project
+    Layer currentLayer = runner.getProtocol().getLayerOfProject(projectId);
+    Layer parentLayer = runner.getProtocol().getPreviousLayer(currentLayer).get();
+    runner.fetchProject(parentLayer.getProjectId(), true);
+
     phaseProgress.setProgress(1.0);
     phaseProgress.setDone(true);
   }

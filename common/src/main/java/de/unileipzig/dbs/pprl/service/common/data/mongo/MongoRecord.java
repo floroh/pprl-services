@@ -51,7 +51,7 @@ public class MongoRecord implements Record {
   private ObjectId objectId;
 
   @Indexed
-  private int idDataset;
+  private long datasetId;
 
   @Indexed
   private Set<String> properties = new HashSet<>();
@@ -72,15 +72,15 @@ public class MongoRecord implements Record {
   @Transient
   private Map<String, Attribute> attributes;
 
-  public MongoRecord(int idDataset, RecordId recordId) {
+  public MongoRecord(long datasetId, RecordId recordId) {
     this();
-    this.idDataset = idDataset;
+    this.datasetId = datasetId;
     this.recordId = toRecordIdMap(recordId);
   }
 
-  public MongoRecord(int idDataset, RecordId recordId, Map<String, String> stringAttributes) {
+  public MongoRecord(long datasetId, RecordId recordId, Map<String, String> stringAttributes) {
     this();
-    this.idDataset = idDataset;
+    this.datasetId = datasetId;
     this.recordId = toRecordIdMap(recordId);
     this.stringAttributes = stringAttributes;
     this.attributes = new HashMap<>();
@@ -96,10 +96,10 @@ public class MongoRecord implements Record {
     }
   }
 
-  public MongoRecord(int idDataset, ObjectId objectId, Map<String, String> stringAttributes,
+  public MongoRecord(long datasetId, ObjectId objectId, Map<String, String> stringAttributes,
     RecordId recordId,
     Map<String, Attribute> attributes) {
-    this.idDataset = idDataset;
+    this.datasetId = datasetId;
     this.recordId = toRecordIdMap(recordId);
     this.stringAttributes = stringAttributes;
     this.attributes = attributes;
@@ -110,12 +110,12 @@ public class MongoRecord implements Record {
     this.attributes = new HashMap<>();
   }
 
-  public int getIdDataset() {
-    return idDataset;
+  public long getDatasetId() {
+    return datasetId;
   }
 
-  public void setIdDataset(int idDataset) {
-    this.idDataset = idDataset;
+  public void setDatasetId(long datasetId) {
+    this.datasetId = datasetId;
   }
 
   public ObjectId getObjectId() {
@@ -203,7 +203,7 @@ public class MongoRecord implements Record {
 
   @Override
   public MongoRecord duplicate() {
-    MongoRecord mongoRecord = new MongoRecord(this.idDataset, this.recordId.duplicate(),
+    MongoRecord mongoRecord = new MongoRecord(this.datasetId, this.recordId.duplicate(),
       this.stringAttributes.entrySet().stream()
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
     );
@@ -251,7 +251,7 @@ public class MongoRecord implements Record {
 
     MongoRecord that = (MongoRecord) o;
 
-    if (idDataset != that.idDataset) {
+    if (datasetId != that.datasetId) {
       return false;
     }
     if (!Objects.equals(stringAttributes, that.stringAttributes)) {
@@ -262,7 +262,7 @@ public class MongoRecord implements Record {
 
   @Override
   public int hashCode() {
-    int result = idDataset;
+    int result = (int) (datasetId ^ (datasetId >>> 32));
     result = 31 * result + (stringAttributes != null ? stringAttributes.hashCode() : 0);
     result = 31 * result + recordId.hashCode();
     return result;
@@ -272,7 +272,7 @@ public class MongoRecord implements Record {
   public String toString() {
     return "MongoRecord{" +
       "objectId=" + objectId +
-      ", idDataset=" + idDataset +
+      ", datasetId=" + datasetId +
       ", recordId=" + recordId +
       ", encodingId=" + encodingId +
       '}';

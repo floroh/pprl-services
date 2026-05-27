@@ -14,18 +14,13 @@ public class CustomDiff {
   }
 
   public String toString() {
-    switch (operation) {
-      case EQUAL:
-        return StringUtils.repeat("?", s0.length());
-      case INSERT:
-        return wrap(s0);
-      case SWAP:
-        return wrap(s0 + "<>" + s1);
-      case REPLACEMENT:
-        return wrap(s0 + "/" + s1);
-      default:
-        return "INVALIDOP";
-    }
+    return switch (operation) {
+      case EQUAL -> StringUtils.repeat("?", s0.length());
+      case INSERT -> wrap(s0);
+      case SWAP -> wrap(s0 + "<>" + s1);
+      case REPLACEMENT -> wrap(s0 + "/" + s1);
+      default -> "INVALIDOP";
+    };
   }
 
   public CustomOperation getOperation() {

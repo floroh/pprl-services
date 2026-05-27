@@ -27,11 +27,7 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import tech.tablesaw.api.StringColumn;
 import tech.tablesaw.api.Table;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -93,18 +89,16 @@ public class ClusterPairwiseDiff extends ClusterPairwiseAnalyzer {
     ResultSet resultSet = getResultSet();
     resultSet.setDescription(buildDescription());
 
-    Map<String, DescriptiveStatistics> stats = new HashMap<>();
-    stats.put(FULL_RECORD, new DescriptiveStatistics());
-
-    Map<String, List<AttributePairDiff>> differingAttributePairs = new HashMap<>();
-
+    Map<String, DescriptiveStatistics> stats = new LinkedHashMap<>();
+    Map<String, List<AttributePairDiff>> differingAttributePairs = new LinkedHashMap<>();
+    DescriptiveStatistics fullRecordStats = new DescriptiveStatistics();
     for (List<Record> cluster : clusters.values()) {
       List<Pair<Record>> recordPairs = buildRecordPairs(cluster);
       //TODO Normalize on number of pairs to prevent disproportional influence of large clusters?
       for (Pair<Record> recordPair : recordPairs) {
         double recordDistance = 0;
 
-        for (AttributePairDiff apd : buildAttributePairDiffs(recordPair)) {
+        for (AttributePairDiff apd : buildAttributePairDiffs(recordPair, true)) {
           String attributeName = apd.getAttributeName();
           if (!stats.containsKey(attributeName)) {
             stats.put(attributeName, new DescriptiveStatistics());
@@ -119,14 +113,12 @@ public class ClusterPairwiseDiff extends ClusterPairwiseAnalyzer {
           stats.get(attributeName).addValue(attrDistance);
           recordDistance += attrDistance;
         }
-        stats.get(FULL_RECORD).addValue(recordDistance);
+        fullRecordStats.addValue(recordDistance);
       }
     }
 
-    List<String> attributeNames = stats.keySet()
-      .stream()
-      .sorted()
-      .collect(Collectors.toList());
+    stats.put(FULL_RECORD, fullRecordStats);
+    List<String> attributeNames = new ArrayList<>(stats.keySet());
 
     for (String attributeName : attributeNames) {
       Result result = new Result();
@@ -142,8 +134,8 @@ public class ClusterPairwiseDiff extends ClusterPairwiseAnalyzer {
     return resultSet;
   }
 
-  protected List<AttributePairDiff> buildAttributePairDiffs(Pair<Record> recordPair) {
-    return super.buildAttributePairs(recordPair).stream()
+  protected List<AttributePairDiff> buildAttributePairDiffs(Pair<Record> recordPair, boolean omitInvalidOrEmpty) {
+    return super.buildAttributePairs(recordPair, omitInvalidOrEmpty).stream()
       .map(AttributePairDiff::new)
       .collect(Collectors.toList());
   }

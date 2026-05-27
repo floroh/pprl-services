@@ -1,5 +1,7 @@
 package de.unileipzig.dbs.pprl.core.common.model.api;
 
+import de.unileipzig.dbs.pprl.core.common.monitoring.TagTable;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Optional;
@@ -25,4 +27,8 @@ public interface DataSet {
   default Iterator<Record> getRecordIterator() {
     return getAllRecords().iterator();
   }
+
+  void setTagTable(TagTable tagTable);
+
+  Optional<TagTable> getTagTable();
 }

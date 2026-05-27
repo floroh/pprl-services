@@ -25,10 +25,6 @@ public class CsvReader {
           .build()
       );
     }
-    List<PersonRecord> csvRecords = importer.getRecords();
-    List<RecordDto> plainRecords = csvRecords.stream()
-      .map(PersonRecord::toRecordDto)
-      .collect(Collectors.toList());
-    return plainRecords;
+    return importer.getRecordDtos();
   }
 }

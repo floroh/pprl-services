@@ -1,4 +1,3 @@
 {
-  "method" : "DBSLeipzig/Plain/Selective",
-  "project" : "exampleProject"
+  "method" : "DBSLeipzig/Plain/Selective"
 }

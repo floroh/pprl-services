@@ -16,6 +16,7 @@
 
 package de.unileipzig.dbs.pprl.core.common;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.paukov.combinatorics3.Generator;
 
 import java.util.ArrayList;
@@ -158,5 +159,60 @@ public class HelperUtils {
       .simple(drawnElements)
       .stream()
       .collect(Collectors.toList());
+  }
+
+
+
+  public static String computeJsonDiff(JsonNode node1, JsonNode node2, String path) {
+    StringBuilder diff = new StringBuilder();
+
+    if (node1.equals(node2)) {
+      return ""; // no differences
+    }
+
+    if (node1.isObject() && node2.isObject()) {
+      Iterator<String> fieldNames = node1.fieldNames();
+      while (fieldNames.hasNext()) {
+        String field = fieldNames.next();
+        String currentPath = path.isEmpty() ? field : path + "." + field;
+        if (node2.has(field)) {
+          diff.append(computeJsonDiff(node1.get(field), node2.get(field), currentPath));
+        } else {
+          diff.append("- ").append(currentPath).append(": ").append(node1.get(field)).append("\n");
+          diff.append("+ ").append(currentPath).append(": <missing>\n");
+        }
+      }
+      // check for fields in node2 missing in node1
+      Iterator<String> fieldNames2 = node2.fieldNames();
+      while (fieldNames2.hasNext()) {
+        String field = fieldNames2.next();
+        if (!node1.has(field)) {
+          String currentPath = path.isEmpty() ? field : path + "." + field;
+          diff.append("- ").append(currentPath).append(": <missing>\n");
+          diff.append("+ ").append(currentPath).append(": ").append(node2.get(field)).append("\n");
+        }
+      }
+    } else if (node1.isArray() && node2.isArray()) {
+      int maxSize = Math.max(node1.size(), node2.size());
+      for (int i = 0; i < maxSize; i++) {
+        String currentPath = path + "[" + i + "]";
+        JsonNode v1 = i < node1.size() ? node1.get(i) : null;
+        JsonNode v2 = i < node2.size() ? node2.get(i) : null;
+        if (v1 != null && v2 != null) {
+          diff.append(computeJsonDiff(v1, v2, currentPath));
+        } else if (v1 != null) {
+          diff.append("- ").append(currentPath).append(": ").append(v1).append("\n");
+          diff.append("+ ").append(currentPath).append(": <missing>\n");
+        } else {
+          diff.append("- ").append(currentPath).append(": <missing>\n");
+          diff.append("+ ").append(currentPath).append(": ").append(v2).append("\n");
+        }
+      }
+    } else {
+      diff.append("- ").append(path).append(": ").append(node1).append("\n");
+      diff.append("+ ").append(path).append(": ").append(node2).append("\n");
+    }
+
+    return diff.toString();
   }
 }

@@ -1,0 +1,801 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Classification API",
+    "description": "\nServices for\n- training, updating, and predicting using a classification model\n- selecting samples for active learning processes\n",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/models/{model_name}/{model_version}/metadata": {
+      "get": {
+        "summary": "Get model metadata",
+        "operationId": "get_model_metadata_models__model_name___model_version__metadata_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "model_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Model Name"
+            }
+          },
+          {
+            "name": "model_version",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Model Version"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Model metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelMetadata"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Model not found or invalid version",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/models/metadata": {
+      "get": {
+        "summary": "Get model metdata",
+        "operationId": "get_model_metadata_models_metadata_get",
+        "responses": {
+          "200": {
+            "description": "Model metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelMetadata",
+                  "items": {
+                    "$ref": "#/components/schemas/ModelMetadata"
+                  },
+                  "type": "array",
+                  "title": "Response Get Model Metadata Models Metadata Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/prediction": {
+      "post": {
+        "summary": "Predict",
+        "operationId": "predict_prediction_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PredictionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Model prediction",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PredictionResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/prediction/batch": {
+      "post": {
+        "summary": "Predict Batch",
+        "operationId": "predict_batch_prediction_batch_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchPredictionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Model prediction",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BatchPredictionResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/training/fit": {
+      "post": {
+        "summary": "Fit",
+        "operationId": "fit_training_fit_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrainingRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Model training",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PredictionResponse",
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/TrainingResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/NotSupportedResponse"
+                    }
+                  ],
+                  "title": "Response Fit Training Fit Post"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Model not found or invalid version",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotSupportedResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/selection": {
+      "post": {
+        "summary": "Select",
+        "operationId": "select_selection_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SampleSelectionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SampleSelectionResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BatchPredictionRequest": {
+        "properties": {
+          "model_name": {
+            "type": "string",
+            "title": "Model Name"
+          },
+          "model_version": {
+            "type": "string",
+            "title": "Model Version"
+          },
+          "features": {
+            "items": {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Features"
+          }
+        },
+        "type": "object",
+        "required": [
+          "model_name",
+          "model_version",
+          "features"
+        ],
+        "title": "BatchPredictionRequest"
+      },
+      "BatchPredictionResponse": {
+        "properties": {
+          "predictions": {
+            "items": {
+              "$ref": "#/components/schemas/PredictionResponse"
+            },
+            "type": "array",
+            "title": "Predictions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "predictions"
+        ],
+        "title": "BatchPredictionResponse"
+      },
+      "ErrorResponse": {
+        "properties": {
+          "detail": {
+            "type": "string",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "detail"
+        ],
+        "title": "ErrorResponse"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ModelMetadata": {
+        "properties": {
+          "model_name": {
+            "type": "string",
+            "title": "Model Name",
+            "default": ""
+          },
+          "model_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Version"
+          },
+          "labels": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Labels",
+            "default": []
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "default": ""
+          },
+          "parameters": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parameters"
+          }
+        },
+        "type": "object",
+        "title": "ModelMetadata"
+      },
+      "NotSupportedResponse": {
+        "properties": {
+          "detail": {
+            "type": "string",
+            "title": "Detail",
+            "default": "Not supported"
+          }
+        },
+        "type": "object",
+        "title": "NotSupportedResponse"
+      },
+      "PredictionRequest": {
+        "properties": {
+          "model_name": {
+            "type": "string",
+            "title": "Model Name"
+          },
+          "model_version": {
+            "type": "string",
+            "title": "Model Version"
+          },
+          "features": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "number"
+                }
+              ]
+            },
+            "type": "object",
+            "title": "Features"
+          }
+        },
+        "type": "object",
+        "required": [
+          "model_name",
+          "model_version",
+          "features"
+        ],
+        "title": "PredictionRequest"
+      },
+      "PredictionResponse": {
+        "properties": {
+          "prediction": {
+            "type": "integer",
+            "title": "Prediction"
+          },
+          "confidence": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confidence"
+          }
+        },
+        "type": "object",
+        "required": [
+          "prediction"
+        ],
+        "title": "PredictionResponse"
+      },
+      "Sample": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id",
+            "description": "Unique identifier for this sample. If omitted, the index in the `samples` list will be used."
+          },
+          "features": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Features",
+            "description": "Arbitrary feature data for the sample, e.g. {'text': '...', 'score': 0.42}."
+          },
+          "label": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label",
+            "description": "Optional ground-truth label for this sample, useful for training or evaluation contexts."
+          }
+        },
+        "type": "object",
+        "required": [
+          "features"
+        ],
+        "title": "Sample",
+        "description": "A single sample, optionally including a ground-truth label."
+      },
+      "SampleSelectionRequest": {
+        "properties": {
+          "strategy_type": {
+            "$ref": "#/components/schemas/StrategyType",
+            "description": "Which sampling strategy to use."
+          },
+          "strategy_options": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Strategy Options",
+            "description": "Parameters specific to the chosen strategy. E.g. {'batch_size': 10, 'threshold': 0.8}.",
+            "examples": [
+              {
+                "batch_size": 5,
+                "threshold": 0.2
+              }
+            ]
+          },
+          "samples": {
+            "items": {
+              "$ref": "#/components/schemas/Sample"
+            },
+            "type": "array",
+            "title": "Samples",
+            "description": "List of candidate samples to choose from."
+          }
+        },
+        "type": "object",
+        "required": [
+          "strategy_type",
+          "samples"
+        ],
+        "title": "SampleSelectionRequest",
+        "description": "Request for selecting which samples to send to labelers in an active learning process."
+      },
+      "SampleSelectionResponse": {
+        "properties": {
+          "selected_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Selected Ids",
+            "description": "List of sample IDs chosen for labeling."
+          },
+          "metadata": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Metadata",
+            "description": "Additional information (e.g. runtime, confidence stats)."
+          }
+        },
+        "type": "object",
+        "required": [
+          "selected_ids"
+        ],
+        "title": "SampleSelectionResponse",
+        "description": "Response listing which samples were selected."
+      },
+      "StrategyType": {
+        "type": "string",
+        "enum": [
+          "random",
+          "uncertainty",
+          "diversity",
+          "sklearn"
+        ],
+        "title": "StrategyType",
+        "description": "Enumeration of allowed active‐learning selection strategies."
+      },
+      "TrainingRequest": {
+        "properties": {
+          "model_name": {
+            "type": "string",
+            "title": "Model Name"
+          },
+          "model_version": {
+            "type": "string",
+            "title": "Model Version"
+          },
+          "output_model_version": {
+            "type": "string",
+            "title": "Output Model Version"
+          },
+          "features": {
+            "anyOf": [
+              {
+                "items": {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "number"
+                      }
+                    ]
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Features"
+          },
+          "labels": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Labels"
+          },
+          "samples": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/Sample"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Samples"
+          },
+          "options": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ]
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Options"
+          }
+        },
+        "type": "object",
+        "required": [
+          "model_name",
+          "model_version",
+          "output_model_version"
+        ],
+        "title": "TrainingRequest",
+        "description": "Request for running training job.\n\nYou must provide **either**:\n  1. `features` (a list of feature dicts) **and** `labels` (a parallel list of ints),\n**or**\n  2. `samples` (a list of `Sample` objects, each embedding its own features + label).\n\nOmitting both combinations (or providing only one of `features`/`labels`) will be rejected."
+      },
+      "TrainingResponse": {
+        "properties": {
+          "model_description": {
+            "$ref": "#/components/schemas/ModelMetadata",
+            "description": "Description of the trained model."
+          },
+          "metadata": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ]
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Metadata",
+            "description": "Additional information (e.g. runtime, training performance metrics)."
+          }
+        },
+        "type": "object",
+        "required": [
+          "model_description"
+        ],
+        "title": "TrainingResponse",
+        "description": "Response of a training job."
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}

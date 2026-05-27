@@ -46,46 +46,59 @@ public class AttributeLength extends AttributeAnalyzer {
       " For Bitvector attributes the cardinality is used as the length");
     for (Map.Entry<String, List<Attribute>> attribute : attributes.entrySet()) {
       DescriptiveStatistics stats = new DescriptiveStatistics();
-
+      String attributeName = attribute.getKey();
       attribute.getValue()
         .forEach(attr -> {
-          if (AttributeAvailability.isInvalidOrEmpty(attribute.getKey(), attr)) {
-            return;
+          Integer len = getAttributeLength(attributeName, attr);
+          if (len != null) {
+            stats.addValue(len);
           }
-          int len = attr.isType(BitVector.class) ? attr.getAs(BitVector.class)
-            .getCardinality() : attr.getAsString()
-            .length();
-          stats.addValue(len);
         });
       if (stats.getN() == 0) {
         continue;
       }
-      Result result = new Result();
-      result.setParam(HEADER_ATTRIBUTE, attribute.getKey());
-      addDescriptiveStatisticMetrics(result, stats,
-        Arrays.asList("count", "median", "mean", "min", "max", "sd")
-      );
-      resultSet.addResult(result);
-
-      Table lengthDistribution = Table.create(attribute.getKey())
-        .addColumns(
-          IntColumn.create(HEADER_ATTRIBUTE_LENGTH),
-          LongColumn.create(HEADER_ABSOLUTE_FREQUENCY),
-          DoubleColumn.create(HEADER_RELATIVE_FREQUENCY)
-        );
-      Arrays.stream(stats.getValues())
-        .mapToObj(d -> (int) d)
-        .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
-        .forEach((len, count) -> {
-          lengthDistribution.intColumn(HEADER_ATTRIBUTE_LENGTH)
-            .append(len);
-          lengthDistribution.longColumn(HEADER_ABSOLUTE_FREQUENCY)
-            .append(count);
-          lengthDistribution.doubleColumn(HEADER_RELATIVE_FREQUENCY)
-            .append((double) count / stats.getN());
-        });
-      resultSet.addAdditionalResult(lengthDistribution);
+      resultSet.addResult(buildResult(HEADER_ATTRIBUTE, attributeName, stats));
+      resultSet.addAdditionalResult(buildLengthDistributionTable(attributeName, stats));
     }
     return resultSet;
+  }
+
+  public static Integer getAttributeLength(String attributeName, Attribute attr) {
+    if (AttributeAvailability.isInvalidOrEmpty(attributeName, attr)) {
+      return null;
+    }
+    return attr.isType(BitVector.class) ? attr.getAs(BitVector.class)
+            .getCardinality() : attr.getAsString()
+            .length();
+  }
+
+  public static Result buildResult(String attributeHeader, String attributeName, DescriptiveStatistics stats) {
+    Result result = new Result();
+    result.setParam(attributeHeader, attributeName);
+    addDescriptiveStatisticMetrics(result, stats,
+            Arrays.asList("count", "median", "mean", "min", "max", "sd")
+    );
+    return result;
+  }
+
+  public static Table buildLengthDistributionTable(String attributeName, DescriptiveStatistics stats) {
+    Table lengthDistribution = Table.create(attributeName)
+      .addColumns(
+        IntColumn.create(HEADER_ATTRIBUTE_LENGTH),
+        LongColumn.create(HEADER_ABSOLUTE_FREQUENCY),
+        DoubleColumn.create(HEADER_RELATIVE_FREQUENCY)
+      );
+    Arrays.stream(stats.getValues())
+      .mapToObj(d -> (int) d)
+      .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+      .forEach((len, count) -> {
+        lengthDistribution.intColumn(HEADER_ATTRIBUTE_LENGTH)
+          .append(len);
+        lengthDistribution.longColumn(HEADER_ABSOLUTE_FREQUENCY)
+          .append(count);
+        lengthDistribution.doubleColumn(HEADER_RELATIVE_FREQUENCY)
+          .append((double) count / stats.getN());
+      });
+    return lengthDistribution;
   }
 }

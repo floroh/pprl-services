@@ -14,6 +14,7 @@ public class MatcherUpdateRequest {
   @NonNull
   private String projectId;
 
+  @Builder.Default
   private MatcherUpdateType type = MatcherUpdateType.NEW_IMPROVED;
 
 }

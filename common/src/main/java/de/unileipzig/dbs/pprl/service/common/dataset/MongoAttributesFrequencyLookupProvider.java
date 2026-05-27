@@ -11,8 +11,9 @@ import de.unileipzig.dbs.pprl.service.common.SpringContext;
 import de.unileipzig.dbs.pprl.service.common.data.mongo.MongoFrequencyLookup;
 import de.unileipzig.dbs.pprl.service.common.persistence.repositories.mongo.MongoFrequencyLookupRepository;
 import de.unileipzig.dbs.pprl.service.common.services.DatasetMongoService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import tech.tablesaw.api.Table;
 
 import java.util.ArrayList;
@@ -27,70 +28,109 @@ import static de.unileipzig.dbs.pprl.core.analyzer.Analyzer.*;
 /**
  * Read frequency information of attribute values from a {@link de.unileipzig.dbs.pprl.service.common.data.mongo.MongoFrequencyLookup}
  */
+@Slf4j
 public class MongoAttributesFrequencyLookupProvider implements AttributesFrequencyLookupProvider {
 
   public static final int REFERENCE_TOTAL = 200000;
 
+  @Getter
+  @Setter
   private boolean transformAttributes = false;
 
+  @Getter
+  @Setter
   private boolean useRelativeFrequencies = false;
 
-  private int datasetId;
+  @Getter
+  @Setter
+  private long datasetId;
+
+  @Getter
+  @Setter
+  private String datasetSource;
+
+  @Getter
+  @Setter
+  private List<String> attributesNamesToParse;
 
   private MongoFrequencyLookupRepository mongoFrequencyLookupRepository;
 
   private DatasetMongoService datasetMongoService;
+
+  @Getter
+  @Setter
   private AttributesFrequencyLookupFilter filter = new AttributesFrequencyLookupFilter();
 
-  private static final Logger logger = LogManager.getLogger(MongoAttributesFrequencyLookupProvider.class);
-
-//  public MongoAttributesFrequencyLookupProvider(MongoFrequencyLookupRepository mongoFrequencyLookupRepository,
-//    DatasetMongoService datasetMongoService) {
-//    this.mongoFrequencyLookupRepository = mongoFrequencyLookupRepository;
-//    this.datasetMongoService = datasetMongoService;
-//  }
-
+  public MongoAttributesFrequencyLookupProvider(MongoFrequencyLookupRepository mongoFrequencyLookupRepository,
+                                                DatasetMongoService datasetMongoService) {
+    this.mongoFrequencyLookupRepository = mongoFrequencyLookupRepository;
+    this.datasetMongoService = datasetMongoService;
+  }
 
   private MongoAttributesFrequencyLookupProvider() {
     datasetMongoService = SpringContext.getBean(DatasetMongoService.class);
     mongoFrequencyLookupRepository = SpringContext.getBean(MongoFrequencyLookupRepository.class);
   }
 
+  public AttributesFrequencyLookup provide(long datasetId) {
+    setDatasetId(datasetId);
+    return provide();
+  }
+
   @Override
   public AttributesFrequencyLookup provide() {
-    Optional<MongoFrequencyLookup> byDatasetId = mongoFrequencyLookupRepository.findByDatasetId(datasetId);
-    if (byDatasetId.isEmpty()) {
+    if (datasetId == 0) {
+      throw new IllegalStateException("Dataset id not provided");
+    }
+    boolean sourceSpecific = datasetSource != null && !datasetSource.isBlank();
+    if (sourceSpecific) log.info("Providing source-specific AttributesFrequencyLookup for {}", datasetSource);
+
+    String config = "transform=" + transformAttributes + ", relFreq=" + useRelativeFrequencies + ", " + filter.getSummary();
+    Optional<MongoFrequencyLookup> possibleDbLookup = sourceSpecific
+            ? mongoFrequencyLookupRepository.findByDatasetIdAndDatasetSourceAndConfig(datasetId, null, config)
+            : mongoFrequencyLookupRepository.findByDatasetIdAndDatasetSourceAndConfig(datasetId, datasetSource, config);
+
+    if (possibleDbLookup.isEmpty()) {
+      List<Record> records = sourceSpecific
+              ? new ArrayList<>(datasetMongoService.getRecordsBySource(datasetId, datasetSource))
+              : new ArrayList<>(datasetMongoService.getAllRecords(datasetId));
+
       AttributeMostFrequent analyzer = new AttributeMostFrequent();
-      List<Record> records = new ArrayList<>(datasetMongoService.getAllRecords(datasetId));
       Map<String, Table> additionalResults =
-        analyzer.analyze(AttributeFrequencyAnalyzer.prepareRecords(records)).getAdditionalResults();
+              analyzer.analyze(AttributeFrequencyAnalyzer.prepareRecords(records)).getAdditionalResults();
       final AttributesFrequencyLookup afls = new AttributesFrequencyLookup(transformAttributes);
       MongoFrequencyLookup.MongoFrequencyLookupBuilder mongoFrequencyLookupBuilder =
-        MongoFrequencyLookup.builder()
-          .datasetId(datasetId);
+              MongoFrequencyLookup.builder()
+                      .datasetId(datasetId)
+                      .datasetSource(datasetSource)
+                      .config(config);
       for (String attrName : additionalResults.keySet()) {
-//        if (!attrName.equals("GENDER")) continue;
         Map<String, Long> curFrequencies = new HashMap<>();
         Table frequencies = additionalResults.get(attrName);
         AttributeFrequencyLookup afl = getAttributeFrequencyLookup(afls, attrName, curFrequencies, frequencies);
         mongoFrequencyLookupBuilder.frequenciesByAttribute(attrName, afl.getFrequencies());
-        afls.addAttributeFrequencyLookup(attrName, afl);
+        if (attributesNamesToParse == null || attributesNamesToParse.contains(attrName)) {
+          afls.addAttributeFrequencyLookup(attrName, afl);
+        }
       }
       MongoFrequencyLookup mongoFrequencyLookup = mongoFrequencyLookupBuilder.build();
       mongoFrequencyLookupRepository.save(mongoFrequencyLookup);
       return afls;
     }
-    logger.info("Using precomputed attribute frequency lookup for dataset " + datasetId);
-    MongoFrequencyLookup mongoFrequencyLookup = byDatasetId.get();
+    log.info("Using precomputed attribute frequency lookup for dataset {}", datasetId);
+    MongoFrequencyLookup mongoFrequencyLookup = possibleDbLookup.get();
     final AttributesFrequencyLookup afls = new AttributesFrequencyLookup(transformAttributes);
-    mongoFrequencyLookup.getFrequenciesByAttributes().forEach((k,v) -> {
-      afls.addAttributeFrequencyLookup(k, new AttributeFrequencyLookup(v));
-    });
+    mongoFrequencyLookup.getFrequenciesByAttributes().forEach(
+            (k, v) -> {
+              if (attributesNamesToParse == null || attributesNamesToParse.contains(k)) {
+                afls.addAttributeFrequencyLookup(k, new AttributeFrequencyLookup(v));
+              }
+            });
     return afls;
   }
 
   private AttributeFrequencyLookup getAttributeFrequencyLookup(AttributesFrequencyLookup afls,
-    String attrName, Map<String, Long> curFrequencies, Table frequencies) {
+                                                               String attrName, Map<String, Long> curFrequencies, Table frequencies) {
     frequencies.stream().forEach(r -> {
       String attrValue = r.getString(HEADER_ATTRIBUTE);
       attrValue = afls.normalizeAttributeValue(attrName, attrValue);
@@ -113,60 +153,27 @@ public class MongoAttributesFrequencyLookupProvider implements AttributesFrequen
   private static void addFrequency(Map<String, Long> curFrequencies, String attrValue, Long frequency) {
     // Add to frequency if an entry already exists
     if (curFrequencies.containsKey(attrValue)) {
-      long tmpFrequency = curFrequencies.get(attrValue);
-      curFrequencies.put(attrValue, tmpFrequency + frequency);
+      curFrequencies.compute(attrValue, (k, tmpFrequency) -> tmpFrequency + frequency);
     } else {
       curFrequencies.put(attrValue, frequency);
     }
   }
 
   private AttributeFrequencyLookup getAttributeFrequencyLookup(String attrName,
-    Map<String, Long> frequencies) {
-    logger.debug("Filtering frequency lookup table for attribute: " + attrName);
+                                                               Map<String, Long> frequencies) {
+    log.debug("Filtering frequency lookup table for attribute: {}", attrName);
     return filter.getFilteredAttributeFrequencyLookup(frequencies);
-  }
-
-  public int getDatasetId() {
-    return datasetId;
-  }
-
-  public void setDatasetId(int datasetId) {
-    this.datasetId = datasetId;
-  }
-
-  public AttributesFrequencyLookupFilter getFilter() {
-    return filter;
-  }
-
-  public void setFilter(AttributesFrequencyLookupFilter filter) {
-    this.filter = filter;
-  }
-
-  public boolean isTransformAttributes() {
-    return transformAttributes;
-  }
-
-  public void setTransformAttributes(boolean transformAttributes) {
-    this.transformAttributes = transformAttributes;
-  }
-
-  public boolean isUseRelativeFrequencies() {
-    return useRelativeFrequencies;
-  }
-
-  public void setUseRelativeFrequencies(boolean useRelativeFrequencies) {
-    this.useRelativeFrequencies = useRelativeFrequencies;
   }
 
   @Override
   public String toString() {
     return "MongoAttributesFrequencyLookupProvider{" +
-      "transformAttributes=" + transformAttributes +
-      ", useRelativeFrequencies=" + useRelativeFrequencies +
-      ", datasetId=" + datasetId +
-      ", mongoFrequencyLookupRepository=" + mongoFrequencyLookupRepository +
-      ", datasetMongoService=" + datasetMongoService +
-      ", filter=" + filter +
-      '}';
+            "transformAttributes=" + transformAttributes +
+            ", useRelativeFrequencies=" + useRelativeFrequencies +
+            ", datasetId=" + datasetId +
+            ", datasetSource=" + datasetSource +
+            ", attributesNamesToParse=" + attributesNamesToParse +
+            ", filter=" + filter +
+            '}';
   }
 }

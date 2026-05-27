@@ -4,7 +4,6 @@
 #      username: doadmin
 #      password: doadminpw
 #      port: 27019
-de.flapdoodle.mongodb.embedded.version: 4.14.0
 dataset:
   csv:
     datasetConfigs:

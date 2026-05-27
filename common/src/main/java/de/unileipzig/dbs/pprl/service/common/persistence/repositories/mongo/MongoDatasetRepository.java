@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface MongoDatasetRepository extends MongoRepository<MongoDataset, ObjectId> {
 
-  Optional<MongoDataset> findByDatasetId(int idDataset);
+  Optional<MongoDataset> findByDatasetId(long datasetId);
 
-  List<MongoDataset> findByPlaintextDatasetId(int plaintextDatasetId);
+  List<MongoDataset> findByPlaintextDatasetId(long plaintextDatasetId);
 }

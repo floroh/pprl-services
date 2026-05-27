@@ -27,10 +27,8 @@ public class BlockingKeyFactory {
   }
 
   public static BlockingKey getBlockingKey(BlockingKeyVariant variant, String id, String value) {
-    switch (variant) {
-      default:
-      case DEFAULT:
-        return new BlockingKeyImpl(id, value);
-    }
+    return switch (variant) {
+      default -> new BlockingKeyImpl(id, value);
+    };
   }
 }

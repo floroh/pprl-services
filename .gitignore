@@ -42,9 +42,17 @@ linkage-unit/src/main/resources/application.yml
 linkage-unit/src/main/resources/application-mongo.yml
 protocol-manager/src/main/resources/application.yml
 protocol-manager/src/main/resources/application-mongo.yml
-
-mongo-storage/
+data-generator/src/main/resources/application.yml
+data-generator/src/main/resources/application-mongo.yml
 
 *.log
 logs/
+
+us-mongodb/
 /data
+/db/dumps
+
+data-owner/src/main/resources/configs/*
+linkage-unit/src/main/resources/configs/*
+.env
+.openapi-generator/

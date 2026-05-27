@@ -24,6 +24,8 @@ import de.unileipzig.dbs.pprl.core.common.model.api.Record;
 import de.unileipzig.dbs.pprl.core.common.model.impl.RecordWithTags;
 import de.unileipzig.dbs.pprl.core.encoder.hardening.Hardener;
 import org.apache.commons.lang3.NotImplementedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 public class WeightedMergeMultiAttributeEncoderGroup<T> extends AbstractAttributeEncoderGroup<T> {
+  private static final Logger log = LoggerFactory.getLogger(WeightedMergeMultiAttributeEncoderGroup.class);
   private Map<String, AttributeEncoder<?, T>> attributeEncoders;
   private AttributeMerger<T> attributeMerger;
 
@@ -56,15 +59,15 @@ public class WeightedMergeMultiAttributeEncoderGroup<T> extends AbstractAttribut
     final Map<String, List<T>> eAttributes = new HashMap<>();
     attributeEncoders.forEach((k, v) -> {
       Attribute attribute = pRecord.getAttribute(k)
-        .orElseThrow(() -> new RuntimeException("Missing attribute: " + k + " (existing: " + pRecord.getAttributeNames() + ")"));
+          .orElse(v.getEmptyInputAttribute());
+//        .orElseThrow(() -> new RuntimeException("Missing attribute: " + k + " (existing: " + pRecord.getAttributeNames() + ")"));
       if (attribute instanceof ListAttribute) {
         throw new NotImplementedException("Weighted encoding is currently not supported for " +
           "list attributes");
       } else {
-        if (v instanceof WeightedBitVectorEncoder) {
-          WeightedBitVectorEncoder<?, ?> wbve = (WeightedBitVectorEncoder<?, ?>) v;
+        if (v instanceof WeightedBitVectorEncoder<?, ?> wbve) {
           wbve.setAttributeName(k);
-          wbve.setPlaintextAttribute(record.getAttribute(k).get());
+          wbve.setPlaintextAttribute(attribute);
           if (record instanceof RecordWithTags) {
             wbve.provideTags().stream()
               .peek(t -> {
@@ -105,6 +108,7 @@ public class WeightedMergeMultiAttributeEncoderGroup<T> extends AbstractAttribut
       for (AttributeEncoder<?, T> attributeEncoder : attributeEncoders.values()) {
         if (attributeEncoder instanceof WeightedBitVectorEncoder) {
           ((WeightedBitVectorEncoder<?, ?>) attributeEncoder).setWeightCalculator(weightCalculator);
+          log.info("setWeightCalculator on {}", attributeEncoder.getId());
         } else if (attributeEncoder instanceof WeightedTokenBitVectorEncoder) {
           ((WeightedTokenBitVectorEncoder<?, ?>) attributeEncoder).setWeightCalculator(weightCalculator);
         }
@@ -150,7 +154,14 @@ public class WeightedMergeMultiAttributeEncoderGroup<T> extends AbstractAttribut
 
   @Override
   public String toString() {
-    return "MultiAttributeEncoderGroup{" + "id='" + id + '\'' + ", attributeEncoders=" + attributeEncoders +
-      ", bitVectorMerger=" + attributeMerger + ", bitVectorHardeners=" + hardeners + '}';
+    return "WeightedMergeMultiAttributeEncoderGroup{" +
+            "attributeEncoders=" + attributeEncoders +
+            ", attributeMerger=" + attributeMerger +
+            ", weightCalculator=" + weightCalculator +
+            ", hardeners=" + hardeners +
+            ", recordPreprocessor=" + recordPreprocessor +
+            ", keyedHardeners=" + keyedHardeners +
+            ", key='" + key + '\'' +
+            "}";
   }
 }

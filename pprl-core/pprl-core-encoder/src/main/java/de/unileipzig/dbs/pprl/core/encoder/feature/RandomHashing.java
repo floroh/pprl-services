@@ -27,7 +27,7 @@ import java.util.Random;
  * using the Random Hashing scheme.
  * Salting is used to create different encodings for the same String.
  */
-public class RandomHashing implements FeatureEncoder<String, BitVector> {
+public class RandomHashing implements FeatureEncoder<String, BitVector>, NumHashFunctionsDependent {
 
   /**
    * Number of hash functions to apply on each feature which is (ignoring collusion) the number of bits
@@ -55,10 +55,12 @@ public class RandomHashing implements FeatureEncoder<String, BitVector> {
     return bv;
   }
 
+  @Override
   public int getNumHashFunctions() {
     return numHashFunctions;
   }
 
+  @Override
   public void setNumHashFunctions(int numHashFunctions) {
     this.numHashFunctions = numHashFunctions;
   }

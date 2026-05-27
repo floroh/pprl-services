@@ -17,8 +17,8 @@ public interface RecordPairRepository extends MongoRepository<MongoRecordPair, O
   List<MongoRecordPair> findMongoRecordPairByClassification(MatchGrade classification);
 
   @Query(value = "{ 'projectId' : ?0 }", fields = "{" +
-    "'leftRecord.idDataset' : 0, 'leftRecord.encodingId' : 0, 'leftRecord.stringAttributes' : 0," +
-    "'rightRecord.idDataset' : 0, 'rightRecord.encodingId' : 0, 'rightRecord.stringAttributes' : 0 }")
+    "'leftRecord.datasetId' : 0, 'leftRecord.encodingId' : 0, 'leftRecord.stringAttributes' : 0," +
+    "'rightRecord.datasetId' : 0, 'rightRecord.encodingId' : 0, 'rightRecord.stringAttributes' : 0 }")
   List<RecordPair> findMongoRecordPairByProjectIdNoRecords(ObjectId projectId);
 
 //  Iterator<RecordPair> findMongoRecordPairByProjectIdAsIterator(ObjectId projectId);

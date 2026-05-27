@@ -3,7 +3,6 @@ package de.unileipzig.dbs.pprl.service.protocol.model.mongo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.unileipzig.dbs.pprl.service.protocol.workflow.ProcessingStep;
-import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -33,9 +32,11 @@ public class MultiLayerProtocol {
   @Singular
   private List<Layer> layers;
 
-  private int plaintextDatasetId;
+  private String linkageProject;
 
-  private int initialDatasetId;
+  private Long plaintextDatasetId;
+
+  private Long initialDatasetId;
 
   private String lastUpdate;
 

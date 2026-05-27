@@ -12,6 +12,7 @@ import de.unileipzig.dbs.pprl.service.common.persistence.repositories.mongo.Mong
 import de.unileipzig.dbs.pprl.service.common.persistence.repositories.mongo.MongoDatasetRepository;
 import de.unileipzig.dbs.pprl.service.common.persistence.repositories.mongo.MongoGroundTruthRepository;
 import de.unileipzig.dbs.pprl.service.common.persistence.repositories.mongo.MongoRecordRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 /**
  * Service for accessing datasets
  */
+@Slf4j
 @Service
 public class DatasetMongoService {
 
@@ -41,32 +43,37 @@ public class DatasetMongoService {
 
   private final MongoGroundTruthRepository groundTruthRepository;
 
+  private final DatasetIdService datasetIdService;
+
   public DatasetMongoService(
-    MongoTemplate mongoTemplate,
-    MongoDatasetRepository datasetRepository,
-    MongoRecordRepository recordRepository,
-    MongoClusterRepository clusterRepository,
-    MongoGroundTruthRepository groundTruthRepository) {
+          MongoTemplate mongoTemplate,
+          MongoDatasetRepository datasetRepository,
+          MongoRecordRepository recordRepository,
+          MongoClusterRepository clusterRepository,
+          MongoGroundTruthRepository groundTruthRepository, DatasetIdService datasetIdService) {
     this.mongoTemplate = mongoTemplate;
     this.datasetRepository = datasetRepository;
     this.recordRepository = recordRepository;
     this.clusterRepository = clusterRepository;
     this.groundTruthRepository = groundTruthRepository;
+    this.datasetIdService = datasetIdService;
   }
 
-  public DatabaseBlockedDataSet getBlockedDataSet(int idDataset) {
+  public DatabaseBlockedDataSet getBlockedDataSet(long datasetId) {
     DatabaseBlockedDataSet dataset = new DatabaseBlockedDataSet(this);
-    dataset.setIdDataset(idDataset);
+    dataset.setDatasetId(datasetId);
     return dataset;
   }
 
-  public void addRecord(int idDataset, MongoRecord record) {
-    record.setIdDataset(idDataset);
+  public void addRecord(long datasetId, MongoRecord record) {
+    checkIfDatasetDoesNotExist(datasetId, true);
+    record.setDatasetId(datasetId);
     recordRepository.save(record);
   }
 
-  public void addRecords(int idDataset, Collection<MongoRecord> records) {
-    records.forEach(r -> r.setIdDataset(idDataset));
+  public void addRecords(long datasetId, Collection<MongoRecord> records) {
+    checkIfDatasetDoesNotExist(datasetId, true);
+    records.forEach(r -> r.setDatasetId(datasetId));
     recordRepository.saveAll(records);
   }
 
@@ -74,12 +81,12 @@ public class DatasetMongoService {
     groundTruthRepository.save(groundTruth);
   }
 
-  public Optional<MongoGroundTruth> getGroundTruth(int idDataset) {
-    return groundTruthRepository.findByDatasetId(idDataset);
+  public Optional<MongoGroundTruth> getGroundTruth(long datasetId) {
+    return groundTruthRepository.findByDatasetId(datasetId);
   }
 
-  public Optional<MongoRecord> getRecord(int idDataset, RecordId id) {
-    return recordRepository.findByIdDatasetAndSourceAndLocal(idDataset, id.getSourceId(), id.getLocalId()
+  public Optional<MongoRecord> getRecord(long datasetId, RecordId id) {
+    return recordRepository.findByDatasetIdAndSourceAndLocal(datasetId, id.getSourceId(), id.getLocalId()
     );
   }
 
@@ -89,28 +96,39 @@ public class DatasetMongoService {
 
   public List<MongoRecord> getRecords(Collection<String> uniqueIds) {
     List<ObjectId> dbIds = uniqueIds.stream().map(ObjectId::new).collect(Collectors.toList());
-    return (List<MongoRecord>) recordRepository.findAllById(dbIds);
+    return recordRepository.findAllById(dbIds);
   }
 
-  public List<MongoDataset> getDatasets(Optional<Integer> plaintextDatasetId) {
+  public List<MongoDataset> getDatasets(Optional<Long> plaintextDatasetId) {
     if (plaintextDatasetId.isPresent()) {
       return datasetRepository.findByPlaintextDatasetId(plaintextDatasetId.get());
     }
     return datasetRepository.findAll();
   }
 
-  public  void deleteDataset(int idDataset) {
-    Optional<MongoDataset> byDatasetId = datasetRepository.findByDatasetId(idDataset);
+  public void deleteDataset(long datasetId) {
+    Optional<MongoDataset> byDatasetId = datasetRepository.findByDatasetId(datasetId);
     byDatasetId.ifPresent(datasetRepository::delete);
   }
 
-  public MongoDataset addDataset(MongoDataset dataset) {
-    if (dataset.getDatasetId() == 0) {
-      Set<Integer> existingIds = getDatasets(Optional.empty()).stream()
-        .map(MongoDataset::getDatasetId)
-        .collect(Collectors.toCollection(TreeSet::new));
+  public boolean checkIfDatasetDoesNotExist(long datasetId, boolean throwException) {
+    if (datasetRepository.findByDatasetId(datasetId).isEmpty()) {
+      if (throwException) {
+        throw new RuntimeException(String.format("Dataset with id %s does not exist. Create it first.", datasetId));
+      }
+      log.warn("Dataset with id {} does not exist.", datasetId);
+      return false;
+    }
+    return true;
+  }
 
-      int newId = 10000;
+  public MongoDataset addDataset(MongoDataset dataset) {
+    if (dataset.getDatasetId() == null || dataset.getDatasetId() == 0) {
+      Set<Long> existingIds = getDatasets(Optional.empty()).stream()
+              .map(MongoDataset::getDatasetId)
+              .collect(Collectors.toCollection(TreeSet::new));
+
+      long newId = 10000;    // Offset for auto generated dataset id
       while (existingIds.contains(newId)) {
         newId++;
       }
@@ -119,21 +137,21 @@ public class DatasetMongoService {
     return datasetRepository.save(dataset);
   }
 
-  public Optional<MongoDataset> getDataset(int idDataset) {
-    return datasetRepository.findByDatasetId(idDataset);
+  public Optional<MongoDataset> getDataset(long datasetId) {
+    return datasetRepository.findByDatasetId(datasetId);
   }
 
-  public List<Integer> getDatasetIds() {
+  public List<Long> getDatasetIds() {
     return mongoTemplate.getCollection(mongoTemplate.getCollectionName(MongoRecord.class))
-      .distinct("idDataset", Integer.class).into(new ArrayList<>());
+            .distinct("datasetId", Long.class).into(new ArrayList<>());
   }
 
-  public Collection<Record> getAllRecords(int idDataset) {
-    return recordRepository.findByIdDataset(idDataset);
+  public Collection<Record> getAllRecords(long datasetId) {
+    return recordRepository.findByDatasetIdOrderByObjectId(datasetId);
   }
 
-  public Collection<Record> getRecordsBySource(int idDataset, String sourceName) {
-    return recordRepository.findByIdDatasetAndSource(idDataset, sourceName);
+  public Collection<Record> getRecordsBySource(long datasetId, String sourceName) {
+    return recordRepository.findByDatasetIdAndSourceOrderByObjectId(datasetId, sourceName);
   }
 
   public void addClusters(ObjectId projectId, Collection<MongoCluster> clusters) {
@@ -163,7 +181,7 @@ public class DatasetMongoService {
 
   public Collection<MongoCluster> getClustersByBlockingKey(ObjectId projectId, BlockingKey bk) {
     Collection<MongoCluster> foundCluster =
-      clusterRepository.findByProjectIdAndBlockingKeysContains(projectId, bk);
+            clusterRepository.findByProjectIdAndBlockingKeysContains(projectId, bk);
     return foundCluster;
   }
 
@@ -178,7 +196,7 @@ public class DatasetMongoService {
     }
 
     Collection<MongoCluster> foundCluster =
-      clusterRepository.findByProjectIdAndBlockingKeysContaining(projectId, new HashSet<>(bks));
+            clusterRepository.findByProjectIdAndBlockingKeysContaining(projectId, new HashSet<>(bks));
     return foundCluster;
   }
 
@@ -186,11 +204,11 @@ public class DatasetMongoService {
     return foundCluster.stream().map(MongoCluster::getRepresentative).collect(Collectors.toList());
   }
 
-  public long size(int idDataset) {
-    return recordRepository.countByIdDataset(idDataset);
+  public long size(long datasetId) {
+    return recordRepository.countByDatasetId(datasetId);
   }
 
-  public void deleteAll(int idDataset) {
-    recordRepository.deleteAllByIdDataset(idDataset);
+  public void deleteAll(long datasetId) {
+    recordRepository.deleteAllByDatasetId(datasetId);
   }
 }

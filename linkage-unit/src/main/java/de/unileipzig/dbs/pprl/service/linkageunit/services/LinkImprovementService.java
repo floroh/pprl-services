@@ -1,6 +1,5 @@
 package de.unileipzig.dbs.pprl.service.linkageunit.services;
 
-import de.unileipzig.dbs.pprl.core.common.exceptions.UnexpectedRuntimeConditionException;
 import de.unileipzig.dbs.pprl.core.common.model.api.RecordId;
 import de.unileipzig.dbs.pprl.core.common.model.api.RecordIdPair;
 import de.unileipzig.dbs.pprl.core.common.model.api.RecordPair;
@@ -25,6 +24,7 @@ import de.unileipzig.dbs.pprl.service.linkageunit.data.mongo.BatchMatchProject;
 import de.unileipzig.dbs.pprl.service.linkageunit.data.mongo.ProjectState;
 import de.unileipzig.dbs.pprl.service.linkageunit.dataset.DatabaseLinkageProcessDataset;
 import de.unileipzig.dbs.pprl.service.linkageunit.persistence.repositories.RecordEncodingWishRepository;
+import de.unileipzig.dbs.pprl.service.linkageunit.services.selection.ExternalClassifierService;
 import kong.unirest.Unirest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -35,6 +35,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static de.unileipzig.dbs.pprl.core.matcher.TagUtils.TAG_MATCHING_METHOD;
 import static de.unileipzig.dbs.pprl.core.matcher.model.api.LinkageProcessDataSet.*;
 import static de.unileipzig.dbs.pprl.service.linkageunit.services.helper.MongoRecordUtils.getRecordPairsForNew;
 import static de.unileipzig.dbs.pprl.service.linkageunit.services.helper.MongoRecordUtils.removeNewFlagFromRecords;
@@ -47,7 +48,6 @@ public class LinkImprovementService {
   public static final String PROPERTY_UNCERTAIN_LINK = "UNCERTAIN_LINK";
   public static final String PROPERTY_REPORTED_LINK = "REPORTED_LINK";
   public static final String PROPERTY_LINK_FROM_UPPER_LAYER = "UNREPORTABLE_LINK";
-  public static final String TAG_ENCODING_METHOD = "METHOD";
   public static final String CONFIG_PROJECT_ID_TO_REPORT_TO = "PROJECT_ID_TO_REPORT_TO";
   public static final String CONFIG_LINK_SELECTION_STRATEGY = "linkSelectionStrategy";
   public static final String CONFIG_WISH_ENCODING_METHOD = "wishMethod";
@@ -60,11 +60,15 @@ public class LinkImprovementService {
 
   private final ProjectService projectService;
 
+  private final ExternalClassifierService externalClassifierService;
+
   public LinkImprovementService(RecordEncodingWishRepository recordEncodingWishRepository,
-    DefaultLinkImprovementConfig linkImprovementConfig, ProjectService projectService) {
+                                DefaultLinkImprovementConfig linkImprovementConfig, ProjectService projectService, ExternalClassifierService externalClassifierService) {
     this.recordEncodingWishRepository = recordEncodingWishRepository;
     this.linkImprovementConfig = linkImprovementConfig;
     this.projectService = projectService;
+    this.externalClassifierService = externalClassifierService;
+    this.externalClassifierService.checkConnection();
   }
 
   public void deleteEncodingWishes(ObjectId projectId) {
@@ -131,19 +135,21 @@ public class LinkImprovementService {
   }
 
   private LinkImprovementConfig buildCurrentConfig(Map<String, String> projectConfig) {
-    LinkImprovementConfig currentConfig = linkImprovementConfig;
+    log.debug("Project config: {}", projectConfig);
+    LinkImprovementConfig currentConfig = linkImprovementConfig.toBuilder().build();
     if (projectConfig.get(CONFIG_LINK_SELECTION_STRATEGY) != null) {
-      currentConfig = linkImprovementConfig.withLinkSelectionStrategy(
+      currentConfig = currentConfig.withLinkSelectionStrategy(
         LinkSelectionStrategy.valueOf(projectConfig.get(CONFIG_LINK_SELECTION_STRATEGY)));
     }
     if (projectConfig.get(CONFIG_WISH_ENCODING_METHOD) != null) {
-      currentConfig = linkImprovementConfig.withEncodingMethodForWishes(
+      currentConfig = currentConfig.withEncodingMethodForWishes(
         projectConfig.get(CONFIG_WISH_ENCODING_METHOD));
     }
     if (projectConfig.get(CONFIG_MIN_ATTRIBUTE_SIMILARITY_FOR_SELECTION) != null) {
-      currentConfig = linkImprovementConfig.withMinSimilarityForPlaintextSelection(
+      currentConfig = currentConfig.withMinSimilarityForPlaintextSelection(
         Double.parseDouble(projectConfig.get(CONFIG_MIN_ATTRIBUTE_SIMILARITY_FOR_SELECTION)));
     }
+    log.debug("Current link improvement config: {}", currentConfig);
     return currentConfig;
   }
 
@@ -218,7 +224,7 @@ public class LinkImprovementService {
       .peek((rp -> rp.addProperty(PROPERTY_REPORTED_LINK)))
       .peek(mrp -> {
         // Tags are added for dtos only, not for the actual record pairs
-        if (project.getMethod().contains("PPCR")) {
+        if (project.getMethod().contains("CR")) {
           mrp.addProperty(LinkImprovementService.PROPERTY_IMPROVED_LINK);
         }
       })
@@ -338,8 +344,8 @@ public class LinkImprovementService {
         } else {
           tags = new ArrayList<>(tags);
         }
-        if (!tags.contains(Tag.create(TAG_ENCODING_METHOD))) {
-          tags.add(Tag.create(TAG_ENCODING_METHOD, project.getMethod(), null));
+        if (!tags.contains(Tag.create(TAG_MATCHING_METHOD))) {
+          tags.add(Tag.create(TAG_MATCHING_METHOD, project.getMethod(), null));
         }
         rp.setTags(tags);
       })
@@ -362,17 +368,28 @@ public class LinkImprovementService {
 
   private List<MongoRecordPair> determineUncertainLinks(Collection<RecordPair> pairs,
     LinkImprovementConfig config) {
-    List<MongoRecordPair> sortedUncertainLinks = getSortedUncertainLinks(pairs, config);
-    log.info("Using {} strategy for {} uncertain links.", config.getLinkSelectionStrategy(),
-      sortedUncertainLinks.size()
-    );
+    log.info("Number of pairs: {}", pairs.size());
+    config.setMinUncertainty(0.0);
     switch (config.getLinkSelectionStrategy()) {
-      case SORTED:
-        return sortedUncertainLinks;
-      case ALTERNATING:
-        return getAlternatingUncertainLinks(sortedUncertainLinks);
-      case BUCKETS:
-        return getBucketBasedUncertainLinks(sortedUncertainLinks);
+      case SORTED, ALTERNATING, BUCKETS:
+        List<MongoRecordPair> sortedUncertainLinks = getSortedUncertainLinks(pairs, config);
+        log.info("Using {} strategy for {} uncertain links.",
+          config.getLinkSelectionStrategy(),
+          sortedUncertainLinks.size());
+
+        return switch (config.getLinkSelectionStrategy()) {
+          case SORTED -> sortedUncertainLinks;
+          case ALTERNATING -> getAlternatingUncertainLinks(sortedUncertainLinks);
+          case BUCKETS -> getBucketBasedUncertainLinks(sortedUncertainLinks);
+          default -> throw new IllegalStateException("Unexpected value: " + config.getLinkSelectionStrategy());
+        };
+      case EXTERNAL_SERVICE:
+        log.info("Using {} strategy.", config.getLinkSelectionStrategy());
+        boolean service_available = this.externalClassifierService.checkConnection();
+        if (!service_available) {
+          throw new RuntimeException("Cannot access external selection service");
+        }
+        return this.externalClassifierService.runSelection(pairs.stream().map(rp -> (MongoRecordPair) rp).toList());
       default:
         throw new RuntimeException(
           "Unknown link selection strategy: " + config.getLinkSelectionStrategy());
@@ -493,7 +510,7 @@ public class LinkImprovementService {
   }
 
   private String createRandomSecret() {
-    return RandomStringUtils.random(32, true, false);
+    return RandomStringUtils.secure().next(32, true, false);
   }
 
   private String createPlaintextSelectionString(LinkImprovementConfig config, MongoRecordPair rp) {

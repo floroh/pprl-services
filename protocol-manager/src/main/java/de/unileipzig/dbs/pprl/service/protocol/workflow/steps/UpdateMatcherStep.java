@@ -2,11 +2,11 @@ package de.unileipzig.dbs.pprl.service.protocol.workflow.steps;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.unileipzig.dbs.pprl.service.common.data.dto.reporting.ReportGroup;
+import de.unileipzig.dbs.pprl.service.common.modifier.JsonModifier;
 import de.unileipzig.dbs.pprl.service.linkageunit.data.dto.MatchingDto;
 import de.unileipzig.dbs.pprl.service.linkageunit.data.mongo.PhaseProgress;
 import de.unileipzig.dbs.pprl.service.protocol.model.mongo.Layer;
 import de.unileipzig.dbs.pprl.service.protocol.service.MultiLayerProtocolRunner;
-import de.unileipzig.dbs.pprl.service.protocol.utils.JsonModifier;
 import de.unileipzig.dbs.pprl.service.protocol.workflow.MultiLayerActiveLearningWorkflow;
 import de.unileipzig.dbs.pprl.service.protocol.workflow.ProcessingStep;
 import lombok.Data;
@@ -20,7 +20,6 @@ import java.util.Map;
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
 public class UpdateMatcherStep extends ProcessingStep {
-
 
   private static final String JSONPATH_TRAINABLE_THRESHOLD_CLASSIFIER_THRESHOLD = "$.." +
           JsonModifier.classSelector("classifier", "TrainableThresholdClassifier") +
@@ -56,7 +55,6 @@ public class UpdateMatcherStep extends ProcessingStep {
     MatchingDto updatedMatcher = runner.getMatcher().updateMatcher(
       layer.getProjectId(), layer.getUpdateType());
     addRbfThresholdProperty(updatedMatcher, this);
-    runner.fetchProject(projectId, true);
     phaseProgress.setProgress(1.0);
     phaseProgress.setDone(true);
   }
@@ -82,7 +80,7 @@ public class UpdateMatcherStep extends ProcessingStep {
 
   public static double getThresholdFromConfig(String config) {
     JSONArray read = (JSONArray) JsonModifier.read(config, JSONPATH_TRAINABLE_THRESHOLD_CLASSIFIER_THRESHOLD);
-    return (double)read.get(0);
+    return (double)read.getFirst();
   }
 
   @Override

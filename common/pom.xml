@@ -5,7 +5,7 @@
     <parent>
         <artifactId>pprl-service-parent</artifactId>
         <groupId>de.unileipzig.dbs</groupId>
-        <version>0.1.0-SNAPSHOT</version>
+        <version>2.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -16,25 +16,39 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
 
-        <dep.jackson.version>2.17.3</dep.jackson.version>
+        <dep.jackson.version>2.21.3</dep.jackson.version>
+        <dep.jsonpath.version>2.10.0</dep.jsonpath.version>
+        <dep.json-smart.version>2.6.0</dep.json-smart.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>de.unileipzig.dbs</groupId>
             <artifactId>pprl-core-common</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
+            <version>2.0</version>
         </dependency>
         <dependency>
             <groupId>de.unileipzig.dbs</groupId>
             <artifactId>pprl-core-analyzer</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
+            <version>2.0</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
             <version>${dep.springboot.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.minidev</groupId>
+            <artifactId>json-smart</artifactId>
+            <version>${dep.json-smart.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+            <version>${dep.jsonpath.version}</version>
         </dependency>
 <!--        <dependency>-->
 <!--            <groupId>com.h2database</groupId>-->

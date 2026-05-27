@@ -25,8 +25,14 @@ management:
     web:
       exposure:
         include: "health,metrics,info,mappings"
+springdoc:
+  show-actuator: true
 
 pprl:
+  services:
+    classifier:
+      endpoint: "http://localhost:8087"
+      bearer-token: "secret"
   matcher:
     incremental-name: "DBSLeipzig/RBF/Inc"
   reporting:

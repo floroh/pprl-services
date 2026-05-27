@@ -25,7 +25,7 @@ import de.unileipzig.dbs.pprl.core.common.model.api.BitVector;
  * using the Double Hashing scheme.
  * In contrast to {@link RandomHashing} no salting is supported by this method.
  */
-public class DoubleHashing implements FeatureEncoder<String, BitVector> {
+public class DoubleHashing implements FeatureEncoder<String, BitVector>, NumHashFunctionsDependent {
   /**
    * Number of hash functions to apply on each feature which is (ignoring collusion) the number of bits
    * to be set to 1 in the {@link BitVector}
@@ -69,8 +69,14 @@ public class DoubleHashing implements FeatureEncoder<String, BitVector> {
     return Math.abs(HashUtils.getHash(algorithm, element));
   }
 
+  @Override
   public int getNumHashFunctions() {
     return numHashFunctions;
+  }
+
+  @Override
+  public void setNumHashFunctions(int numHashFunctions) {
+    this.numHashFunctions = numHashFunctions;
   }
 
   @Override

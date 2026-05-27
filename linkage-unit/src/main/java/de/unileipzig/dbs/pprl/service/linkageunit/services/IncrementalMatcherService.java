@@ -46,7 +46,7 @@ public class IncrementalMatcherService extends AbstractMatcherService {
     }
   }
 
-  private void initMatcher(int datasetId) {
+  private void initMatcher(long datasetId) {
     matcher.setDataSet(datasetService.getBlockedDataSet(datasetId));
   }
 

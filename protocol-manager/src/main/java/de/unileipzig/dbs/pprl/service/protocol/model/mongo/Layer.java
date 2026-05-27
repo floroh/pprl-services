@@ -2,6 +2,8 @@ package de.unileipzig.dbs.pprl.service.protocol.model.mongo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import de.unileipzig.dbs.pprl.service.dataowner.data.dto.EncodingCreationRequestDto;
+import de.unileipzig.dbs.pprl.service.linkageunit.config.LinkSelectionStrategy;
 import de.unileipzig.dbs.pprl.service.linkageunit.data.dto.BatchMatchProjectDto;
 import de.unileipzig.dbs.pprl.service.linkageunit.data.dto.MatcherUpdateType;
 import lombok.AllArgsConstructor;
@@ -10,6 +12,8 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 
 @Data
@@ -26,15 +30,24 @@ public class Layer {
   private int maxBatches;
   private String encodingMethod;
   private boolean updateMatcher;
+  private LinkSelectionStrategy linkSelectionStrategy;
   private MatcherUpdateType updateType;
 
   // RBF
   private double initialThreshold;
+  @Builder.Default
+  private Boolean stopUpdateWhenClericalReviewBudgetIsReached = false;
+
   // CR
   @Builder.Default
   private int budget = -1;
   @Builder.Default
   private double errorRate = 0.0;
+
+  // Weights
+  private String attributeWeightMethod;
+  private Map<String, Double> initialAttributeWeights;
+  private Map<String, Double> attributeErrorRates;
 
   // Runtime parameters
   private String projectId;
@@ -60,6 +73,10 @@ public class Layer {
       batchSize = batchSizeConfig.getFirst();
     }
     return batchSize;
+  }
+
+  public boolean isStopUpdateWhenClericalReviewBudgetIsReached() {
+    return Objects.requireNonNullElse(stopUpdateWhenClericalReviewBudgetIsReached, false);
   }
 
   public void setCurrentBatch(int currentBatch) {

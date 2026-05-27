@@ -1,18 +1,18 @@
 package de.unileipzig.dbs.pprl.service.linkageunit.services;
 
 import de.unileipzig.dbs.pprl.core.common.model.api.Record;
+import de.unileipzig.dbs.pprl.core.common.model.api.RecordId;
+import de.unileipzig.dbs.pprl.core.encoder.blocking.IdBlocker;
+import de.unileipzig.dbs.pprl.core.matcher.blocking.StandardBlocking;
 import de.unileipzig.dbs.pprl.core.matcher.matcher.BatchMatcher;
 import de.unileipzig.dbs.pprl.core.common.model.api.RecordPair;
+import de.unileipzig.dbs.pprl.core.matcher.matcher.DefaultBatchMatcher;
 import de.unileipzig.dbs.pprl.service.common.data.converter.AbstractRecordConverter;
 import de.unileipzig.dbs.pprl.service.common.data.converter.RecordConverter;
 import de.unileipzig.dbs.pprl.service.common.data.dto.RecordIdDto;
 import de.unileipzig.dbs.pprl.service.linkageunit.config.MatcherConfig;
 import de.unileipzig.dbs.pprl.service.linkageunit.data.converter.RecordPairDtoConverter;
-import de.unileipzig.dbs.pprl.service.linkageunit.data.dto.BatchMatchRequestDto;
-import de.unileipzig.dbs.pprl.service.linkageunit.data.dto.ClusteringRequestDto;
-import de.unileipzig.dbs.pprl.service.linkageunit.data.dto.MatchResultDto;
-import de.unileipzig.dbs.pprl.service.linkageunit.data.dto.MatcherIdDto;
-import de.unileipzig.dbs.pprl.service.linkageunit.data.dto.RecordPairDto;
+import de.unileipzig.dbs.pprl.service.linkageunit.data.dto.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
@@ -90,6 +91,36 @@ public class TransientBatchMatcherService extends AbstractMatcherService {
 
     return MatchResultDto.builder()
       .recordIds(recordIdDtos)
+      .build();
+  }
+
+  public MatchResultDto compare(ComparingRequestDto clusteringRequestDto) {
+    BatchMatcher curMatcher = getMatcher(clusteringRequestDto.getMethod());
+    // Use id based blocker
+    if (curMatcher instanceof DefaultBatchMatcher) {
+      StandardBlocking blocker = new StandardBlocking();
+      blocker.addBlockingKeyExtractor(new IdBlocker("blkId", RecordId.BLOCK_ID));
+      ((DefaultBatchMatcher) curMatcher).setBlocker(blocker);
+    }
+    AtomicInteger i = new AtomicInteger();
+    Collection<RecordPair> inputRecordPairs = clusteringRequestDto.getRecordPairs().stream()
+        .map(RecordPairDtoConverter::convertDtoToRecordPair)
+            .peek(rp -> {
+              rp.getRecords().forEach(r -> r.getId().addId(RecordId.BLOCK_ID, String.valueOf(i.get())));
+              i.set(i.get() + 1);
+            })
+        .toList();
+    log.debug("Comparing " + inputRecordPairs.size() + " records pairs");
+
+    List<Record> records = inputRecordPairs.parallelStream()
+            .flatMap(rp -> rp.getRecords().stream())
+            .toList();
+    Collection<RecordPair> classifiedRecordPairs = curMatcher.matchRecords(records);
+    List<RecordPairDto> recordPairDtos = classifiedRecordPairs.stream()
+            .map(RecordPairDtoConverter::convertRecordPairToDto)
+            .collect(Collectors.toList());
+    return MatchResultDto.builder()
+      .recordPairs(recordPairDtos)
       .build();
   }
 

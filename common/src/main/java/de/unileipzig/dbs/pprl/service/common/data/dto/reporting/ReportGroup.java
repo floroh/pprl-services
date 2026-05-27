@@ -5,8 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Data
 @NoArgsConstructor
@@ -18,12 +19,16 @@ public class ReportGroup {
 
   private Map<String, Report> reports;
 
+  public Optional<Report> getReport(String reportName) {
+    return Optional.ofNullable(reports.get(reportName));
+  }
+
   public static class ReportGroupBuilder {
-    private Map<String, Report> reports = new HashMap<>();
+    private Map<String, Report> reports = new LinkedHashMap<>();
 
     public ReportGroupBuilder report(Report report) {
       if (reports == null) {
-        reports = new HashMap<>();
+        reports = new LinkedHashMap<>();
       }
       reports.put(report.getName(), report);
       return this;

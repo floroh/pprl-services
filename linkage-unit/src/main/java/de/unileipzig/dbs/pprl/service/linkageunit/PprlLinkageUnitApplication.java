@@ -7,12 +7,14 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @SpringBootApplication
-@EntityScan(
-  {"de.unileipzig.dbs.pprl.service.common.data.jpa", "de.unileipzig.dbs.pprl.service.linkageunit"})
+@EntityScan({
+        "de.unileipzig.dbs.pprl.service.common.data.mongo",
+        "de.unileipzig.dbs.pprl.service.linkageunit.data.mongo",
+})
 @ComponentScan("de.unileipzig.dbs.pprl.service")
 @EnableMongoRepositories({
-  "de.unileipzig.dbs.pprl.service.common.persistence.repositories", "de.unileipzig.dbs.pprl.service" +
-  ".linkageunit.persistence.repositories"
+        "de.unileipzig.dbs.pprl.service.common.persistence.repositories.mongo",
+        "de.unileipzig.dbs.pprl.service.linkageunit.persistence.repositories",
 })
 public class PprlLinkageUnitApplication {
 

@@ -1,5 +1,6 @@
 package de.unileipzig.dbs.pprl.core.common.frequencies;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,6 +23,7 @@ public class AttributesFrequencyLookupFilter {
   private double relativeBottomLimit = -1.0;
 
   private long minimumCount = 0;
+
   private static final Logger logger = LogManager.getLogger(AttributesFrequencyLookupFilter.class);
 
   public AttributeFrequencyLookup filter(AttributeFrequencyLookup afl) {
@@ -36,22 +38,22 @@ public class AttributesFrequencyLookupFilter {
     Map<String, Long> minFilteredFrequencies = filterByMinCount(curFrequencies);
     final long minFilteredUnique = minFilteredFrequencies.size();
     long minFilteredTotal = calculateTotal(minFilteredFrequencies);
-    logger.debug("After min filtering:: unique=" + minFilteredUnique + ", total=" + minFilteredTotal);
+    logger.debug("After min filtering: unique=" + minFilteredUnique + ", total=" + minFilteredTotal);
 
     final LinkedHashMap<String, Long> filteredFrequencies = filterFrequencies(minFilteredFrequencies);
 
     long totalValues = calculateTotal(filteredFrequencies);
     logger.debug("Post Filtering: unique=" + filteredFrequencies.size() + ", total=" + totalValues);
     logger.info("Removed " + (preFilteredUnique - filteredFrequencies.size()) + "/" + preFilteredUnique
-      + " entries from the frequency lookup table");
+            + " entries from the frequency lookup table");
 
     return new AttributeFrequencyLookup(filteredFrequencies, minFilteredTotal, minFilteredUnique);
   }
 
   private Map<String, Long> filterByMinCount(Map<String, Long> curFrequencies) {
     return curFrequencies.entrySet().stream()
-      .filter(e -> e.getValue() >= minimumCount)
-      .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            .filter(e -> e.getValue() >= minimumCount)
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 
   private LinkedHashMap<String, Long> filterFrequencies(Map<String, Long> input) {
@@ -94,21 +96,21 @@ public class AttributesFrequencyLookupFilter {
 
   private boolean isInTop(int absPos, double relPos) {
     boolean isInAbsolute = isActive(absoluteTopLimit) ?
-      absPos < absoluteTopLimit
-      : true;
+            absPos < absoluteTopLimit
+            : true;
     boolean isInRelative = isActive(relativeTopLimit) ?
-      relPos < relativeTopLimit
-      : true;
+            relPos < relativeTopLimit
+            : true;
     return isInAbsolute && isInRelative;
   }
 
   private boolean isInBottom(int absPos, double relPos, long uniqueCount) {
     boolean isInAbsolute = isActive(absoluteBottomLimit) ?
-      absPos >= uniqueCount - absoluteBottomLimit
-      : true;
+            absPos >= uniqueCount - absoluteBottomLimit
+            : true;
     boolean isInRelative = isActive(relativeBottomLimit) ?
-      relPos >= 1 - relativeBottomLimit
-      : true;
+            relPos >= 1 - relativeBottomLimit
+            : true;
     return isInAbsolute && isInRelative;
   }
 
@@ -150,6 +152,18 @@ public class AttributesFrequencyLookupFilter {
 
   public void setMinimumCount(long minimumCount) {
     this.minimumCount = minimumCount;
+  }
+
+  @JsonIgnore
+  public String getSummary() {
+    return String.format(
+            "absTop=%d, relTop=%.3f, absBot=%d, relBot=%.3f, minCnt=%d",
+            absoluteTopLimit,
+            relativeTopLimit,
+            absoluteBottomLimit,
+            relativeBottomLimit,
+            minimumCount
+    );
   }
 
   @Override

@@ -12,7 +12,7 @@ class RecordIdDtoTest {
   void serializeNonGlobalId() throws JsonProcessingException {
     RecordIdDto id = RecordIdDto.builder()
       .local("ID0")
-      .source("org")
+      .source("A")
       .build();
     ObjectMapper om = new ObjectMapper();
     String jsonString = om.writerWithDefaultPrettyPrinter().writeValueAsString(id);

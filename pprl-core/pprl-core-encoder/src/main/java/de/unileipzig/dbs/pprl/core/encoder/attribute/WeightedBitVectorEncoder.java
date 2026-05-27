@@ -26,6 +26,7 @@ import de.unileipzig.dbs.pprl.core.common.monitoring.Tag;
 import de.unileipzig.dbs.pprl.core.common.monitoring.TagProvider;
 import de.unileipzig.dbs.pprl.core.encoder.feature.FeatureEncoder;
 import de.unileipzig.dbs.pprl.core.encoder.feature.FeatureExtractor;
+import de.unileipzig.dbs.pprl.core.encoder.feature.NumHashFunctionsDependent;
 import de.unileipzig.dbs.pprl.core.encoder.feature.RandomHashing;
 import de.unileipzig.dbs.pprl.core.common.preprocessing.AttributePreprocessor;
 import io.micrometer.core.instrument.DistributionSummary;
@@ -85,20 +86,20 @@ public class WeightedBitVectorEncoder<P, F> implements AttributeEncoder<String, 
       String plainValue = plaintextAttribute.getAsString();
       scale = weightCalculator.getScale(attributeName, plainValue);
     }
-    if (!(featureEncoder instanceof RandomHashing)) {
-      throw new IllegalStateException("Misconfiguration: Feature Encoder must be RandomHashing," +
-        "but it is not.");
+    if (!(featureEncoder instanceof NumHashFunctionsDependent)) {
+      throw new IllegalStateException("Misconfiguration:" +
+              "Feature Encoder must implement NumHashFunctionsDependent interface, but it does not.");
     }
-    int kBase = ((RandomHashing) featureEncoder).getNumHashFunctions();
+    int kBase = ((NumHashFunctionsDependent) featureEncoder).getNumHashFunctions();
     int kNew = (int) (scale * kBase);
     String scaleDirection = getScaleDirection(scale);
     tags.add(Tag.create("NUM_HASH_FUNCTIONS_SCALE", scaleDirection, scale));
     tags.add(Tag.create("NUM_HASH_FUNCTIONS", String.valueOf(kNew), (double)kNew));
-    ((RandomHashing) featureEncoder).setNumHashFunctions(kNew);
+    ((NumHashFunctionsDependent) featureEncoder).setNumHashFunctions(kNew);
     for (F feature : features) {
       bv.or(featureEncoder.encode(bvLength, feature));
     }
-    ((RandomHashing) featureEncoder).setNumHashFunctions(kBase);
+    ((NumHashFunctionsDependent) featureEncoder).setNumHashFunctions(kBase);
     return bv;
   }
 

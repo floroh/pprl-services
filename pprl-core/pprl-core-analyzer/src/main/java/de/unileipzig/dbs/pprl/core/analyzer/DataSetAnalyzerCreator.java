@@ -29,6 +29,7 @@ import de.unileipzig.dbs.pprl.core.analyzer.cluster.ClusterPairwiseEqual;
 import de.unileipzig.dbs.pprl.core.analyzer.cluster.ClusterPairwiseEqualCount;
 import de.unileipzig.dbs.pprl.core.analyzer.cluster.ClusterSize;
 import de.unileipzig.dbs.pprl.core.analyzer.record.RecordCounter;
+import de.unileipzig.dbs.pprl.core.analyzer.record.RecordLength;
 import de.unileipzig.dbs.pprl.core.analyzer.record.RecordOverlap;
 import de.unileipzig.dbs.pprl.core.analyzer.record.WeightAnalyzer;
 import de.unileipzig.dbs.pprl.core.common.model.api.Attribute;
@@ -78,6 +79,7 @@ public class DataSetAnalyzerCreator {
 
     // RecordAnalyzer
     dsa.addAnalyzer(new RecordCounter());
+    dsa.addAnalyzer(new RecordLength());
 
     if (!forSingleSource) {
       dsa.addAnalyzer(new RecordOverlap());
@@ -104,6 +106,7 @@ public class DataSetAnalyzerCreator {
 
     // RecordAnalyzer
     dsa.addAnalyzer(new RecordCounter());
+    dsa.addAnalyzer(new RecordLength());
     if (!forSingleSource) {
       dsa.addAnalyzer(new RecordOverlap());
       dsa.addAnalyzer(new WeightAnalyzer());

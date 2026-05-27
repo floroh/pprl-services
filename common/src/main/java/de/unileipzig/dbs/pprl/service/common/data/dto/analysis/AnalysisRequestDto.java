@@ -16,12 +16,13 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AnalysisRequestDto {
 
-  private int datasetId;
+  private long datasetId;
 
   private String projectId;
 
   private String type;
 
+  @Builder.Default
   private Map<String, String> parameters = new HashMap<>();
 
 }

@@ -6,11 +6,11 @@
 
     <groupId>de.unileipzig.dbs</groupId>
     <artifactId>pprl-service-parent</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>2.0</version>
 
     <packaging>pom</packaging>
 
-    <name>PPRL Services (DBS Group leipzig)</name>
+    <name>PPRL Services (DBS Group Leipzig)</name>
     <url>https://dbs.uni-leipzig.de/en</url>
 
     <organization>
@@ -31,15 +31,14 @@
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <dep.pprl.core.version>0.1.0-SNAPSHOT</dep.pprl.core.version>
-        <dep.flapdoodle.embed.mongo.version>4.12.0</dep.flapdoodle.embed.mongo.version>
-        <dep.junit.version>5.10.5</dep.junit.version>
-        <dep.micrometer.version>1.13.6</dep.micrometer.version>
-        <dep.lombok.version>1.18.34</dep.lombok.version>
-        <dep.springboot.version>3.3.5</dep.springboot.version>
+        <dep.pprl.core.version>2.0</dep.pprl.core.version>
+        <dep.junit.version>5.14.4</dep.junit.version>
+        <dep.micrometer.version>1.15.4</dep.micrometer.version>
+        <dep.lombok.version>1.18.46</dep.lombok.version>
+        <dep.springboot.version>3.5.14</dep.springboot.version>
         <dep.konghq.unirest.version>3.14.5</dep.konghq.unirest.version>
-        <dep.springdoc-openapi-ui.version>2.6.0</dep.springdoc-openapi-ui.version>
-        <dep.commons-io.version>2.16.1</dep.commons-io.version>
+        <dep.springdoc-openapi-ui.version>2.8.17</dep.springdoc-openapi-ui.version>
+        <dep.commons-io.version>2.22.0</dep.commons-io.version>
     </properties>
 
     <modules>
@@ -48,6 +47,7 @@
         <module>data-owner</module>
         <module>linkage-unit</module>
         <module>protocol-manager</module>
+        <module>data-generator</module>
     </modules>
 
     <dependencies>
@@ -55,7 +55,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>${dep.springboot.version}</version>
 <!--            <exclusions>-->
 <!--                &lt;!&ndash; Exclude the Tomcat dependency &ndash;&gt;-->
 <!--                <exclusion>-->
@@ -67,37 +66,21 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
-            <version>${dep.springboot.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
-            <version>${dep.springboot.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
-            <version>${dep.springboot.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
-            <version>${dep.springboot.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>de.flapdoodle.embed</groupId>
-            <artifactId>de.flapdoodle.embed.mongo</artifactId>
-            <version>${dep.flapdoodle.embed.mongo.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>de.flapdoodle.embed</groupId>
-            <artifactId>de.flapdoodle.embed.mongo.spring3x</artifactId>
-            <version>${dep.flapdoodle.embed.mongo.version}</version>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>com.konghq</groupId>
             <artifactId>unirest-java</artifactId>
@@ -138,6 +121,21 @@
 
         <!-- Tests -->
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-testcontainers</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mongodb</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>${dep.junit.version}</version>
@@ -146,7 +144,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <version>${dep.springboot.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -157,13 +154,26 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${dep.springboot.version}</version>
+                <configuration>
+                    <layers>
+                        <enabled>true</enabled>
+                    </layers>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
+                <version>3.15.0</version>
                 <configuration>
                     <parameters>true</parameters>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.5</version>
+                <configuration>
+                    <reportFormat>xml</reportFormat>
                 </configuration>
             </plugin>
         </plugins>

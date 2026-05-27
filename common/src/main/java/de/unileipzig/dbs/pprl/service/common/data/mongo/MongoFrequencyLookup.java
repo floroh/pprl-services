@@ -17,7 +17,11 @@ public class MongoFrequencyLookup {
   @Id
   private ObjectId objectId;
 
-  private int datasetId;
+  private long datasetId;
+
+  private String datasetSource;
+
+  private String config;
 
   @Singular
   private Map<String, Map<String, Long>> frequenciesByAttributes;

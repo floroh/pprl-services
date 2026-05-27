@@ -146,8 +146,9 @@ public class AttributeFrequencyLookup {
   @Override
   public String toString() {
     return "AttributeFrequencyLookup{" +
-      "frequencies=" + frequencies +
+      "len(frequencies)=" + frequencies.size() +
       ", totalCount=" + totalCount +
+      ", uniqueCount=" + uniqueCount +
       '}';
   }
 }

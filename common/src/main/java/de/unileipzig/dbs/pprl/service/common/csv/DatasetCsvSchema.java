@@ -22,9 +22,14 @@ import java.util.List;
 @Builder
 public class DatasetCsvSchema {
 
+  @Builder.Default
   private boolean header = false;
+  @Builder.Default
   private String charset = "UTF-8";
+  @Builder.Default
   private String format = "RFC4180";
+  @Builder.Default
+  private char delimiter = ',';
 
   @Singular
   private List<CsvColumn> columns;
@@ -38,6 +43,7 @@ public class DatasetCsvSchema {
       // TODO: add support for other types
       builder.addColumn(column.getName(), CsvSchema.ColumnType.STRING);
     }
+    builder.setColumnSeparator(delimiter);
     return builder.build();
   }
 
@@ -62,6 +68,7 @@ public class DatasetCsvSchema {
       .header(false)
       .charset("UTF-8")
       .format("RFC4180")
+      .delimiter(';')
       .column(CsvColumn.builder().name("id.source").build())
       .column(CsvColumn.builder().name("id.global").build())
       .column(CsvColumn.builder().name("id.local").build())
@@ -79,7 +86,7 @@ public class DatasetCsvSchema {
       .column(CsvColumn.builder().name("IGNORE_2").build())
       .build();
     try {
-      schema.write("/tmp/ncvr-gen-schema.json");
+      schema.write("ncvr-gen-schema.json");
     } catch (IOException e) {
       e.printStackTrace();
     }

@@ -8,8 +8,10 @@ import de.unileipzig.dbs.pprl.service.common.data.dto.RecordRequirementsDto;
 import de.unileipzig.dbs.pprl.service.common.utils.LocalConfigHandlerUtils;
 import de.unileipzig.dbs.pprl.service.linkageunit.data.dto.BatchMatchProjectDto;
 import de.unileipzig.dbs.pprl.service.linkageunit.data.dto.MatcherIdDto;
+import de.unileipzig.dbs.pprl.service.linkageunit.data.dto.MatchingCreationRequestDto;
 import de.unileipzig.dbs.pprl.service.linkageunit.data.dto.MatchingDto;
 import de.unileipzig.dbs.pprl.service.linkageunit.services.MatcherProviderService;
+import de.unileipzig.dbs.pprl.service.linkageunit.services.MatchingCreationService;
 import de.unileipzig.dbs.pprl.service.linkageunit.services.ProjectService;
 import de.unileipzig.dbs.pprl.service.linkageunit.services.TransientBatchMatcherService;
 import io.micrometer.core.annotation.Timed;
@@ -45,13 +47,15 @@ public class ConfigController {
   private final MatcherProviderService matcherProviderService;
 
   private final TransientBatchMatcherService transientBatchMatcherService;
+  private final MatchingCreationService matchingCreationService;
 
   public ConfigController(
-    ProjectService projectService, MatcherProviderService matcherProviderService,
-    TransientBatchMatcherService transientBatchMatcherService) {
+          ProjectService projectService, MatcherProviderService matcherProviderService,
+          TransientBatchMatcherService transientBatchMatcherService, MatchingCreationService matchingCreationService) {
     this.projectService = projectService;
     this.matcherProviderService = matcherProviderService;
     this.transientBatchMatcherService = transientBatchMatcherService;
+    this.matchingCreationService = matchingCreationService;
   }
 
   @Operation(summary = "Add a configuration", tags = TAG)
@@ -144,5 +148,11 @@ public class ConfigController {
       .id(matcherId)
       .classifierDescription(modelDescription)
       .build();
+  }
+
+  @Operation(summary = "Create a matching configuration", tags = ConfigController.TAG)
+  @PostMapping("/create")
+  public MatchingDto createMatching(@RequestBody MatchingCreationRequestDto requestDto) {
+    return matchingCreationService.createMatching(requestDto);
   }
 }

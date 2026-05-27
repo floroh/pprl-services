@@ -34,16 +34,6 @@ public class SelectivePlainProvider implements RecordEncoder {
     return encodedRecord;
   }
 
-  @Override
-  public RecordEncoder addBlockingKeyExtractor(BlockingKeyExtractor blockingKeyExtractor) {
-    return this;
-  }
-
-  @Override
-  public RecordEncoder addAttributeEncoderGroup(AttributeEncoderGroup attributeEncoderGroup) {
-    return this;
-  }
-
   public Set<String> getGlobalAttributeNames() {
     return globalAttributeNames;
   }

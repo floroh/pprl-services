@@ -9,21 +9,16 @@ import de.unileipzig.dbs.pprl.service.common.data.dto.EncodingIdDto;
 import de.unileipzig.dbs.pprl.service.common.data.dto.RecordDto;
 import de.unileipzig.dbs.pprl.service.common.data.mongo.MongoGroundTruth;
 import de.unileipzig.dbs.pprl.service.common.data.mongo.MongoRecordIdPair;
-import de.unileipzig.dbs.pprl.service.linkageunit.data.dto.MatcherUpdateType;
-import de.unileipzig.dbs.pprl.service.protocol.api.MatcherApi;
 import de.unileipzig.dbs.pprl.service.protocol.config.ServicesConfig;
 import de.unileipzig.dbs.pprl.service.protocol.model.dto.ProtocolExecutionDto;
-import de.unileipzig.dbs.pprl.service.protocol.model.mongo.Layer;
 import de.unileipzig.dbs.pprl.service.protocol.model.mongo.MultiLayerProtocol;
 import de.unileipzig.dbs.pprl.service.protocol.persistence.repositories.MultiLayerProtocolRepository;
-import de.unileipzig.dbs.pprl.service.protocol.scripts.RecordInserter;
 import de.unileipzig.dbs.pprl.service.protocol.workflow.ProcessingStep;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,14 +34,13 @@ public class ProtocolService {
 
   @Getter
   private final DataOwnerService dataOwnerService;
-
   @Getter
   private final LinkageUnitService linkageUnitService;
 
   private final MultiLayerProtocolRepository protocolRepository;
 
   public ProtocolService(ServicesConfig config, DataOwnerService dataOwnerService,
-    LinkageUnitService linkageUnitService, MultiLayerProtocolRepository repository) {
+                         LinkageUnitService linkageUnitService, MultiLayerProtocolRepository repository) {
     this.config = config;
     this.dataOwnerService = dataOwnerService;
     this.linkageUnitService = linkageUnitService;
@@ -65,7 +59,7 @@ public class ProtocolService {
     log.info("Deleting protocol " + protocolId);
     MultiLayerProtocol protocol = getProtocol(protocolId);
     getLinkageUnitService().getMatcherApi()
-      .deleteProject(protocol.getLayers().getLast().getProjectId(), true);
+            .deleteProject(protocol.getLayers().getLast().getProjectId(), true);
     protocolRepository.deleteById(protocol.getObjId());
   }
 
@@ -97,7 +91,7 @@ public class ProtocolService {
   }
 
   public MultiLayerProtocol createProtocol(MultiLayerProtocol protocol) {
-    MultiLayerProjectCreator runner = new MultiLayerProjectCreator(this);
+    MultiLayerProjectCreator runner = new MultiLayerProjectCreator(linkageUnitService.getDatasetIdService(), this);
     protocol = runner.initMultiLayerProtocol(protocol);
     save(protocol);
     protocol.setProtocolId(protocol.getObjId().toHexString());
@@ -117,44 +111,64 @@ public class ProtocolService {
       throw new RuntimeException("Could not find protocol with id " + protocolExecution.getProtocolId());
     }
     MultiLayerProtocol protocol = optionalProtocol.get();
-//    MultiLayerProtocolFullRunner runner = new MultiLayerProtocolFullRunner(this);
     MultiLayerProtocolRunner runner = new MultiLayerProtocolRunner(this);
     protocol = runner.runMultiLayerProtocol(protocol, protocolExecution);
     save(protocol);
     return protocol;
   }
 
-  public int addEncodedDataset(int dataOwnerDatasetId, String method) {
-    if (dataOwnerDatasetId == 0) {
+  public void addDescriptionForEncodedDatasetIfMissing(
+          long plaintextDatasetId,
+          long encodedDatasetId,
+          EncodingIdDto encodingIdDto) {
+    Optional<DatasetDto> encodedDatasetDescription = linkageUnitService.getMatcherApi().getDatasetDescription(plaintextDatasetId);
+    if (encodedDatasetDescription.isEmpty()) {
+      Optional<DatasetDto> datasetDescription = dataOwnerService.getEncoderApi().getDatasetDescription(plaintextDatasetId);
+      if (datasetDescription.isEmpty()) {
+        throw new RuntimeException("Data owner dataset with id " + plaintextDatasetId + " not found");
+      }
+      linkageUnitService.getMatcherApi().addDatasetDescription(DatasetDto.builder()
+              .datasetId(encodedDatasetId)
+              .datasetName(datasetDescription.get().getDatasetName())
+              .plaintextDatasetId(plaintextDatasetId)
+              .encodingIdDto(encodingIdDto)
+              .build());
+    }
+  }
+
+  public long addEncodedDataset(Long dataOwnerDatasetId, Long linkageUnitDatasetId,
+                                String encodingMethod, String linkageProject) {
+    if (dataOwnerDatasetId == null || dataOwnerDatasetId == 0) {
       throw new RuntimeException("Invalid dataset id '0'");
     }
+    if (linkageUnitDatasetId == null || linkageUnitDatasetId == 0) {
+      linkageUnitDatasetId = linkageUnitService.getDatasetIdService().generateDatasetId();
+    }
     log.info("Encoding records of dataset {} ...", dataOwnerDatasetId);
-    List<RecordDto> encRecords =
-      dataOwnerService.getEncoderApi().retrieveEncoded(dataOwnerDatasetId, EncodingIdDto.builder()
-        .method(method)
-        .project("exampleProject")
-        .build()
-      );
+    EncodingIdDto encodingIdDto = EncodingIdDto.builder()
+            .method(encodingMethod)
+            .project(linkageProject)
+            .build();
+    List<RecordDto> encRecords = dataOwnerService.getEncoderApi().retrieveEncoded(dataOwnerDatasetId, encodingIdDto);
 
-    int encodedDatasetId = getEncodedDatasetId(dataOwnerDatasetId, method);
+    long encodedDatasetId = linkageUnitDatasetId;
     log.info("Encoded dataset: " + encodedDatasetId);
 
     RecordConverter recordConverter = new RecordConverter();
     GroundTruth gtFromGlobalIds = GroundTruth.createFromGlobalIds(
-      encRecords.stream().map(recordConverter::toRecord).collect(Collectors.toList()));
+            encRecords.stream().map(recordConverter::toRecord).collect(Collectors.toList()));
     log.info("Ground truth from global ids: " + gtFromGlobalIds.getIdPairs().size());
     MongoGroundTruth mongoGroundTruth = new MongoGroundTruth(
-      encodedDatasetId,
-      gtFromGlobalIds.getIdPairs().stream()
-        .map(idP -> new MongoRecordIdPair(idP.getLeftRecordId(), idP.getRightRecordId(),
-          Classifier.Label.TRUE_MATCH
-        ))
-        .collect(Collectors.toList())
+            encodedDatasetId,
+            gtFromGlobalIds.getIdPairs().stream()
+                    .map(idP -> new MongoRecordIdPair(idP.getLeftRecordId(), idP.getRightRecordId(),
+                            Classifier.Label.TRUE_MATCH
+                    ))
+                    .collect(Collectors.toList())
     );
 
-    int finalEncodedDatasetId = encodedDatasetId;
     encRecords.forEach(r -> {
-      r.setDatasetId(finalEncodedDatasetId);
+      r.setDatasetId(encodedDatasetId);
       r.getId().setBlocks(List.of(r.getId().getGlobal()));
       r.getId().setGlobal(null);
     });
@@ -162,31 +176,13 @@ public class ProtocolService {
     log.info("Deleting dataset " + encodedDatasetId + "...");
     linkageUnitService.getMatcherApi().deleteDataset(encodedDatasetId);
     log.info("Importing encoded records to matcher...");
-    linkageUnitService.getRecordInserter().batchInsert(encRecords);
-    linkageUnitService.getRecordInserter().addDatasetDescription(DatasetDto.builder()
-      .plaintextDatasetId(dataOwnerDatasetId)
-      .datasetId(finalEncodedDatasetId)
-      .datasetName(method)
-      .build());
+    this.addDescriptionForEncodedDatasetIfMissing(dataOwnerDatasetId, encodedDatasetId, encodingIdDto);
+    linkageUnitService.getMatcherApi().batchInsert(encRecords);
     log.info("Importing ground truth to matcher...");
-    new RecordInserter(MatcherApi.matcherUrl).addGroundTruth(RecordIdPairConverter.toDto(mongoGroundTruth));
+    linkageUnitService.getMatcherApi().addGroundTruth(RecordIdPairConverter.toDto(mongoGroundTruth));
 
     log.info("Finished");
     return encodedDatasetId;
   }
 
-  public static int getEncodedDatasetId(int dataOwnerDatasetId, String method) {
-    int encodedDatasetId = dataOwnerDatasetId;
-    // ABF
-    if (method.contains("ABF/")) {
-      encodedDatasetId += 100;
-    }
-    if (method.contains("avg")) {
-      encodedDatasetId += 200;
-    }
-    if (method.contains("xor")) {
-      encodedDatasetId += 100;
-    }
-    return encodedDatasetId;
-  }
 }

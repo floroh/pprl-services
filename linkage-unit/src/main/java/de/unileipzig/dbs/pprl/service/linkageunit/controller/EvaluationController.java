@@ -57,7 +57,7 @@ public class EvaluationController {
 
   @Operation(summary = "Add ground truth for a dataset based on record global ids", tags = TAG)
   @PostMapping("/ground-truth/{datasetId}")
-  public void addGroundTruthFromGlobalIds(@PathVariable int datasetId, 
+  public void addGroundTruthFromGlobalIds(@PathVariable long datasetId, 
     @RequestBody List<RecordIdDto> recordIdDtos) {
     log.info("Generating ground truth based on global ids for dataset {}", datasetId);
     GroundTruth groundTruth = GroundTruth.createFromRecordId(
@@ -77,7 +77,7 @@ public class EvaluationController {
 
   @Operation(summary = "Get ground truth for a dataset", tags = TAG)
   @GetMapping("/ground-truth/{datasetId}")
-  public Optional<GroundTruthDto> fetch(@PathVariable int datasetId) {
+  public Optional<GroundTruthDto> fetch(@PathVariable long datasetId) {
     log.info("Fetching ground truth for dataset {}", datasetId);
     return datasetDtoService.getGroundTruth(datasetId);
   }

@@ -57,4 +57,5 @@ public interface LinkageProcessDataSet extends BlockedDataSet {
   void updateRecordPairs(Collection<RecordPair> recordPairs);
 
   void replaceRecordPairs(Collection<RecordPair> recordPairs);
+
 }

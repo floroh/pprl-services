@@ -1,8 +1,11 @@
 package de.unileipzig.dbs.pprl.service.common.services;
 
 import de.unileipzig.dbs.pprl.core.common.model.api.Attribute;
+import de.unileipzig.dbs.pprl.core.common.model.impl.PersonalAttributeType;
+import de.unileipzig.dbs.pprl.core.common.preprocessing.DateSplitter;
 import de.unileipzig.dbs.pprl.core.matcher.classification.Classifier;
 import de.unileipzig.dbs.pprl.core.matcher.model.api.LinkageProcessDataSet;
+import de.unileipzig.dbs.pprl.service.common.config.PreprocessingConfig;
 import de.unileipzig.dbs.pprl.service.common.data.converter.DatasetConverter;
 import de.unileipzig.dbs.pprl.service.common.data.converter.MongoRecordConverter;
 import de.unileipzig.dbs.pprl.service.common.data.converter.RecordIdPairConverter;
@@ -38,16 +41,20 @@ public class DatasetDtoService {
 
   private final MongoTemplate mongoTemplate;
 
+  private final PreprocessingConfig preprocessingConfig;
+
   public DatasetDtoService(
-    DatasetMongoService datasetService, MongoTemplate mongoTemplate) {
+          DatasetMongoService datasetService, MongoTemplate mongoTemplate, PreprocessingConfig preprocessingConfig) {
     this.datasetService = datasetService;
     this.mongoTemplate = mongoTemplate;
+    this.preprocessingConfig = preprocessingConfig;
   }
 
   public RecordIdDto insert(RecordDto recordDto) {
     MongoRecord record = (MongoRecord) mongoRecordConverter.toRecord(recordDto);
     record.getProperties().add(LinkageProcessDataSet.NEW);
-    datasetService.addRecord(record.getIdDataset(), record);
+    record = preprocessRecord(record);
+    datasetService.addRecord(record.getDatasetId(), record);
     RecordIdDto idDto = recordDto.getId();
     RecordIdDto recordIdDto = addUnique(idDto, record);
     log.info("Inserted record with id: " + recordIdDto);
@@ -56,24 +63,25 @@ public class DatasetDtoService {
 
   public List<RecordIdDto> insertAll(List<RecordDto> recordDtos) {
     log.info("Starting bulk insert of " + recordDtos.size() + " records");
-    List<Integer> idDatasets = recordDtos.stream()
+    List<Long> datasetIds = recordDtos.stream()
       .map(RecordDto::getDatasetId)
       .distinct().collect(Collectors.toList());
-    if (idDatasets.isEmpty()) {
+    if (datasetIds.isEmpty()) {
       throw new RuntimeException("Records have missing dataset ids");
-    } else if (idDatasets.size() > 1) {
+    } else if (datasetIds.size() > 1) {
       throw new RuntimeException("Bulk insertion of records from different datasets is not supported");
     }
-    int idDataset = idDatasets.getFirst();
+    long datasetId = datasetIds.getFirst();
 
     List<MongoRecord> records = recordDtos.stream()
       .map(mongoRecordConverter::toRecord)
       .map(r -> (MongoRecord) r)
       .peek(r -> r.getProperties().add(LinkageProcessDataSet.NEW))
+      .map(this::preprocessRecord)
       .collect(Collectors.toList());
     log.debug("Finished conversion of " + recordDtos.size() + " records");
 
-    datasetService.addRecords(idDataset, records);
+    datasetService.addRecords(datasetId, records);
 
     List<RecordIdDto> idDtos = new ArrayList<>();
     for (int i = 0; i < recordDtos.size(); i++) {
@@ -85,17 +93,33 @@ public class DatasetDtoService {
     return idDtos;
   }
 
+  public MongoRecord preprocessRecord(MongoRecord in) {
+    if (this.preprocessingConfig.isSplitDateOfBirthAttributeIfPossible()) {
+      Optional<Attribute> dob = in.getAttribute(PersonalAttributeType.DATEOFBIRTH.name());
+      Optional<Attribute> yob = in.getAttribute(PersonalAttributeType.YEAROFBIRTH.name());
+      if (dob.isPresent() && yob.isEmpty()) {
+        DateSplitter dateSplitter = new DateSplitter(true);
+        dateSplitter.setInPlace(true);
+        if (this.preprocessingConfig.getDatePattern() != null && !this.preprocessingConfig.getDatePattern().isBlank()) {
+          dateSplitter.setInputDatePattern(this.preprocessingConfig.getDatePattern());
+        }
+        return (MongoRecord) dateSplitter.preprocess(in);
+      }
+    }
+    return in;
+  }
+
   public void addGroundTruth(GroundTruthDto groundTruthDto) {
     datasetService.addGroundTruth(RecordIdPairConverter.fromDto(groundTruthDto));
   }
 
-  public Optional<GroundTruthDto> getGroundTruth(int idDataset) {
-    return datasetService.getGroundTruth(idDataset).stream().map(RecordIdPairConverter::toDto).findFirst();
+  public Optional<GroundTruthDto> getGroundTruth(long datasetId) {
+    return datasetService.getGroundTruth(datasetId).stream().map(RecordIdPairConverter::toDto).findFirst();
   }
 
-  public List<RecordDto> getRecordsWithGlobalIdIfAvailable(int idDataset) {
-    List<RecordDto> records = getAllRecordsAsDto(idDataset);
-    Optional<GroundTruthDto> optionalGroundTruthDto = getGroundTruth(idDataset);
+  public List<RecordDto> getRecordsWithGlobalIdIfAvailable(long datasetId) {
+    List<RecordDto> records = getAllRecordsAsDto(datasetId);
+    Optional<GroundTruthDto> optionalGroundTruthDto = getGroundTruth(datasetId);
     if (optionalGroundTruthDto.isPresent()) {
       addGlobalIdsBasedOnGroundTruth(records, optionalGroundTruthDto);
     }
@@ -164,21 +188,21 @@ public class DatasetDtoService {
       .collect(Collectors.toList());
   }
 
-  public List<RecordDto> getAllRecordsAsDto(int idDataset) {
-    log.debug("Retrieving all records of dataset {} from the database", idDataset);
-    return datasetService.getAllRecords(idDataset).stream()
+  public List<RecordDto> getAllRecordsAsDto(long datasetId) {
+    log.debug("Retrieving all records of dataset {} from the database", datasetId);
+    return datasetService.getAllRecords(datasetId).stream()
       .map(mongoRecordConverter::fromRecord)
       .collect(Collectors.toList());
   }
 
-  public RecordDto getRecordAsDto(int idDataset, RecordIdDto idDto) {
-    return datasetService.getRecord(idDataset, MongoRecordConverter.toRecordId(idDto))
+  public RecordDto getRecordAsDto(long datasetId, RecordIdDto idDto) {
+    return datasetService.getRecord(datasetId, MongoRecordConverter.toRecordId(idDto))
       .map(mongoRecordConverter::fromRecord)
       .orElseThrow(
-        () -> new RuntimeException("No record found for id " + idDto + " in dataset " + idDataset));
+        () -> new RuntimeException("No record found for id " + idDto + " in dataset " + datasetId));
   }
 
-  public List<RecordDto> getRecordsAsDto(int idDataset, List<RecordIdDto> idDtos) {
+  public List<RecordDto> getRecordsAsDto(long datasetId, List<RecordIdDto> idDtos) {
     log.debug("Retrieving " + idDtos.size() + " records from the database");
     Query query = new Query();
     List<Criteria> idCriteria = idDtos.stream()
@@ -189,7 +213,7 @@ public class DatasetDtoService {
           ))
       .collect(Collectors.toList());
     query.addCriteria(
-      Criteria.where("idDataset").is(idDataset)
+      Criteria.where("datasetId").is(datasetId)
         .andOperator(new Criteria().orOperator(idCriteria))
     );
     return mongoTemplate.find(query, MongoRecord.class).stream()
@@ -197,43 +221,43 @@ public class DatasetDtoService {
       .collect(Collectors.toList());
   }
 
-  public List<RecordDto> getRecordsBySourceAsDto(int idDataset, String source) {
-    return datasetService.getRecordsBySource(idDataset, source).stream()
+  public List<RecordDto> getRecordsBySourceAsDto(long datasetId, String source) {
+    return datasetService.getRecordsBySource(datasetId, source).stream()
       .map(mongoRecordConverter::fromRecord)
       .collect(Collectors.toList());
   }
 
-  public Long getNumberOfRecords(int idDataset) {
-    return datasetService.size(idDataset);
+  public Long getNumberOfRecords(long datasetId) {
+    return datasetService.size(datasetId);
   }
 
   public DatasetDto addDataset(DatasetDto datasetDto) {
     return DatasetConverter.toDto(datasetService.addDataset(DatasetConverter.fromDto(datasetDto)));
   }
 
-  public void deleteDataset(int datasetId) {
+  public void deleteDataset(long datasetId) {
     deleteAllRecords(datasetId);
     datasetService.deleteDataset(datasetId);
   }
 
-  public Optional<DatasetDto> getDataset(int idDataset) {
-    return datasetService.getDataset(idDataset).map(DatasetConverter::toDto);
+  public Optional<DatasetDto> getDataset(long datasetId) {
+    return datasetService.getDataset(datasetId).map(DatasetConverter::toDto);
   }
 
-  public List<DatasetDto> getDatasets(Optional<Integer> plaintextDatasetId) {
+  public List<DatasetDto> getDatasets(Optional<Long> plaintextDatasetId) {
     return datasetService.getDatasets(plaintextDatasetId).stream()
       .map(DatasetConverter::toDto)
       .toList();
   }
 
-  public List<Integer> getDatasetIds() {
+  public List<Long> getDatasetIds() {
     log.debug("Retrieving all dataset ids from the database");
     return datasetService.getDatasetIds();
   }
 
-  public void deleteAllRecords(int idDataset) {
-    log.info("Deleting all records of dataset {} from the database", idDataset);
-    datasetService.deleteAll(idDataset);
+  public void deleteAllRecords(long datasetId) {
+    log.info("Deleting all records of dataset {} from the database", datasetId);
+    datasetService.deleteAll(datasetId);
   }
 
   public Optional<MongoRecord> getRecord(RecordIdDto idDto) {

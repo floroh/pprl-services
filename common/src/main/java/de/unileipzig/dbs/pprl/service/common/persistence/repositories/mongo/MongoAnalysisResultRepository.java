@@ -9,8 +9,8 @@ import java.util.Optional;
 
 public interface MongoAnalysisResultRepository extends MongoRepository<MongoAnalysisResult, ObjectId> {
 
-  Collection<MongoAnalysisResult> findByDatasetId(int datasetId);
-  Optional<MongoAnalysisResult> findByDatasetIdAndSourceAndType(int datasetId,
+  Collection<MongoAnalysisResult> findByDatasetId(long datasetId);
+  Optional<MongoAnalysisResult> findByDatasetIdAndSourceAndType(long datasetId,
     String source, MongoAnalysisResult.Type type);
 
 }

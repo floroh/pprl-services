@@ -55,19 +55,13 @@ public class AttributeFactory {
   }
 
   public static Attribute parseAttribute(AttributeSerializationType type, String attributeValue) {
-    switch (type) {
-      case NULL:
-        return AttributeLight.NULL_ATTRIBUTE;
-      case STRING:
-        return parseAttribute(attributeValue, Function.identity());
-      case BITSET_BITSTRING:
-        return parseAttribute(attributeValue, BitSetVector::fromBitString);
-      case BITSET_BASE64:
-        return parseAttribute(attributeValue, BitSetVector::fromBase64);
-      case INT:
-        return parseAttribute(attributeValue, Integer::parseInt);
-    }
-    return getAttribute(attributeValue);
+    return switch (type) {
+      case NULL -> AttributeLight.NULL_ATTRIBUTE;
+      case STRING -> parseAttribute(attributeValue, Function.identity());
+      case BITSET_BITSTRING -> parseAttribute(attributeValue, BitSetVector::fromBitString);
+      case BITSET_BASE64 -> parseAttribute(attributeValue, BitSetVector::fromBase64);
+      case INT -> parseAttribute(attributeValue, Integer::parseInt);
+    };
   }
 
   private static <T> Attribute parseAttribute(String string, Function<String, T> objParser) {
@@ -85,19 +79,13 @@ public class AttributeFactory {
   }
 
   public static String attributeToString(AttributeSerializationType type, Attribute attribute) {
-    switch (type) {
-      case NULL:
-        return NULL_STRING_REPRESENTATION;
-      case STRING:
-        return attributeToString(attribute, String.class, Function.identity());
-      case BITSET_BITSTRING:
-        return attributeToString(attribute, BitVector.class, BitVector::getBitString);
-      case BITSET_BASE64:
-        return attributeToString(attribute, BitVector.class, BitVector::getBase64);
-      case INT:
-        return attributeToString(attribute, Integer.class, Object::toString);
-    }
-    return attribute.getAsString();
+    return switch (type) {
+      case NULL -> NULL_STRING_REPRESENTATION;
+      case STRING -> attributeToString(attribute, String.class, Function.identity());
+      case BITSET_BITSTRING -> attributeToString(attribute, BitVector.class, BitVector::getBitString);
+      case BITSET_BASE64 -> attributeToString(attribute, BitVector.class, BitVector::getBase64);
+      case INT -> attributeToString(attribute, Integer.class, Object::toString);
+    };
   }
 
   private static <T> String attributeToString(Attribute attribute, Class<T> type,

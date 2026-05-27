@@ -17,6 +17,7 @@
 package de.unileipzig.dbs.pprl.core.matcher.model;
 
 import de.unileipzig.dbs.pprl.core.common.model.api.Attribute;
+import de.unileipzig.dbs.pprl.core.common.model.impl.AttributePair;
 
 public class NamedAttributePair extends AttributePair {
 

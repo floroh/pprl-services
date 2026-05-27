@@ -7,6 +7,7 @@ import de.unileipzig.dbs.pprl.core.common.model.api.RecordPair;
 import de.unileipzig.dbs.pprl.core.common.monitoring.Tag;
 import de.unileipzig.dbs.pprl.core.matcher.MatcherSerialization;
 import de.unileipzig.dbs.pprl.core.matcher.MatcherUtils;
+import de.unileipzig.dbs.pprl.core.matcher.TagUtils;
 import de.unileipzig.dbs.pprl.core.matcher.classification.Classifier;
 import de.unileipzig.dbs.pprl.core.matcher.classification.MultiThresholdClassifier;
 import de.unileipzig.dbs.pprl.core.matcher.classification.TrainableThresholdClassifier;
@@ -44,6 +45,7 @@ import static de.unileipzig.dbs.pprl.service.linkageunit.services.LinkImprovemen
 public class MatcherModificationService {
 
   public static final String PROPERTY_METHOD_PPCR = "METHOD_PPCR";
+  public static final String CONFIG_REPLACE_ONLY_CHANGED_PAIRS_ON_RECLASSIFICATION = "replaceOnlyChangedPairsOnReclassification";
   private final MatcherProviderService matcherProviderService;
 
   private final AsynchronousBatchMatcherService matcherService;
@@ -52,8 +54,8 @@ public class MatcherModificationService {
   private final DatasetMongoService datasetService;
 
   public MatcherModificationService(MatcherProviderService matcherProviderService,
-    AsynchronousBatchMatcherService matcherService, ProjectService projectService,
-    DatasetMongoService datasetService) {
+                                    AsynchronousBatchMatcherService matcherService, ProjectService projectService,
+                                    DatasetMongoService datasetService) {
     this.matcherProviderService = matcherProviderService;
     this.matcherService = matcherService;
     this.projectService = projectService;
@@ -128,6 +130,7 @@ public class MatcherModificationService {
   private MatchingDto fitWithImprovedLinks(ObjectId projectId) {
     return fit(projectId, Set.of(LinkImprovementService.PROPERTY_IMPROVED_LINK));
   }
+
   private MatchingDto fitWithReviewedLinksOnly(ObjectId projectId) {
     return fit(projectId, Set.of(LinkImprovementService.PROPERTY_IMPROVED_LINK, PROPERTY_METHOD_PPCR));
   }
@@ -146,10 +149,8 @@ public class MatcherModificationService {
     List<RecordPair> pairsForTraining = allRecordPairs;
     if (properties.contains(PROPERTY_METHOD_PPCR)) {
       pairsForTraining = pairsForTraining.stream()
-        .filter(rp -> rp.getTags().stream()
-          .filter(tag -> tag.getTag().equals(LinkImprovementService.TAG_ENCODING_METHOD))
-          .anyMatch(tag -> tag.getStringValue().contains("CR"))
-        ).collect(Collectors.toList());
+        .filter(TagUtils::isFromClericalReview)
+        .toList();
       properties.remove(PROPERTY_METHOD_PPCR);
     }
     final Set<String> finalProperties = properties;
@@ -186,25 +187,21 @@ public class MatcherModificationService {
     if (matcher instanceof DatasetBasedBatchMatcher) {
       DefaultLinker linker = (DefaultLinker) ((DatasetBasedBatchMatcher) matcher).getLinker();
       Classifier classifier = linker.getClassifier();
-      if (classifier instanceof TrainableThresholdClassifier) {
-        TrainableThresholdClassifier trainableThresholdClassifier =
-          (TrainableThresholdClassifier) classifier;
+      if (classifier instanceof TrainableThresholdClassifier trainableThresholdClassifier) {
 
       }
     }
   }
 
   private void provideSimilarityDistributionToTrainableThresholdClassifier(Matcher matcher,
-    Collection<RecordPair> recordPairs) {
+                                                                           Collection<RecordPair> recordPairs) {
     recordPairs = recordPairs.stream()
       .filter(rp -> !((MongoRecordPair) rp).getProperties().contains(LinkageProcessDataSet.REPLACED))
       .collect(Collectors.toList());
     if (matcher instanceof DatasetBasedBatchMatcher) {
       DefaultLinker linker = (DefaultLinker) ((DatasetBasedBatchMatcher) matcher).getLinker();
       Classifier classifier = linker.getClassifier();
-      if (classifier instanceof TrainableThresholdClassifier) {
-        TrainableThresholdClassifier trainableThresholdClassifier =
-          (TrainableThresholdClassifier) classifier;
+      if (classifier instanceof TrainableThresholdClassifier trainableThresholdClassifier) {
         if (trainableThresholdClassifier.getSimilarityDistribution() != null) {
           log.warn("Similarity distribution already provided");
           return;
@@ -238,17 +235,20 @@ public class MatcherModificationService {
     long withOutImprovedLinks = recordPairs.size();
     log.info("All: {}, Improved: {}", paircount, paircount - withOutImprovedLinks);
 
-    DatasetBasedBatchMatcher matcher = matcherService.getMatcher(projectService.getProject(projectId));
+    BatchMatchProject project = projectService.getProject(projectId);
+    DatasetBasedBatchMatcher matcher = matcherService.getMatcher(project);
 
-    log.info("Reclassifying {} pairs with classifier: {}", recordPairs.size(),
-      ((DefaultLinker) matcher.getLinker()).getClassifier()
+    String replaceOnlyChangedPairsOnReclassification = project.getConfigValue(
+            CONFIG_REPLACE_ONLY_CHANGED_PAIRS_ON_RECLASSIFICATION).orElse("false");
+    log.info("Reclassifying {} pairs with classifier: {} (replaceOnlyChangedPairs={})", recordPairs.size(),
+      ((DefaultLinker) matcher.getLinker()).getClassifier(), replaceOnlyChangedPairsOnReclassification
     );
-    matcher.reclassifyRecordPairs(recordPairs);
+    matcher.reclassifyRecordPairs(recordPairs, Boolean.parseBoolean(replaceOnlyChangedPairsOnReclassification));
   }
 
   public MatchingDto trainWithGroundTruth(MatcherTrainingsRequest request) {
     MatcherIdDto inputId = request.getMatcherId();
-    int trainingsDatasetId = request.getDatasetId();
+    long trainingsDatasetId = request.getDatasetId();
     double minSimilarity = request.getMinSimilarity();
     double maxSimilarity = request.getMaxSimilarity() == 0 ? 1.0 : request.getMaxSimilarity();
 

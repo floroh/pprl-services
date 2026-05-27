@@ -19,7 +19,7 @@ package de.unileipzig.dbs.pprl.core.matcher.similarityCalculation.attribute;
 import de.unileipzig.dbs.pprl.core.common.BitSetUtils;
 import de.unileipzig.dbs.pprl.core.common.model.api.Attribute;
 import de.unileipzig.dbs.pprl.core.common.model.api.BitVector;
-import de.unileipzig.dbs.pprl.core.matcher.model.AttributePair;
+import de.unileipzig.dbs.pprl.core.common.model.impl.AttributePair;
 import de.unileipzig.dbs.pprl.core.matcher.similarityCalculation.missing.MissingSimilarityStrategy;
 
 import java.util.BitSet;
@@ -69,18 +69,16 @@ public final class BitVectorSimilarityCalculator implements AttributeSimilarityC
     }
 
     double nom = 0;
-    double divisor = 1;
-    switch (similarityMethod) {
-      case DICE_BOTH:
-      case DICE:
+    double divisor = switch (similarityMethod) {
+      case DICE_BOTH, DICE -> {
         nom = 2 * and;
-        divisor = card1 + card2;
-        break;
-      case JACCARD:
+        yield card1 + card2;
+      }
+      case JACCARD -> {
         nom = and;
-        divisor = card1 + card2 - and;
-        break;
-    }
+        yield card1 + card2 - and;
+      }
+    };
 
     double sim = divisor == 0 ? MissingSimilarityStrategy.MISSING_SIMILARITY : nom / divisor;
     sim = useWeightCurve ? applyWeightCurve(sim, card1, card2, len) : sim;
@@ -121,17 +119,16 @@ public final class BitVectorSimilarityCalculator implements AttributeSimilarityC
 
     double res = 0;
     double divisor;
-    switch (similarityMethod) {
-      case DICE:
-      case DICE_BOTH:
+    res = switch (similarityMethod) {
+      case DICE, DICE_BOTH -> {
         divisor = ((cardA + cardB) * len);
-        res = divisor == 0 ? 0 : (2.0 * cardA * cardB) / divisor;
-        break;
-      case JACCARD:
+        yield divisor == 0 ? 0 : (2.0 * cardA * cardB) / divisor;
+      }
+      case JACCARD -> {
         divisor = (pA + pB - pA * pB);
-        res = divisor == 0 ? 0 : (pA * pB) / divisor;
-        break;
-    }
+        yield divisor == 0 ? 0 : (pA * pB) / divisor;
+      }
+    };
     return res;
   }
 

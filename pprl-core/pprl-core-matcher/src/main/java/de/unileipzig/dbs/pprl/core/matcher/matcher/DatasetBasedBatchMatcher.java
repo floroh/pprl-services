@@ -40,6 +40,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static de.unileipzig.dbs.pprl.core.matcher.model.api.LinkageProcessDataSet.*;
@@ -159,25 +160,33 @@ public class DatasetBasedBatchMatcher implements BatchMatcher {
 
   public void reclassifyRecordPairs() {
     Collection<RecordPair> pairs = dataSet.getRecordPairs();
-    reclassifyRecordPairs(pairs);
+    reclassifyRecordPairs(pairs, false);
     dataSet.updateRecordPairs(pairs);
   }
 
-  public void reclassifyRecordPairs(Collection<RecordPair> recordPairs) {
-    Collection<RecordPair> changedPairs = recordPairs.stream()
-      .filter(pair -> {
-        String previousOutcome = getOutComeFingerPrint(pair);
-        pair = linker.classify(pair);
-        String newOutcome = getOutComeFingerPrint(pair);
-        boolean changed = !previousOutcome.equals(newOutcome);
-        if (changed) {
-          pair.getTags().add(Tag.create(CHANGED_BY_RECLASSIFICATION, "true", 1.0));
-        }
-        return changed;
-      })
-      .collect(Collectors.toList());
-    logger.info("Replacing " + changedPairs.size() + " changed pairs");
-    dataSet.replaceRecordPairs(changedPairs);
+  public void reclassifyRecordPairs(Collection<RecordPair> recordPairs, boolean replaceOnlyChanged) {
+    AtomicInteger changeCounter = new AtomicInteger();
+    Collection<RecordPair> reclassified = recordPairs.stream()
+            .filter(pair -> {
+              String previousOutcome = getOutComeFingerPrint(pair);
+              pair = linker.classify(pair);
+              String newOutcome = getOutComeFingerPrint(pair);
+              boolean changed = !previousOutcome.equals(newOutcome);
+              if (changed) {
+                pair.getTags().add(Tag.create(CHANGED_BY_RECLASSIFICATION, "true", 1.0));
+                changeCounter.incrementAndGet();
+              }
+              if (replaceOnlyChanged) return changed;
+              return true;
+            })
+            .toList();
+    if (replaceOnlyChanged) {
+      logger.info("{} pairs changed by reclassification and are updated.", reclassified.size());
+    } else {
+      logger.info("{} pairs changed by reclassification. Still updating all {} pairs.",
+              changeCounter, reclassified.size());
+    }
+    dataSet.replaceRecordPairs(reclassified);
   }
 
   private static String getOutComeFingerPrint(RecordPair pair) {

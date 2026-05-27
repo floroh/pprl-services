@@ -1,0 +1,560 @@
+<Births>
+<Year year="1990">
+<FederalState name="Baden-Württemberg" births="118579"></FederalState>
+<FederalState name="Bayern" births="136122"></FederalState>
+<FederalState name="Berlin" births="37596"></FederalState>
+<FederalState name="Brandenburg" births="29238"></FederalState>
+<FederalState name="Bremen" births="6895"></FederalState>
+<FederalState name="Hamburg" births="16693"></FederalState>
+<FederalState name="Hessen" births="62026"></FederalState>
+<FederalState name="Mecklenburg-Vorpommern" births="23503"></FederalState>
+<FederalState name="Niedersachsen" births="82452"></FederalState>
+<FederalState name="Nordrhein-Westfalen" births="199294"></FederalState>
+<FederalState name="Rheinland-Pfalz" births="42732"></FederalState>
+<FederalState name="Saarland" births="11210"></FederalState>
+<FederalState name="Sachsen" births="49672"></FederalState>
+<FederalState name="Sachsen-Anhalt" births="31837"></FederalState>
+<FederalState name="Schleswig-Holstein" births="29046"></FederalState>
+<FederalState name="Thüringen" births="28780"></FederalState>
+</Year>
+<Year year="1991">
+<FederalState name="Baden-Württemberg" births="117528"></FederalState>
+<FederalState name="Bayern" births="134400"></FederalState>
+<FederalState name="Berlin" births="30562"></FederalState>
+<FederalState name="Brandenburg" births="17215"></FederalState>
+<FederalState name="Bremen" births="6789"></FederalState>
+<FederalState name="Hamburg" births="16503"></FederalState>
+<FederalState name="Hessen" births="61324"></FederalState>
+<FederalState name="Mecklenburg-Vorpommern" births="13635"></FederalState>
+<FederalState name="Niedersachsen" births="83122"></FederalState>
+<FederalState name="Nordrhein-Westfalen" births="198436"></FederalState>
+<FederalState name="Rheinland-Pfalz" births="42311"></FederalState>
+<FederalState name="Saarland" births="11052"></FederalState>
+<FederalState name="Sachsen" births="31278"></FederalState>
+<FederalState name="Sachsen-Anhalt" births="19459"></FederalState>
+<FederalState name="Schleswig-Holstein" births="28935"></FederalState>
+<FederalState name="Thüringen" births="17470"></FederalState>
+</Year>
+<Year year="1992">
+<FederalState name="Baden-Württemberg" births="117559"></FederalState>
+<FederalState name="Bayern" births="133946"></FederalState>
+<FederalState name="Berlin" births="29667"></FederalState>
+<FederalState name="Brandenburg" births="13469"></FederalState>
+<FederalState name="Bremen" births="6757"></FederalState>
+<FederalState name="Hamburg" births="16497"></FederalState>
+<FederalState name="Hessen" births="61146"></FederalState>
+<FederalState name="Mecklenburg-Vorpommern" births="10875"></FederalState>
+<FederalState name="Niedersachsen" births="83669"></FederalState>
+<FederalState name="Nordrhein-Westfalen" births="196899"></FederalState>
+<FederalState name="Rheinland-Pfalz" births="42722"></FederalState>
+<FederalState name="Saarland" births="10954"></FederalState>
+<FederalState name="Sachsen" births="25298"></FederalState>
+<FederalState name="Sachsen-Anhalt" births="16284"></FederalState>
+<FederalState name="Schleswig-Holstein" births="28757"></FederalState>
+<FederalState name="Thüringen" births="14615"></FederalState>
+</Year>
+<Year year="1993">
+<FederalState name="Baden-Württemberg" births="117982"></FederalState>
+<FederalState name="Bayern" births="133897"></FederalState>
+<FederalState name="Berlin" births="28724"></FederalState>
+<FederalState name="Brandenburg" births="12238"></FederalState>
+<FederalState name="Bremen" births="6656"></FederalState>
+<FederalState name="Hamburg" births="16257"></FederalState>
+<FederalState name="Hessen" births="61610"></FederalState>
+<FederalState name="Mecklenburg-Vorpommern" births="9432"></FederalState>
+<FederalState name="Niedersachsen" births="84579"></FederalState>
+<FederalState name="Nordrhein-Westfalen" births="194156"></FederalState>
+<FederalState name="Rheinland-Pfalz" births="42291"></FederalState>
+<FederalState name="Saarland" births="10653"></FederalState>
+<FederalState name="Sachsen" births="23423"></FederalState>
+<FederalState name="Sachsen-Anhalt" births="14610"></FederalState>
+<FederalState name="Schleswig-Holstein" births="28632"></FederalState>
+<FederalState name="Thüringen" births="13307"></FederalState>
+</Year>
+<Year year="1994">
+<FederalState name="Baden-Württemberg" births="113398"></FederalState>
+<FederalState name="Bayern" births="127828"></FederalState>
+<FederalState name="Berlin" births="28503"></FederalState>
+<FederalState name="Brandenburg" births="12443"></FederalState>
+<FederalState name="Bremen" births="6288"></FederalState>
+<FederalState name="Hamburg" births="16201"></FederalState>
+<FederalState name="Hessen" births="60565"></FederalState>
+<FederalState name="Mecklenburg-Vorpommern" births="8934"></FederalState>
+<FederalState name="Niedersachsen" births="81520"></FederalState>
+<FederalState name="Nordrhein-Westfalen" births="186079"></FederalState>
+<FederalState name="Rheinland-Pfalz" births="40539"></FederalState>
+<FederalState name="Saarland" births="10028"></FederalState>
+<FederalState name="Sachsen" births="22734"></FederalState>
+<FederalState name="Sachsen-Anhalt" births="14280"></FederalState>
+<FederalState name="Schleswig-Holstein" births="27542"></FederalState>
+<FederalState name="Thüringen" births="12721"></FederalState>
+</Year>
+<Year year="1995">
+<FederalState name="Baden-Württemberg" births="112459"></FederalState>
+<FederalState name="Bayern" births="125995"></FederalState>
+<FederalState name="Berlin" births="28648"></FederalState>
+<FederalState name="Brandenburg" births="13494"></FederalState>
+<FederalState name="Bremen" births="6429"></FederalState>
+<FederalState name="Hamburg" births="15872"></FederalState>
+<FederalState name="Hessen" births="59858"></FederalState>
+<FederalState name="Mecklenburg-Vorpommern" births="9878"></FederalState>
+<FederalState name="Niedersachsen" births="80994"></FederalState>
+<FederalState name="Nordrhein-Westfalen" births="182393"></FederalState>
+<FederalState name="Rheinland-Pfalz" births="39684"></FederalState>
+<FederalState name="Saarland" births="9727"></FederalState>
+<FederalState name="Sachsen" births="24004"></FederalState>
+<FederalState name="Sachsen-Anhalt" births="14568"></FederalState>
+<FederalState name="Schleswig-Holstein" births="27430"></FederalState>
+<FederalState name="Thüringen" births="13788"></FederalState>
+</Year>
+<Year year="1996">
+<FederalState name="Baden-Württemberg" births="114657"></FederalState>
+<FederalState name="Bayern" births="129376"></FederalState>
+<FederalState name="Berlin" births="29905"></FederalState>
+<FederalState name="Brandenburg" births="15140"></FederalState>
+<FederalState name="Bremen" births="6623"></FederalState>
+<FederalState name="Hamburg" births="16594"></FederalState>
+<FederalState name="Hessen" births="62391"></FederalState>
+<FederalState name="Mecklenburg-Vorpommern" births="11088"></FederalState>
+<FederalState name="Niedersachsen" births="83655"></FederalState>
+<FederalState name="Nordrhein-Westfalen" births="188493"></FederalState>
+<FederalState name="Rheinland-Pfalz" births="40926"></FederalState>
+<FederalState name="Saarland" births="9976"></FederalState>
+<FederalState name="Sachsen" births="27006"></FederalState>
+<FederalState name="Sachsen-Anhalt" births="16152"></FederalState>
+<FederalState name="Schleswig-Holstein" births="28766"></FederalState>
+<FederalState name="Thüringen" births="15265"></FederalState>
+</Year>
+<Year year="1997">
+<FederalState name="Baden-Württemberg" births="116419"></FederalState>
+<FederalState name="Bayern" births="130517"></FederalState>
+<FederalState name="Berlin" births="30369"></FederalState>
+<FederalState name="Brandenburg" births="16370"></FederalState>
+<FederalState name="Bremen" births="6644"></FederalState>
+<FederalState name="Hamburg" births="16970"></FederalState>
+<FederalState name="Hessen" births="63124"></FederalState>
+<FederalState name="Mecklenburg-Vorpommern" births="12046"></FederalState>
+<FederalState name="Niedersachsen" births="85907"></FederalState>
+<FederalState name="Nordrhein-Westfalen" births="190386"></FederalState>
+<FederalState name="Rheinland-Pfalz" births="41677"></FederalState>
+<FederalState name="Saarland" births="9987"></FederalState>
+<FederalState name="Sachsen" births="29008"></FederalState>
+<FederalState name="Sachsen-Anhalt" births="17194"></FederalState>
+<FederalState name="Schleswig-Holstein" births="29080"></FederalState>
+<FederalState name="Thüringen" births="16475"></FederalState>
+</Year>
+<Year year="1998">
+<FederalState name="Baden-Württemberg" births="111056"></FederalState>
+<FederalState name="Bayern" births="126529"></FederalState>
+<FederalState name="Berlin" births="29612"></FederalState>
+<FederalState name="Brandenburg" births="17146"></FederalState>
+<FederalState name="Bremen" births="6360"></FederalState>
+<FederalState name="Hamburg" births="16235"></FederalState>
+<FederalState name="Hessen" births="60567"></FederalState>
+<FederalState name="Mecklenburg-Vorpommern" births="12246"></FederalState>
+<FederalState name="Niedersachsen" births="82207"></FederalState>
+<FederalState name="Nordrhein-Westfalen" births="182287"></FederalState>
+<FederalState name="Rheinland-Pfalz" births="39639"></FederalState>
+<FederalState name="Saarland" births="9111"></FederalState>
+<FederalState name="Sachsen" births="30190"></FederalState>
+<FederalState name="Sachsen-Anhalt" births="17513"></FederalState>
+<FederalState name="Schleswig-Holstein" births="27729"></FederalState>
+<FederalState name="Thüringen" births="16607"></FederalState>
+</Year>
+<Year year="1999">
+<FederalState name="Baden-Württemberg" births="107973"></FederalState>
+<FederalState name="Bayern" births="123244"></FederalState>
+<FederalState name="Berlin" births="29856"></FederalState>
+<FederalState name="Brandenburg" births="17928"></FederalState>
+<FederalState name="Bremen" births="6096"></FederalState>
+<FederalState name="Hamburg" births="16034"></FederalState>
+<FederalState name="Hessen" births="58996"></FederalState>
+<FederalState name="Mecklenburg-Vorpommern" births="12589"></FederalState>
+<FederalState name="Niedersachsen" births="80483"></FederalState>
+<FederalState name="Nordrhein-Westfalen" births="176578"></FederalState>
+<FederalState name="Rheinland-Pfalz" births="38190"></FederalState>
+<FederalState name="Saarland" births="8941"></FederalState>
+<FederalState name="Sachsen" births="31383"></FederalState>
+<FederalState name="Sachsen-Anhalt" births="18176"></FederalState>
+<FederalState name="Schleswig-Holstein" births="27351"></FederalState>
+<FederalState name="Thüringen" births="16926"></FederalState>
+</Year>
+<Year year="2000">
+<FederalState name="Baden-Württemberg" births="106182"></FederalState>
+<FederalState name="Bayern" births="120765"></FederalState>
+<FederalState name="Berlin" births="29695"></FederalState>
+<FederalState name="Brandenburg" births="18444"></FederalState>
+<FederalState name="Bremen" births="6070"></FederalState>
+<FederalState name="Hamburg" births="16159"></FederalState>
+<FederalState name="Hessen" births="58817"></FederalState>
+<FederalState name="Mecklenburg-Vorpommern" births="13319"></FederalState>
+<FederalState name="Niedersachsen" births="79436"></FederalState>
+<FederalState name="Nordrhein-Westfalen" births="175144"></FederalState>
+<FederalState name="Rheinland-Pfalz" births="37826"></FederalState>
+<FederalState name="Saarland" births="8783"></FederalState>
+<FederalState name="Sachsen" births="33139"></FederalState>
+<FederalState name="Sachsen-Anhalt" births="18723"></FederalState>
+<FederalState name="Schleswig-Holstein" births="26920"></FederalState>
+<FederalState name="Thüringen" births="17577"></FederalState>
+</Year>
+<Year year="2001">
+<FederalState name="Baden-Württemberg" births="101366"></FederalState>
+<FederalState name="Bayern" births="115964"></FederalState>
+<FederalState name="Berlin" births="28624"></FederalState>
+<FederalState name="Brandenburg" births="17692"></FederalState>
+<FederalState name="Bremen" births="5831"></FederalState>
+<FederalState name="Hamburg" births="15786"></FederalState>
+<FederalState name="Hessen" births="56228"></FederalState>
+<FederalState name="Mecklenburg-Vorpommern" births="12968"></FederalState>
+<FederalState name="Niedersachsen" births="75239"></FederalState>
+<FederalState name="Nordrhein-Westfalen" births="167752"></FederalState>
+<FederalState name="Rheinland-Pfalz" births="35781"></FederalState>
+<FederalState name="Saarland" births="8196"></FederalState>
+<FederalState name="Sachsen" births="31943"></FederalState>
+<FederalState name="Sachsen-Anhalt" births="18073"></FederalState>
+<FederalState name="Schleswig-Holstein" births="25681"></FederalState>
+<FederalState name="Thüringen" births="17351"></FederalState>
+</Year>
+<Year year="2002">
+<FederalState name="Baden-Württemberg" births="99604"></FederalState>
+<FederalState name="Bayern" births="113818"></FederalState>
+<FederalState name="Berlin" births="28801"></FederalState>
+<FederalState name="Brandenburg" births="17704"></FederalState>
+<FederalState name="Bremen" births="5484"></FederalState>
+<FederalState name="Hamburg" births="15707"></FederalState>
+<FederalState name="Hessen" births="55324"></FederalState>
+<FederalState name="Mecklenburg-Vorpommern" births="12504"></FederalState>
+<FederalState name="Niedersachsen" births="73193"></FederalState>
+<FederalState name="Nordrhein-Westfalen" births="163434"></FederalState>
+<FederalState name="Rheinland-Pfalz" births="34741"></FederalState>
+<FederalState name="Saarland" births="7879"></FederalState>
+<FederalState name="Sachsen" births="31518"></FederalState>
+<FederalState name="Sachsen-Anhalt" births="17617"></FederalState>
+<FederalState name="Schleswig-Holstein" births="24915"></FederalState>
+<FederalState name="Thüringen" births="17007"></FederalState>
+</Year>
+<Year year="2003">
+<FederalState name="Baden-Württemberg" births="97596"></FederalState>
+<FederalState name="Bayern" births="111536"></FederalState>
+<FederalState name="Berlin" births="28723"></FederalState>
+<FederalState name="Brandenburg" births="17970"></FederalState>
+<FederalState name="Bremen" births="5577"></FederalState>
+<FederalState name="Hamburg" births="15916"></FederalState>
+<FederalState name="Hessen" births="54400"></FederalState>
+<FederalState name="Mecklenburg-Vorpommern" births="12782"></FederalState>
+<FederalState name="Niedersachsen" births="70563"></FederalState>
+<FederalState name="Nordrhein-Westfalen" births="159883"></FederalState>
+<FederalState name="Rheinland-Pfalz" births="34083"></FederalState>
+<FederalState name="Saarland" births="7598"></FederalState>
+<FederalState name="Sachsen" births="32079"></FederalState>
+<FederalState name="Sachsen-Anhalt" births="16889"></FederalState>
+<FederalState name="Schleswig-Holstein" births="24215"></FederalState>
+<FederalState name="Thüringen" births="16911"></FederalState>
+</Year>
+<Year year="2004">
+<FederalState name="Baden-Württemberg" births="96655"></FederalState>
+<FederalState name="Bayern" births="111164"></FederalState>
+<FederalState name="Berlin" births="29446"></FederalState>
+<FederalState name="Brandenburg" births="18148"></FederalState>
+<FederalState name="Bremen" births="5442"></FederalState>
+<FederalState name="Hamburg" births="16103"></FederalState>
+<FederalState name="Hessen" births="54332"></FederalState>
+<FederalState name="Mecklenburg-Vorpommern" births="13045"></FederalState>
+<FederalState name="Niedersachsen" births="70371"></FederalState>
+<FederalState name="Nordrhein-Westfalen" births="158054"></FederalState>
+<FederalState name="Rheinland-Pfalz" births="33421"></FederalState>
+<FederalState name="Saarland" births="7660"></FederalState>
+<FederalState name="Sachsen" births="33044"></FederalState>
+<FederalState name="Sachsen-Anhalt" births="17337"></FederalState>
+<FederalState name="Schleswig-Holstein" births="24090"></FederalState>
+<FederalState name="Thüringen" births="17310"></FederalState>
+</Year>
+<Year year="2005">
+<FederalState name="Baden-Württemberg" births="94279"></FederalState>
+<FederalState name="Bayern" births="107308"></FederalState>
+<FederalState name="Berlin" births="28976"></FederalState>
+<FederalState name="Brandenburg" births="17910"></FederalState>
+<FederalState name="Bremen" births="5489"></FederalState>
+<FederalState name="Hamburg" births="16179"></FederalState>
+<FederalState name="Hessen" births="53369"></FederalState>
+<FederalState name="Mecklenburg-Vorpommern" births="12357"></FederalState>
+<FederalState name="Niedersachsen" births="66993"></FederalState>
+<FederalState name="Nordrhein-Westfalen" births="153372"></FederalState>
+<FederalState name="Rheinland-Pfalz" births="32592"></FederalState>
+<FederalState name="Saarland" births="7484"></FederalState>
+<FederalState name="Sachsen" births="32581"></FederalState>
+<FederalState name="Sachsen-Anhalt" births="17166"></FederalState>
+<FederalState name="Schleswig-Holstein" births="23027"></FederalState>
+<FederalState name="Thüringen" births="16713"></FederalState>
+</Year>
+<Year year="2006">
+<FederalState name="Baden-Württemberg" births="91955"></FederalState>
+<FederalState name="Bayern" births="104822"></FederalState>
+<FederalState name="Berlin" births="29627"></FederalState>
+<FederalState name="Brandenburg" births="17883"></FederalState>
+<FederalState name="Bremen" births="5506"></FederalState>
+<FederalState name="Hamburg" births="16089"></FederalState>
+<FederalState name="Hessen" births="51404"></FederalState>
+<FederalState name="Mecklenburg-Vorpommern" births="12638"></FederalState>
+<FederalState name="Niedersachsen" births="65327"></FederalState>
+<FederalState name="Nordrhein-Westfalen" births="149925"></FederalState>
+<FederalState name="Rheinland-Pfalz" births="31755"></FederalState>
+<FederalState name="Saarland" births="7222"></FederalState>
+<FederalState name="Sachsen" births="32556"></FederalState>
+<FederalState name="Sachsen-Anhalt" births="16927"></FederalState>
+<FederalState name="Schleswig-Holstein" births="22686"></FederalState>
+<FederalState name="Thüringen" births="16402"></FederalState>
+</Year>
+<Year year="2007">
+<FederalState name="Baden-Württemberg" births="92823"></FederalState>
+<FederalState name="Bayern" births="106870"></FederalState>
+<FederalState name="Berlin" births="31174"></FederalState>
+<FederalState name="Brandenburg" births="18589"></FederalState>
+<FederalState name="Bremen" births="5591"></FederalState>
+<FederalState name="Hamburg" births="16727"></FederalState>
+<FederalState name="Hessen" births="52616"></FederalState>
+<FederalState name="Mecklenburg-Vorpommern" births="12786"></FederalState>
+<FederalState name="Niedersachsen" births="65326"></FederalState>
+<FederalState name="Nordrhein-Westfalen" births="151168"></FederalState>
+<FederalState name="Rheinland-Pfalz" births="32536"></FederalState>
+<FederalState name="Saarland" births="7274"></FederalState>
+<FederalState name="Sachsen" births="33858"></FederalState>
+<FederalState name="Sachsen-Anhalt" births="17387"></FederalState>
+<FederalState name="Schleswig-Holstein" births="22961"></FederalState>
+<FederalState name="Thüringen" births="17176"></FederalState>
+</Year>
+<Year year="2008">
+<FederalState name="Baden-Württemberg" births="91909"></FederalState>
+<FederalState name="Bayern" births="106298"></FederalState>
+<FederalState name="Berlin" births="31936"></FederalState>
+<FederalState name="Brandenburg" births="18808"></FederalState>
+<FederalState name="Bremen" births="5569"></FederalState>
+<FederalState name="Hamburg" births="16751"></FederalState>
+<FederalState name="Hessen" births="51752"></FederalState>
+<FederalState name="Mecklenburg-Vorpommern" births="13098"></FederalState>
+<FederalState name="Niedersachsen" births="64887"></FederalState>
+<FederalState name="Nordrhein-Westfalen" births="150007"></FederalState>
+<FederalState name="Rheinland-Pfalz" births="32223"></FederalState>
+<FederalState name="Saarland" births="7158"></FederalState>
+<FederalState name="Sachsen" births="34411"></FederalState>
+<FederalState name="Sachsen-Anhalt" births="17697"></FederalState>
+<FederalState name="Schleswig-Holstein" births="22678"></FederalState>
+<FederalState name="Thüringen" births="17332"></FederalState>
+</Year>
+<Year year="2009">
+<FederalState name="Baden-Württemberg" births="89678"></FederalState>
+<FederalState name="Bayern" births="103710"></FederalState>
+<FederalState name="Berlin" births="32104"></FederalState>
+<FederalState name="Brandenburg" births="18537"></FederalState>
+<FederalState name="Bremen" births="5481"></FederalState>
+<FederalState name="Hamburg" births="16779"></FederalState>
+<FederalState name="Hessen" births="50744"></FederalState>
+<FederalState name="Mecklenburg-Vorpommern" births="13014"></FederalState>
+<FederalState name="Niedersachsen" births="62228"></FederalState>
+<FederalState name="Nordrhein-Westfalen" births="145029"></FederalState>
+<FederalState name="Rheinland-Pfalz" births="30881"></FederalState>
+<FederalState name="Saarland" births="6927"></FederalState>
+<FederalState name="Sachsen" births="34093"></FederalState>
+<FederalState name="Sachsen-Anhalt" births="17144"></FederalState>
+<FederalState name="Schleswig-Holstein" births="21923"></FederalState>
+<FederalState name="Thüringen" births="16854"></FederalState>
+</Year>
+<Year year="2010">
+<FederalState name="Baden-Württemberg" births="90695"></FederalState>
+<FederalState name="Bayern" births="105251"></FederalState>
+<FederalState name="Berlin" births="33393"></FederalState>
+<FederalState name="Brandenburg" births="18954"></FederalState>
+<FederalState name="Bremen" births="5599"></FederalState>
+<FederalState name="Hamburg" births="17377"></FederalState>
+<FederalState name="Hessen" births="51742"></FederalState>
+<FederalState name="Mecklenburg-Vorpommern" births="13337"></FederalState>
+<FederalState name="Niedersachsen" births="63130"></FederalState>
+<FederalState name="Nordrhein-Westfalen" births="147333"></FederalState>
+<FederalState name="Rheinland-Pfalz" births="31574"></FederalState>
+<FederalState name="Saarland" births="7066"></FederalState>
+<FederalState name="Sachsen" births="35091"></FederalState>
+<FederalState name="Sachsen-Anhalt" births="17300"></FederalState>
+<FederalState name="Schleswig-Holstein" births="22578"></FederalState>
+<FederalState name="Thüringen" births="17527"></FederalState>
+</Year>
+<Year year="2011">
+<FederalState name="Baden-Württemberg" births="88823"></FederalState>
+<FederalState name="Bayern" births="103668"></FederalState>
+<FederalState name="Berlin" births="33075"></FederalState>
+<FederalState name="Brandenburg" births="18279"></FederalState>
+<FederalState name="Bremen" births="5388"></FederalState>
+<FederalState name="Hamburg" births="17125"></FederalState>
+<FederalState name="Hessen" births="51479"></FederalState>
+<FederalState name="Mecklenburg-Vorpommern" births="12638"></FederalState>
+<FederalState name="Niedersachsen" births="61280"></FederalState>
+<FederalState name="Nordrhein-Westfalen" births="143097"></FederalState>
+<FederalState name="Rheinland-Pfalz" births="31081"></FederalState>
+<FederalState name="Saarland" births="7088"></FederalState>
+<FederalState name="Sachsen" births="34423"></FederalState>
+<FederalState name="Sachsen-Anhalt" births="16837"></FederalState>
+<FederalState name="Schleswig-Holstein" births="21331"></FederalState>
+<FederalState name="Thüringen" births="17073"></FederalState>
+</Year>
+<Year year="2012">
+<FederalState name="Baden-Württemberg" births="89477"></FederalState>
+<FederalState name="Bayern" births="107039"></FederalState>
+<FederalState name="Berlin" births="34678"></FederalState>
+<FederalState name="Brandenburg" births="18482"></FederalState>
+<FederalState name="Bremen" births="5639"></FederalState>
+<FederalState name="Hamburg" births="17706"></FederalState>
+<FederalState name="Hessen" births="51607"></FederalState>
+<FederalState name="Mecklenburg-Vorpommern" births="12715"></FederalState>
+<FederalState name="Niedersachsen" births="61478"></FederalState>
+<FederalState name="Nordrhein-Westfalen" births="145755"></FederalState>
+<FederalState name="Rheinland-Pfalz" births="31169"></FederalState>
+<FederalState name="Saarland" births="6878"></FederalState>
+<FederalState name="Sachsen" births="34686"></FederalState>
+<FederalState name="Sachsen-Anhalt" births="16888"></FederalState>
+<FederalState name="Schleswig-Holstein" births="22005"></FederalState>
+<FederalState name="Thüringen" births="17342"></FederalState>
+</Year>
+<Year year="2013">
+<FederalState name="Baden-Württemberg" births="91505"></FederalState>
+<FederalState name="Bayern" births="109562"></FederalState>
+<FederalState name="Berlin" births="35038"></FederalState>
+<FederalState name="Brandenburg" births="18355"></FederalState>
+<FederalState name="Bremen" births="5749"></FederalState>
+<FederalState name="Hamburg" births="18137"></FederalState>
+<FederalState name="Hessen" births="52185"></FederalState>
+<FederalState name="Mecklenburg-Vorpommern" births="12560"></FederalState>
+<FederalState name="Niedersachsen" births="62879"></FederalState>
+<FederalState name="Nordrhein-Westfalen" births="146417"></FederalState>
+<FederalState name="Rheinland-Pfalz" births="31989"></FederalState>
+<FederalState name="Saarland" births="6848"></FederalState>
+<FederalState name="Sachsen" births="34800"></FederalState>
+<FederalState name="Sachsen-Anhalt" births="16797"></FederalState>
+<FederalState name="Schleswig-Holstein" births="21822"></FederalState>
+<FederalState name="Thüringen" births="17426"></FederalState>
+</Year>
+<Year year="2014">
+<FederalState name="Baden-Württemberg" births="95632"></FederalState>
+<FederalState name="Bayern" births="113935"></FederalState>
+<FederalState name="Berlin" births="37368"></FederalState>
+<FederalState name="Brandenburg" births="19339"></FederalState>
+<FederalState name="Bremen" births="6211"></FederalState>
+<FederalState name="Hamburg" births="19039"></FederalState>
+<FederalState name="Hessen" births="54631"></FederalState>
+<FederalState name="Mecklenburg-Vorpommern" births="12830"></FederalState>
+<FederalState name="Niedersachsen" births="66406"></FederalState>
+<FederalState name="Nordrhein-Westfalen" births="155102"></FederalState>
+<FederalState name="Rheinland-Pfalz" births="33427"></FederalState>
+<FederalState name="Saarland" births="7328"></FederalState>
+<FederalState name="Sachsen" births="35935"></FederalState>
+<FederalState name="Sachsen-Anhalt" births="17064"></FederalState>
+<FederalState name="Schleswig-Holstein" births="22793"></FederalState>
+<FederalState name="Thüringen" births="17887"></FederalState>
+</Year>
+<Year year="2015">
+<FederalState name="Baden-Württemberg" births="100269"></FederalState>
+<FederalState name="Bayern" births="118228"></FederalState>
+<FederalState name="Berlin" births="38030"></FederalState>
+<FederalState name="Brandenburg" births="19112"></FederalState>
+<FederalState name="Bremen" births="6509"></FederalState>
+<FederalState name="Hamburg" births="19768"></FederalState>
+<FederalState name="Hessen" births="56889"></FederalState>
+<FederalState name="Mecklenburg-Vorpommern" births="13298"></FederalState>
+<FederalState name="Niedersachsen" births="67183"></FederalState>
+<FederalState name="Nordrhein-Westfalen" births="160468"></FederalState>
+<FederalState name="Rheinland-Pfalz" births="34946"></FederalState>
+<FederalState name="Saarland" births="7511"></FederalState>
+<FederalState name="Sachsen" births="36466"></FederalState>
+<FederalState name="Sachsen-Anhalt" births="17415"></FederalState>
+<FederalState name="Schleswig-Holstein" births="23549"></FederalState>
+<FederalState name="Thüringen" births="17934"></FederalState>
+</Year>
+<Year year="2016">
+<FederalState name="Baden-Württemberg" births="107487"></FederalState>
+<FederalState name="Bayern" births="125686"></FederalState>
+<FederalState name="Berlin" births="41086"></FederalState>
+<FederalState name="Brandenburg" births="20934"></FederalState>
+<FederalState name="Bremen" births="7136"></FederalState>
+<FederalState name="Hamburg" births="21480"></FederalState>
+<FederalState name="Hessen" births="60731"></FederalState>
+<FederalState name="Mecklenburg-Vorpommern" births="13442"></FederalState>
+<FederalState name="Niedersachsen" births="75215"></FederalState>
+<FederalState name="Nordrhein-Westfalen" births="173274"></FederalState>
+<FederalState name="Rheinland-Pfalz" births="37518"></FederalState>
+<FederalState name="Saarland" births="8215"></FederalState>
+<FederalState name="Sachsen" births="37940"></FederalState>
+<FederalState name="Sachsen-Anhalt" births="18092"></FederalState>
+<FederalState name="Schleswig-Holstein" births="25420"></FederalState>
+<FederalState name="Thüringen" births="18475"></FederalState>
+</Year>
+<Year year="2017">
+<FederalState name="Baden-Württemberg" births="107375"></FederalState>
+<FederalState name="Bayern" births="126187"></FederalState>
+<FederalState name="Berlin" births="40160"></FederalState>
+<FederalState name="Brandenburg" births="20337"></FederalState>
+<FederalState name="Bremen" births="7000"></FederalState>
+<FederalState name="Hamburg" births="21133"></FederalState>
+<FederalState name="Hessen" births="60988"></FederalState>
+<FederalState name="Mecklenburg-Vorpommern" births="13081"></FederalState>
+<FederalState name="Niedersachsen" births="73020"></FederalState>
+<FederalState name="Nordrhein-Westfalen" births="171979"></FederalState>
+<FederalState name="Rheinland-Pfalz" births="37443"></FederalState>
+<FederalState name="Saarland" births="8313"></FederalState>
+<FederalState name="Sachsen" births="36833"></FederalState>
+<FederalState name="Sachsen-Anhalt" births="17837"></FederalState>
+<FederalState name="Schleswig-Holstein" births="25066"></FederalState>
+<FederalState name="Thüringen" births="18132"></FederalState>
+</Year>
+<Year year="2018">
+<FederalState name="Baden-Württemberg" births="108919"></FederalState>
+<FederalState name="Bayern" births="127616"></FederalState>
+<FederalState name="Berlin" births="40203"></FederalState>
+<FederalState name="Brandenburg" births="19881"></FederalState>
+<FederalState name="Bremen" births="7163"></FederalState>
+<FederalState name="Hamburg" births="21126"></FederalState>
+<FederalState name="Hessen" births="61012"></FederalState>
+<FederalState name="Mecklenburg-Vorpommern" births="13032"></FederalState>
+<FederalState name="Niedersachsen" births="73652"></FederalState>
+<FederalState name="Nordrhein-Westfalen" births="173150"></FederalState>
+<FederalState name="Rheinland-Pfalz" births="37647"></FederalState>
+<FederalState name="Saarland" births="8149"></FederalState>
+<FederalState name="Sachsen" births="35890"></FederalState>
+<FederalState name="Sachsen-Anhalt" births="17410"></FederalState>
+<FederalState name="Schleswig-Holstein" births="25236"></FederalState>
+<FederalState name="Thüringen" births="17437"></FederalState>
+</Year>
+<Year year="2019">
+<FederalState name="Baden-Württemberg" births="108985"></FederalState>
+<FederalState name="Bayern" births="128227"></FederalState>
+<FederalState name="Berlin" births="39503"></FederalState>
+<FederalState name="Brandenburg" births="19329"></FederalState>
+<FederalState name="Bremen" births="7149"></FederalState>
+<FederalState name="Hamburg" births="20940"></FederalState>
+<FederalState name="Hessen" births="60062"></FederalState>
+<FederalState name="Mecklenburg-Vorpommern" births="12630"></FederalState>
+<FederalState name="Niedersachsen" births="73286"></FederalState>
+<FederalState name="Nordrhein-Westfalen" births="170391"></FederalState>
+<FederalState name="Rheinland-Pfalz" births="37173"></FederalState>
+<FederalState name="Saarland" births="8006"></FederalState>
+<FederalState name="Sachsen" births="34491"></FederalState>
+<FederalState name="Sachsen-Anhalt" births="16618"></FederalState>
+<FederalState name="Schleswig-Holstein" births="24653"></FederalState>
+<FederalState name="Thüringen" births="16647"></FederalState>
+</Year>
+<Year year="2020">
+<FederalState name="Baden-Württemberg" births="108024"></FederalState>
+<FederalState name="Bayern" births="128764"></FederalState>
+<FederalState name="Berlin" births="38693"></FederalState>
+<FederalState name="Brandenburg" births="18998"></FederalState>
+<FederalState name="Bremen" births="6968"></FederalState>
+<FederalState name="Hamburg" births="20431"></FederalState>
+<FederalState name="Hessen" births="59389"></FederalState>
+<FederalState name="Mecklenburg-Vorpommern" births="12061"></FederalState>
+<FederalState name="Niedersachsen" births="74119"></FederalState>
+<FederalState name="Nordrhein-Westfalen" births="170038"></FederalState>
+<FederalState name="Rheinland-Pfalz" births="37632"></FederalState>
+<FederalState name="Saarland" births="8155"></FederalState>
+<FederalState name="Sachsen" births="33383"></FederalState>
+<FederalState name="Sachsen-Anhalt" births="16113"></FederalState>
+<FederalState name="Schleswig-Holstein" births="24385"></FederalState>
+<FederalState name="Thüringen" births="15991"></FederalState>
+</Year>
+</Births>

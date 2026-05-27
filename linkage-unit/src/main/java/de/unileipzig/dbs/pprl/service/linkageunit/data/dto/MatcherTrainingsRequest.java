@@ -14,7 +14,7 @@ public class MatcherTrainingsRequest {
   @NonNull
   private MatcherIdDto matcherId;
 
-  private int datasetId;
+  private long datasetId;
 
   private double minSimilarity;
 

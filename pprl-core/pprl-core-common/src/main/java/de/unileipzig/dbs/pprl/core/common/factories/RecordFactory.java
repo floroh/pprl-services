@@ -39,24 +39,18 @@ public class RecordFactory {
   }
 
   public static Record getEmptyRecord(RecordVariant variant, RecordId recordId) {
-    switch (variant) {
-      default:
-      case DEFAULT:
-        return new RecordSimple(recordId);
-      case LIGHT:
-        return new RecordLight(recordId);
-    }
+    return switch (variant) {
+      default -> new RecordSimple(recordId);
+      case LIGHT -> new RecordLight(recordId);
+    };
   }
 
   public static Record getRecord(RecordVariant variant, RecordId recordId,
     Map<String, Attribute> attributes) {
-    switch (variant) {
-      default:
-      case DEFAULT:
-        return new RecordSimple(recordId, attributes);
-      case LIGHT:
-        return new RecordLight(recordId, attributes);
-    }
+    return switch (variant) {
+      default -> new RecordSimple(recordId, attributes);
+      case LIGHT -> new RecordLight(recordId, attributes);
+    };
   }
 
   public static Record getRecordDuplicate(RecordVariant variant, Record record) {

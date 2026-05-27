@@ -18,7 +18,7 @@ package de.unileipzig.dbs.pprl.core.matcher.similarityCalculation.record;
 
 import de.unileipzig.dbs.pprl.core.common.model.api.Attribute;
 import de.unileipzig.dbs.pprl.core.common.model.api.Record;
-import de.unileipzig.dbs.pprl.core.matcher.model.AttributePair;
+import de.unileipzig.dbs.pprl.core.common.model.impl.AttributePair;
 import de.unileipzig.dbs.pprl.core.common.model.api.RecordPair;
 import de.unileipzig.dbs.pprl.core.matcher.similarityCalculation.attribute.AttributeSimilarityCalculator;
 

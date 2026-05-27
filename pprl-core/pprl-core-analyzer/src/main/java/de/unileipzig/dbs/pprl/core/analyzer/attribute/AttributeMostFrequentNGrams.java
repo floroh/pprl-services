@@ -82,16 +82,12 @@ public class AttributeMostFrequentNGrams extends AttributeFrequencyAnalyzer {
   }
 
   public static String getName(int length) {
-    switch (length) {
-      case 1:
-        return "AttributeMostFrequentUniGrams";
-      case 2:
-        return "AttributeMostFrequentBiGrams";
-      case 3:
-        return "AttributeMostFrequentTriGrams";
-      default:
-        return "AttributeMostFrequent" + length + "Grams";
-    }
+    return switch (length) {
+      case 1 -> "AttributeMostFrequentUniGrams";
+      case 2 -> "AttributeMostFrequentBiGrams";
+      case 3 -> "AttributeMostFrequentTriGrams";
+      default -> "AttributeMostFrequent" + length + "Grams";
+    };
   }
 
   @Override

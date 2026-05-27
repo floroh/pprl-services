@@ -11,16 +11,16 @@ import java.util.Optional;
 
 public interface MongoRecordRepository extends MongoRepository<MongoRecord, ObjectId> {
 
-  @Query("{'idDataset': ?0, 'recordId.ids.SOURCE_ID': ?1, 'recordId.ids.LOCAL_ID': ?2}")
-  Optional<MongoRecord> findByIdDatasetAndSourceAndLocal(int idDataset, String source, String local);
+  @Query("{'datasetId': ?0, 'recordId.ids.SOURCE_ID': ?1, 'recordId.ids.LOCAL_ID': ?2}")
+  Optional<MongoRecord> findByDatasetIdAndSourceAndLocal(long datasetId, String source, String local);
 
-  @Query("{'idDataset': ?0, 'recordId.ids.SOURCE_ID': ?1}")
-  Collection<Record> findByIdDatasetAndSource(int idDataset, String source);
+  @Query("{'datasetId': ?0, 'recordId.ids.SOURCE_ID': ?1}")
+  Collection<Record> findByDatasetIdAndSourceOrderByObjectId(long datasetId, String source);
 
-  Collection<Record> findByIdDataset(int idDataset);
+  Collection<Record> findByDatasetIdOrderByObjectId(long datasetId);
 
-  long countByIdDataset(int idDataset);
+  long countByDatasetId(long datasetId);
 
-  void deleteAllByIdDataset(int idDataset);
+  void deleteAllByDatasetId(long datasetId);
 
 }

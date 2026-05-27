@@ -2,6 +2,7 @@ package de.unileipzig.dbs.pprl.service.linkageunit.controller;
 
 import de.unileipzig.dbs.pprl.service.linkageunit.data.dto.BatchMatchRequestDto;
 import de.unileipzig.dbs.pprl.service.linkageunit.data.dto.ClusteringRequestDto;
+import de.unileipzig.dbs.pprl.service.linkageunit.data.dto.ComparingRequestDto;
 import de.unileipzig.dbs.pprl.service.linkageunit.data.dto.MatchResultDto;
 import de.unileipzig.dbs.pprl.service.linkageunit.services.TransientBatchMatcherService;
 import io.micrometer.core.annotation.Timed;
@@ -37,6 +38,12 @@ public class BatchMatcherController {
   @PostMapping("/cluster")
   public MatchResultDto cluster(@RequestBody ClusteringRequestDto requestDto) {
     return matcherService.cluster(requestDto);
+  }
+
+  @Operation(summary = "Compare record pairs", tags = TAG)
+  @PostMapping("/compare")
+  public MatchResultDto compare(@RequestBody ComparingRequestDto requestDto) {
+    return matcherService.compare(requestDto);
   }
 
 }

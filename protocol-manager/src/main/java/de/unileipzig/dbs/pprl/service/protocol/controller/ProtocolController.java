@@ -36,10 +36,12 @@ public class ProtocolController {
 
   @Operation(summary = "Transfer an encoded dataset", tags = TAG)
   @PostMapping("/transfer/dataset")
-  public int transferEncoded(@RequestBody EncodedTransferRequestDto transferRequestDto) {
+  public long transferEncoded(@RequestBody EncodedTransferRequestDto transferRequestDto) {
     return protocolService.addEncodedDataset(
-      transferRequestDto.getDataOwnerDatasetId(),
-      transferRequestDto.getEncoding().getMethod()
+            transferRequestDto.getDataOwnerDatasetId(),
+            transferRequestDto.getLinkageUnitDatasetId(),
+            transferRequestDto.getEncoding().getMethod(),
+            transferRequestDto.getEncoding().getProject()
     );
   }
 

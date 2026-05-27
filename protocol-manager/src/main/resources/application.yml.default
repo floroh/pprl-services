@@ -20,8 +20,11 @@ management:
     web:
       exposure:
         include: "health,metrics,info,mappings"
+springdoc:
+  show-actuator: true
 
 pprl:
   services:
     data-owner-endpoint: "http://localhost:8081"
     linkage-unit-endpoint: "http://localhost:8082"
+    data-generator-endpoint: "http://localhost:8086"

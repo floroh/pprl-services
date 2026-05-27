@@ -31,7 +31,7 @@ public class MongoRecordConverter extends AbstractRecordConverter<RecordDto> {
       (k, v) -> dtoBuilder.attribute(k, AttributeConverter.toDto(v))
     );
     if (record instanceof MongoRecord) {
-      dtoBuilder.datasetId(((MongoRecord) record).getIdDataset());
+      dtoBuilder.datasetId(((MongoRecord) record).getDatasetId());
     }
     RecordDto dto = dtoBuilder.build();
     if (record instanceof MongoRecord) {
@@ -42,7 +42,7 @@ public class MongoRecordConverter extends AbstractRecordConverter<RecordDto> {
     return dto;
   }
 
-  private MongoRecord emptyRecord(int datasetId, RecordIdDto idDto) {
+  private MongoRecord emptyRecord(long datasetId, RecordIdDto idDto) {
     return new MongoRecord(datasetId, toRecordId(idDto));
   }
 

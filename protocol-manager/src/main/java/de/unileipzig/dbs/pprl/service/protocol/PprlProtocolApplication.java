@@ -3,6 +3,7 @@ package de.unileipzig.dbs.pprl.service.protocol;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.core.convert.DbRefResolver;
 import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
@@ -12,6 +13,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 @SpringBootApplication
 @EnableMongoRepositories({"de.unileipzig.dbs.pprl.service.protocol.persistence.repositories"})
+@Import(CommonBeansConfig.class)
 public class PprlProtocolApplication {
 
   public static void main(String[] args) {

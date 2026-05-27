@@ -17,7 +17,7 @@
 package de.unileipzig.dbs.pprl.core.matcher.similarityCalculation.attribute;
 
 import de.unileipzig.dbs.pprl.core.common.model.api.Attribute;
-import de.unileipzig.dbs.pprl.core.matcher.model.AttributePair;
+import de.unileipzig.dbs.pprl.core.common.model.impl.AttributePair;
 import de.unileipzig.dbs.pprl.core.matcher.similarityCalculation.missing.MissingSimilarityStrategy;
 import info.debatty.java.stringsimilarity.JaroWinkler;
 import info.debatty.java.stringsimilarity.NormalizedLevenshtein;
@@ -68,15 +68,11 @@ public final class StringSimilarityCalculator implements AttributeSimilarityCalc
     double compute(String s0, String s1);
 
     static SimilarityFunction fromEnum(SimilarityMethod simEnum) {
-      switch (simEnum) {
-        default:
-        case LEVENSHTEIN:
-          return new InternalLevenshtein();
-        case DICE:
-          return new InternalDice();
-        case JAROWINKLER:
-          return new InternalJaroWinkler();
-      }
+      return switch (simEnum) {
+        default -> new InternalLevenshtein();
+        case DICE -> new InternalDice();
+        case JAROWINKLER -> new InternalJaroWinkler();
+      };
     }
   }
 

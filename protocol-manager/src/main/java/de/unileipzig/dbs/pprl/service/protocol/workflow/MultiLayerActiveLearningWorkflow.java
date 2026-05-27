@@ -5,6 +5,8 @@ import de.unileipzig.dbs.pprl.service.protocol.model.mongo.MultiLayerProtocol;
 import de.unileipzig.dbs.pprl.service.protocol.workflow.steps.DetermineUncertainLinksStep;
 import de.unileipzig.dbs.pprl.service.protocol.workflow.steps.IdleStep;
 import de.unileipzig.dbs.pprl.service.protocol.workflow.steps.InitialLinkageStep;
+import de.unileipzig.dbs.pprl.service.protocol.workflow.steps.PrepareMatcherConfigs;
+import de.unileipzig.dbs.pprl.service.protocol.workflow.steps.PrepareProtocolConfigs;
 import de.unileipzig.dbs.pprl.service.protocol.workflow.steps.ReclassifyStep;
 import de.unileipzig.dbs.pprl.service.protocol.workflow.steps.ReportImprovedPairsStep;
 import de.unileipzig.dbs.pprl.service.protocol.workflow.steps.TransferEncodedDatasetStep;
@@ -20,7 +22,9 @@ import java.util.Optional;
 public class MultiLayerActiveLearningWorkflow {
 
   public enum StepType implements ProcessingStep.StepType {
+    PREPARE_CONFIGS,
     TRANSFER_ENCODED_DATASET,
+    PREPARE_MATCHER_CONFIGS,
     INITIAL_STATE,
     IDLE,
     WAIT_FOR_EXTERNAL_INPUT,
@@ -39,8 +43,8 @@ public class MultiLayerActiveLearningWorkflow {
     ProcessingStep previousStep;
     if (protocol.getStepHistory().isEmpty()) {
       previousStep = ProcessingStep.builder()
-        .type(StepType.INITIAL_STATE.toString())
-        .build();
+              .type(StepType.INITIAL_STATE.toString())
+              .build();
     } else {
       previousStep = protocol.getStepHistory().getLast();
     }
@@ -53,39 +57,59 @@ public class MultiLayerActiveLearningWorkflow {
       }
 
       case INITIAL_STATE -> {
+        nextSteps.add(PrepareProtocolConfigs.builder()
+                .build()
+                .getAsUntypedStep()
+        );
+      }
+
+      case PREPARE_CONFIGS -> {
         nextSteps.add(TransferEncodedDatasetStep.builder()
-          .build()
-          .getAsUntypedStep()
+                .build()
+                .getAsUntypedStep()
         );
       }
 
       case TRANSFER_ENCODED_DATASET -> {
+        nextSteps.add(PrepareMatcherConfigs.builder()
+                .build()
+                .getAsUntypedStep()
+        );
+      }
+
+      case PREPARE_MATCHER_CONFIGS -> {
         nextSteps.add(InitialLinkageStep.builder()
-          .build()
-          .setProjectId(protocol.getLayers().getFirst().getProjectId())
-          .getAsUntypedStep()
+                .build()
+                .setProjectId(protocol.getLayers().getFirst().getProjectId())
+                .getAsUntypedStep()
         );
       }
 
       case RUN_INITIAL_LINKAGE -> {
         Layer firstLayer = protocol.getLayers().getFirst();
         Optional<Layer> possibleSubLayer = protocol.getNextLayer(firstLayer);
+        //          subLayer.updateBatchSize();
         if (possibleSubLayer.isPresent()) {
           Layer subLayer = possibleSubLayer.get();
           subLayer.setCurrentBatch(0);
-//          subLayer.updateBatchSize();
+          nextSteps.add(
+                  DetermineUncertainLinksStep.builder()
+                          .build()
+                          .setProjectId(firstLayer.getProjectId())
+                          .getAsUntypedStep()
+          );
+        } else {
+          nextSteps.add(IdleStep.builder()
+                  .build()
+                  .setDescription("Finished")
+                  .getAsUntypedStep()
+          );
         }
-        nextSteps.add(
-          DetermineUncertainLinksStep.builder()
-            .build()
-            .setProjectId(firstLayer.getProjectId())
-            .getAsUntypedStep()
-        );
       }
 
       case DETERMINE_UNCERTAIN_LINKS -> {
         DetermineUncertainLinksStep previousStepTyped =
-          (DetermineUncertainLinksStep) ProcessingStepFactory.createTypedProcessingStep(previousStep);
+                (DetermineUncertainLinksStep) ProcessingStepFactory.createTypedProcessingStep(previousStep);
         String projectId = previousStepTyped.getProjectId();
         Layer currentLayer = protocol.getLayerOfProject(projectId);
         Optional<Layer> possibleSubLayer = protocol.getNextLayer(currentLayer);
@@ -94,15 +118,15 @@ public class MultiLayerActiveLearningWorkflow {
           if (possibleParentLayer.isPresent()) {
 //            currentLayer.setCurrentBatch(0);
             nextSteps.add(ReportImprovedPairsStep.builder()
-              .build()
-              .setProjectId(currentLayer.getProjectId())
-              .getAsUntypedStep()
+                    .build()
+                    .setProjectId(currentLayer.getProjectId())
+                    .getAsUntypedStep()
             );
           } else {
             nextSteps.add(IdleStep.builder()
-              .build()
-              .setDescription("No uncertain links available")
-              .getAsUntypedStep()
+                    .build()
+                    .setDescription("No uncertain links available")
+                    .getAsUntypedStep()
             );
           }
         } else if (possibleSubLayer.isPresent()) {
@@ -114,30 +138,30 @@ public class MultiLayerActiveLearningWorkflow {
             if (possibleParentLayer.isPresent()) {
               subLayer.setCurrentBatch(0);
               nextSteps.add(
-                ReportImprovedPairsStep.builder()
-                  .build()
-                  .setProjectId(currentLayer.getProjectId())
-                  .getAsUntypedStep()
+                      ReportImprovedPairsStep.builder()
+                              .build()
+                              .setProjectId(currentLayer.getProjectId())
+                              .getAsUntypedStep()
               );
             } else {
               nextSteps.add(IdleStep.builder()
-                .build()
-                .setDescription("Finished")
-                .getAsUntypedStep()
+                      .build()
+                      .setDescription("Finished")
+                      .getAsUntypedStep()
               );
             }
           } else {
             nextSteps.add(UpdateSubProjectWithUncertainLinksStep.builder()
-              .build()
-              .setProjectId(subLayer.getProjectId())
-              .setNumberOfPairsLimit(subLayer.getBatchSize())
-              .getAsUntypedStep()
+                    .build()
+                    .setProjectId(subLayer.getProjectId())
+                    .setNumberOfPairsLimit(subLayer.getBatchSize())
+                    .getAsUntypedStep()
             );
           }
         } else {
           nextSteps.add(IdleStep.builder()
                   .build()
-                  .setDescription("Finished")
+                  .setDescription("Unsure what to do")
                   .getAsUntypedStep()
           );
         }
@@ -145,54 +169,64 @@ public class MultiLayerActiveLearningWorkflow {
 
       case UPDATE_SUBPROJECT_WITH_UNCERTAIN_LINKS -> {
         UpdateSubProjectWithUncertainLinksStep previousStepTyped =
-          (UpdateSubProjectWithUncertainLinksStep) ProcessingStepFactory.createTypedProcessingStep(previousStep);
+                (UpdateSubProjectWithUncertainLinksStep) ProcessingStepFactory.createTypedProcessingStep(previousStep);
         String projectId = previousStepTyped.getProjectId();
         nextSteps.add(
-          ReclassifyStep.builder()
-            .build()
-            .setProjectId(projectId)
-            .getAsUntypedStep()
+                ReclassifyStep.builder()
+                        .build()
+                        .setProjectId(projectId)
+                        .getAsUntypedStep()
         );
       }
 
       case REPORT_PAIRS -> {
         ReportImprovedPairsStep previousStepTyped =
-          (ReportImprovedPairsStep) ProcessingStepFactory.createTypedProcessingStep(previousStep);
+                (ReportImprovedPairsStep) ProcessingStepFactory.createTypedProcessingStep(previousStep);
         String projectId = previousStepTyped.getProjectId();
         Layer layer = protocol.getLayerOfProject(projectId);
         Layer parentLayer = protocol.getPreviousLayer(layer).orElseThrow();
         if (parentLayer.isUpdateMatcher()) {
           nextSteps.add(
-            UpdateMatcherStep.builder()
-              .build()
-              .setProjectId(parentLayer.getProjectId())
-              .getAsUntypedStep()
+                  UpdateMatcherStep.builder()
+                          .build()
+                          .setProjectId(parentLayer.getProjectId())
+                          .getAsUntypedStep()
           );
         } else {
           nextSteps.add(
-            DetermineUncertainLinksStep.builder()
-              .build()
-              .setProjectId(parentLayer.getProjectId())
-              .getAsUntypedStep()
+                  DetermineUncertainLinksStep.builder()
+                          .build()
+                          .setProjectId(parentLayer.getProjectId())
+                          .getAsUntypedStep()
           );
         }
       }
 
       case UPDATE_MATCHER -> {
         UpdateMatcherStep previousStepTyped =
-          (UpdateMatcherStep) ProcessingStepFactory.createTypedProcessingStep(previousStep);
+                (UpdateMatcherStep) ProcessingStepFactory.createTypedProcessingStep(previousStep);
         String projectId = previousStepTyped.getProjectId();
+        Layer layer = protocol.getLayerOfProject(projectId);
+        Optional<Layer> possiblePprlLayer = protocol.getLayerByName("PPCR");
+        if (possiblePprlLayer.isPresent()
+                && layer.isStopUpdateWhenClericalReviewBudgetIsReached()) {
+          Layer pprlLayer = possiblePprlLayer.get();
+          if (!pprlLayer.isActive()) {
+            log.info("Deactivating update of layer " + layer.getName());
+            layer.setUpdateMatcher(false);
+          }
+        }
         nextSteps.add(
-          ReclassifyStep.builder()
-            .build()
-            .setProjectId(projectId)
-            .getAsUntypedStep()
+                ReclassifyStep.builder()
+                        .build()
+                        .setProjectId(projectId)
+                        .getAsUntypedStep()
         );
       }
 
       case RECLASSIFY_PAIRS -> {
         ReclassifyStep previousStepTyped =
-          (ReclassifyStep) ProcessingStepFactory.createTypedProcessingStep(previousStep);
+                (ReclassifyStep) ProcessingStepFactory.createTypedProcessingStep(previousStep);
         String projectId = previousStepTyped.getProjectId();
         Layer currentLayer = protocol.getLayerOfProject(projectId);
         Optional<Layer> possibleSubLayer = protocol.getNextLayer(currentLayer);
@@ -206,40 +240,40 @@ public class MultiLayerActiveLearningWorkflow {
             if (possibleParentLayer.isPresent()) {
               subLayer.setCurrentBatch(0);
               nextSteps.add(
-                ReportImprovedPairsStep.builder()
-                  .build()
-                  .setProjectId(projectId)
-                  .getAsUntypedStep()
+                      ReportImprovedPairsStep.builder()
+                              .build()
+                              .setProjectId(projectId)
+                              .getAsUntypedStep()
               );
             } else {
               nextSteps.add(IdleStep.builder()
-                .build()
-                .setDescription("Finished")
-                .getAsUntypedStep()
+                      .build()
+                      .setDescription("Finished")
+                      .getAsUntypedStep()
               );
             }
           } else {
             nextSteps.add(
-              DetermineUncertainLinksStep.builder()
-                .build()
-                .setProjectId(projectId)
-                .getAsUntypedStep()
+                    DetermineUncertainLinksStep.builder()
+                            .build()
+                            .setProjectId(projectId)
+                            .getAsUntypedStep()
             );
           }
         } else {
           if (possibleParentLayer.isPresent()) {
             nextSteps.add(
-              ReportImprovedPairsStep.builder()
-                .build()
-                .setProjectId(projectId)
-                .getAsUntypedStep()
+                    ReportImprovedPairsStep.builder()
+                            .build()
+                            .setProjectId(projectId)
+                            .getAsUntypedStep()
             );
           } else {
             nextSteps.add(
-              DetermineUncertainLinksStep.builder()
-                .build()
-                .setProjectId(currentLayer.getProjectId())
-                .getAsUntypedStep()
+                    DetermineUncertainLinksStep.builder()
+                            .build()
+                            .setProjectId(currentLayer.getProjectId())
+                            .getAsUntypedStep()
             );
           }
         }
@@ -247,9 +281,9 @@ public class MultiLayerActiveLearningWorkflow {
 
       default -> {
         nextSteps.add(ProcessingStep.builder()
-          .type(StepType.WAIT_FOR_EXTERNAL_INPUT.toString())
-          .build()
-          .getAsUntypedStep()
+                .type(StepType.WAIT_FOR_EXTERNAL_INPUT.toString())
+                .build()
+                .getAsUntypedStep()
         );
       }
     }

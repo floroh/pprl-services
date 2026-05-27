@@ -2,7 +2,6 @@ package de.unileipzig.dbs.pprl.service.common.data.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,7 +20,7 @@ public class RecordDto {
 
   private RecordIdDto id;
 
-  private int datasetId;
+  private long datasetId;
 
   private EncodingIdDto encodingId;
 

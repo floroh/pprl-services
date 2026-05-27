@@ -34,8 +34,8 @@ import java.util.Set;
 
 public class DefaultRecordEncoder implements RecordEncoder, TagProvider {
 
-  private final Set<AttributeEncoderGroup> encoderGroups = new HashSet<>();
-  private final Set<BlockingKeyExtractor> blockingKeyExtractors = new HashSet<>();
+  protected final Set<AttributeEncoderGroup> encoderGroups = new HashSet<>();
+  protected final Set<BlockingKeyExtractor> blockingKeyExtractors = new HashSet<>();
 
   private TagTable tagTable = new TagTable();
 
@@ -74,13 +74,11 @@ public class DefaultRecordEncoder implements RecordEncoder, TagProvider {
     tagTable.clear();
   }
 
-  @Override
   public DefaultRecordEncoder addAttributeEncoderGroup(AttributeEncoderGroup attributeEncoderGroup) {
     encoderGroups.add(attributeEncoderGroup);
     return this;
   }
 
-  @Override
   public DefaultRecordEncoder addBlockingKeyExtractor(BlockingKeyExtractor blockingKeyExtractor) {
     blockingKeyExtractors.add(blockingKeyExtractor);
     return this;

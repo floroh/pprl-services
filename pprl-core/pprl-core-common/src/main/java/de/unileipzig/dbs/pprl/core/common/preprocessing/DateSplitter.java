@@ -21,6 +21,8 @@ import de.unileipzig.dbs.pprl.core.common.factories.AttributeFactory;
 import de.unileipzig.dbs.pprl.core.common.model.api.Attribute;
 import de.unileipzig.dbs.pprl.core.common.model.api.Record;
 import de.unileipzig.dbs.pprl.core.common.model.impl.PersonalAttributeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -31,6 +33,7 @@ import java.util.Optional;
 
 public class DateSplitter implements RecordPreprocessor {
 
+  private static final Logger log = LoggerFactory.getLogger(DateSplitter.class);
   private String attributeId = PersonalAttributeType.DATEOFBIRTH.name();
 
   private static final Map<String, String> componentNames = Map.of(
@@ -43,6 +46,8 @@ public class DateSplitter implements RecordPreprocessor {
   private String inputDatePattern = "yyyy-MM-dd";
 
   private boolean keepFullDate = false;
+
+  private boolean inPlace = false;
 
   @JsonIgnore
   private DateTimeFormatter dateFormatter;
@@ -64,7 +69,7 @@ public class DateSplitter implements RecordPreprocessor {
     if (dateFormatter == null) {
       this.dateFormatter = DateTimeFormatter.ofPattern(inputDatePattern);
     }
-    Record out = in.duplicate();
+    Record out = inPlace ? in : in.duplicate();
     Optional<Attribute> optionalAttribute = in.getAttribute(attributeId);
     if (optionalAttribute.isEmpty()) {
 //      if (areDateComponentsAvailable(in)) {
@@ -82,6 +87,19 @@ public class DateSplitter implements RecordPreprocessor {
       addDateComponentAttribute(out, "y", date.getYear());
     } catch (DateTimeParseException e) {
       String[] components = attribute.getAsString().split("\\.");
+      if (components.length == 1) {
+        // Handle YYYYMMDD format
+        String dateString = attribute.getAsString();
+        if (dateString.length() == 8) {
+          String year = dateString.substring(0, 4);
+          String month = dateString.substring(4, 6);
+          String day = dateString.substring(6, 8);
+          components = new String[]{day, month, year};
+        } else {
+//          log.warn("Could not parse and split date of birth.");
+          return out;
+        }
+      }
       addDateComponentAttribute(out, "d", Integer.parseInt(components[0]));
       addDateComponentAttribute(out, "M", Integer.parseInt(components[1]));
       addDateComponentAttribute(out, "y", Integer.parseInt(components[2]));
@@ -127,11 +145,29 @@ public class DateSplitter implements RecordPreprocessor {
     this.keepFullDate = keepFullDate;
   }
 
+  public boolean isInPlace() {
+    return inPlace;
+  }
+
+  public void setInPlace(boolean inPlace) {
+    this.inPlace = inPlace;
+  }
+
   public String getInputDatePattern() {
     return inputDatePattern;
   }
 
   public void setInputDatePattern(String inputDatePattern) {
     this.inputDatePattern = inputDatePattern;
+  }
+
+  @Override
+  public String toString() {
+    return "DateSplitter{" +
+            "attributeId='" + attributeId + '\'' +
+            ", inputDatePattern='" + inputDatePattern + '\'' +
+            ", keepFullDate=" + keepFullDate +
+            ", inPlace=" + inPlace +
+            '}';
   }
 }

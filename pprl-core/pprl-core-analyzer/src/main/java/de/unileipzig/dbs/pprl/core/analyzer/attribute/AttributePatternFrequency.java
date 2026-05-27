@@ -55,10 +55,7 @@ public class AttributePatternFrequency extends AttributeFrequencyAnalyzer {
     ResultSet resultSet = new ResultSet(getName());
     resultSet.setDescription(buildDescription());
 
-    List<String> attributeNames = attributes.keySet()
-      .stream()
-      .sorted()
-      .collect(Collectors.toList());
+    List<String> attributeNames = new ArrayList<>(attributes.keySet());
 
     for (String attributeName : attributeNames) {
       List<Attribute> curAttributes = attributes.get(attributeName);

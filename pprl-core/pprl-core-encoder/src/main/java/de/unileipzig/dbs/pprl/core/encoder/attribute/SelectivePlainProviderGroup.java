@@ -1,6 +1,5 @@
 package de.unileipzig.dbs.pprl.core.encoder.attribute;
 
-import de.unileipzig.dbs.pprl.core.common.factories.RecordFactory;
 import de.unileipzig.dbs.pprl.core.common.model.api.Record;
 import de.unileipzig.dbs.pprl.core.common.preprocessing.RecordPreprocessor;
 import de.unileipzig.dbs.pprl.core.encoder.crypto.KeyExtractor;

@@ -12,12 +12,9 @@ public class RecordIdFactory {
   }
 
   public static RecordId get(RecordIdVariant variant, String value) {
-    switch (variant) {
-      default:
-      case SIMPLE:
-        return new RecordIdMap(value);
-      case COMPOSED:
-        return RecordIdComposed.ofComposed(value);
-    }
+    return switch (variant) {
+      default -> new RecordIdMap(value);
+      case COMPOSED -> RecordIdComposed.ofComposed(value);
+    };
   }
 }

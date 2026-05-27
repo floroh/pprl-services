@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.unileipzig.dbs.pprl.core.common.model.api.RecordPair;
 import de.unileipzig.dbs.pprl.core.common.model.impl.MatchGrade;
 import de.unileipzig.dbs.pprl.core.encoder.attribute.AttributeFrequencyEncoderGroup;
+import de.unileipzig.dbs.pprl.core.matcher.TagUtils;
 import de.unileipzig.dbs.pprl.core.matcher.classification.model.ClassifierConfig;
 import de.unileipzig.dbs.pprl.core.matcher.classification.model.InstanceBinary;
 import de.unileipzig.dbs.pprl.core.matcher.classification.model.InstanceCommon;
@@ -299,10 +300,7 @@ public class WekaClassifier implements TrainableClassifier {
       .orElseGet(() -> new InstanceBinary(features));
     if (optionalLabel.isPresent() &&
       InstanceWeightMethod.WEIGHTED_PROBABILITY.equals(config.getInstanceWeightMethod())) {
-      boolean isFromClericalReview = recordPairWithSimilarity.getTags().stream()
-        .filter(tag -> tag.getTag().equals("METHOD"))
-        .anyMatch(tag -> tag.getStringValue().contains("CR"));
-      if (isFromClericalReview) {
+      if (TagUtils.isFromClericalReview(recordPairWithSimilarity)) {
         instance.setProbability(2 * instance.getProbability());
       }
     }

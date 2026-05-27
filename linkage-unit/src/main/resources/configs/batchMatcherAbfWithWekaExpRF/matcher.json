@@ -78,7 +78,7 @@
         "classAttributeValues" : [ "false", "true" ],
         "classifierMethod" : "WEKA_EXP_RANDOM_FOREST",
         "classBalancerMethod": "NONE",
-        "instanceWeightMethod": "NONE",
+        "instanceWeightMethod": "WEIGHTED_PROBABILITY",
         "classifierOptions": "-P 70 -attribute-importance -I 10 -J 10 -N 100 -num-slots 1 -K 0 -M 1.0 -V 0.001 -S 1 -depth 6",
         "trainingDataOutputDirectory": "/tmp/weka/trainingsdata"
       },

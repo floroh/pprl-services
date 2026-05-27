@@ -71,10 +71,7 @@ public abstract class AttributeFrequencyAnalyzer extends AttributeAnalyzer {
     ResultSet resultSet = getResultSet();
     resultSet.setDescription(buildDescription());
 
-    List<String> attributeNames = attributes.keySet()
-      .stream()
-      .sorted()
-      .collect(Collectors.toList());
+    List<String> attributeNames = new ArrayList<>(attributes.keySet());
 
     for (String attributeName : attributeNames) {
       List<Attribute> curAttributes = attributes.get(attributeName);

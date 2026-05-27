@@ -1,6 +1,10 @@
 spring:
   data:
     mongodb:
-      uri: mongodb://USER:PASSWORD@localhost:27017/?authSource=admin
-      database: pprllu
       auto-index-creation: true
+      authentication-database: admin
+      database: pprllu
+      username: luadmin
+      password: luadminpw
+      host: localhost
+      port: 27017

@@ -81,6 +81,16 @@ public class ProjectService {
     return mongoProject;
   }
 
+  public BatchMatchProject update(BatchMatchProjectDto projectDto) {
+    log.info("Updating project with id {}", projectDto.getProjectId());
+    BatchMatchProject mongoProject = BatchMatchProjectConverter.dtoToProject(projectDto);
+    if (mongoProject.getDatasetId() == 0) {
+      throw new RuntimeException("No dataset id set for project " + mongoProject.getProjectId());
+    }
+    save(mongoProject);
+    return mongoProject;
+  }
+
   public void save(BatchMatchProject project) {
     project.updateLastUpdateToCurrentTime();
     batchMatchProjectRepository.save(project);
@@ -103,7 +113,7 @@ public class ProjectService {
     DatabaseLinkageProcessDataset dataset =
       new DatabaseLinkageProcessDataset(this, reportUpdater.getReportingConfig());
     dataset.setProjectId(projectId);
-    dataset.setIdDataset(getProject(projectId).getDatasetId());
+    dataset.setDatasetId(getProject(projectId).getDatasetId());
     return dataset;
   }
 
@@ -314,12 +324,9 @@ public class ProjectService {
 
   private List<MongoRecordPair> retrieveExistingPairsByPairId(ObjectId projectId,
     Collection<MongoRecordPair> recordPairs) {
-    return removeReplacedRecordPairs(recordPairRepository.findMongoRecordPairByProjectIdAndPairIdIn(
-      projectId,
-      recordPairs.stream()
-        .map(MongoRecordPair::getPairId)
-        .collect(Collectors.toList())
-    ));
+    return getRecordPairsByRecordPairIds(projectId, recordPairs.stream()
+            .map(MongoRecordPair::getPairId)
+            .collect(Collectors.toList()));
   }
 
   private void persistOldAndNewPairs(ObjectId projectId, Collection<MongoRecordPair> newRecordPairs,
@@ -359,7 +366,7 @@ public class ProjectService {
   }
 
   public List<RecordPair> addGroundTruthTag(ObjectId projectId, List<RecordPair> pairs) {
-    int datasetId = getProject(projectId).getDatasetId();
+    long datasetId = getProject(projectId).getDatasetId();
     Optional<MongoGroundTruth> groundTruth = datasetService.getGroundTruth(datasetId);
     if (groundTruth.isPresent()) {
       log.info("Adding ground truth tag to {} pairs", pairs.size());
@@ -378,6 +385,10 @@ public class ProjectService {
 
   public List<RecordPair> getRecordPairsNoRecords(ObjectId projectId) {
     return removeReplacedRecordPairs(recordPairRepository.findMongoRecordPairByProjectIdNoRecords(projectId));
+  }
+
+  public List<MongoRecordPair> getRecordPairsByRecordPairIds(ObjectId projectId, Collection<String> pairIds) {
+    return removeReplacedRecordPairs(recordPairRepository.findMongoRecordPairByProjectIdAndPairIdIn(projectId, pairIds));
   }
 
   public List<RecordPair> getRecordPairsFilteredByProperties(ObjectId projectId, Set<String> properties) {

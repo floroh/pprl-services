@@ -149,7 +149,6 @@ public class ClassifierConfig implements Serializable {
   @Override
   public int hashCode() {
     int result;
-    long temp;
     result = attributeNames.hashCode();
     result = 31 * result + classAttributeName.hashCode();
     result = 31 * result + classAttributeValues.hashCode();
@@ -157,8 +156,7 @@ public class ClassifierConfig implements Serializable {
     result = 31 * result + classBalancerMethod.hashCode();
     result = 31 * result + instanceWeightMethod.hashCode();
     result = 31 * result + trainingDataOutputDirectory.hashCode();
-    temp = Double.doubleToLongBits(certaintyThreshold);
-    result = 31 * result + (int) (temp ^ (temp >>> 32));
+    result = 31 * result + Double.hashCode(certaintyThreshold);
     return result;
   }
 

@@ -1,6 +1,12 @@
 server:
   port: 8085
   address: 0.0.0.0
+  servlet:
+    session:
+      timeout: 30m
+  error:
+    include-message: always
+    include-stacktrace: always
 
 logging:
   level:
@@ -8,9 +14,15 @@ logging:
     de.unileipzig.dbs.pprl: info
 
 spring:
-  data.mongodb:
-      uri: mongodb://pmadmin:pmadminpw@pprl-services-mongo:27017/?authSource=admin
-      database: pprl-protocol
+  data:
+    mongodb:
+      auto-index-creation: true
+      authentication-database: admin
+      database: pprlpm
+      username: pmadmin
+      password: pmadminpw
+      host: pprl-services-mongo
+      port: 27017
 
 management:
   jmx:
@@ -21,8 +33,11 @@ management:
     web:
       exposure:
         include: "health,metrics,info,mappings"
+springdoc:
+  show-actuator: true
 
 pprl:
   services:
     data-owner-endpoint: "http://pprl-do:8081"
     linkage-unit-endpoint: "http://pprl-lu:8082"
+    data-generator-endpoint: "http://pprl-dg:8086"

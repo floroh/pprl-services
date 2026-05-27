@@ -70,10 +70,9 @@ public class SerializableTable {
     if (o == this) {
       return true;
     }
-    if (!(o instanceof SerializableTable)) {
+    if (!(o instanceof SerializableTable other)) {
       return false;
     }
-    final SerializableTable other = (SerializableTable) o;
     if (!other.canEqual((Object) this)) {
       return false;
     }

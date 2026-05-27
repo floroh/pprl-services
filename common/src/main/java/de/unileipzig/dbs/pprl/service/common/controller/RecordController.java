@@ -55,22 +55,22 @@ public class RecordController {
   }
 
   @Operation(summary = "Get all records from the database", tags = TAG)
-  @GetMapping("/{idDataset}/all")
-  public List<RecordDto> getAll(@PathVariable int idDataset,
+  @GetMapping("/{datasetId}/all")
+  public List<RecordDto> getAll(@PathVariable long datasetId,
     @RequestParam(required = false, defaultValue = "-1") Integer limit) {
-    List<RecordDto> allRecordsAsDto = datasetDtoService.getAllRecordsAsDto(idDataset);
+    List<RecordDto> allRecordsAsDto = datasetDtoService.getAllRecordsAsDto(datasetId);
     if (limit > 0) {
       allRecordsAsDto = allRecordsAsDto.subList(0, Math.min(allRecordsAsDto.size(), limit));
     }
-    log.info("Responding with {} records from dataset {}", allRecordsAsDto.size(), idDataset);
+    log.info("Responding with {} records from dataset {}", allRecordsAsDto.size(), datasetId);
     return allRecordsAsDto;
   }
 
   @Operation(summary = "Get the number of records in the database", tags = TAG)
-  @GetMapping("/{idDataset}/count")
-  public Long count(@PathVariable int idDataset) {
-    Long numberOfRecords = datasetDtoService.getNumberOfRecords(idDataset);
-    log.debug("Retrieved number of records ({}) from dataset {}", numberOfRecords, idDataset);
+  @GetMapping("/{datasetId}/count")
+  public Long count(@PathVariable long datasetId) {
+    Long numberOfRecords = datasetDtoService.getNumberOfRecords(datasetId);
+    log.debug("Retrieved number of records ({}) from dataset {}", numberOfRecords, datasetId);
     return numberOfRecords;
   }
 
@@ -87,22 +87,23 @@ public class RecordController {
   }
 
   @Operation(summary = "Retrieve a persisted record by its record id (source + local)", tags = TAG)
-  @PostMapping("/findByRecordId/{idDataset}")
-  public RecordDto findByRecordId(@PathVariable String idDataset, @RequestBody RecordIdDto recordIdDto) {
-    return datasetDtoService.getRecordAsDto(Integer.parseInt(idDataset), recordIdDto);
+  @PostMapping("/findByRecordId/{datasetId}")
+  public RecordDto findByRecordId(@PathVariable long datasetId, @RequestBody RecordIdDto recordIdDto) {
+    return datasetDtoService.getRecordAsDto(datasetId, recordIdDto);
   }
 
   @Operation(summary = "Retrieve a persisted record by source", tags = TAG)
-  @PostMapping("/findBySource/{idDataset}")
-  public List<RecordDto> findByDatasetAndSource(@PathVariable String idDataset, @RequestBody String source) {
-    return datasetDtoService.getRecordsBySourceAsDto(Integer.parseInt(idDataset), source);
+  @PostMapping("/findBySource/{datasetId}")
+  public List<RecordDto> findByDatasetAndSource(@PathVariable long datasetId, @RequestBody String source) {
+    return datasetDtoService.getRecordsBySourceAsDto(datasetId, source);
   }
 
   @Operation(summary = "Clear the record database", tags = TAG)
-  @DeleteMapping("/{idDataset}/all")
-  public void deleteAll(@PathVariable int idDataset) {
-    datasetDtoService.deleteAllRecords(idDataset);
-    analysisService.deleteAnalysisResults(idDataset);
+  @DeleteMapping("/{datasetId}/all")
+  public void deleteAll(@PathVariable long datasetId) {
+    datasetDtoService.deleteAllRecords(datasetId);
+    analysisService.deleteAnalysisResults(datasetId);
+    analysisService.deleteTags(datasetId);
   }
 
   @Operation(summary = "Add a dataset description", tags = TAG)
@@ -113,38 +114,39 @@ public class RecordController {
 
   @Operation(summary = "Get available dataset ids", tags = TAG)
   @GetMapping("/datasets/ids")
-  public List<Integer> getDatasetIds() {
+  public List<Long> getDatasetIds() {
     return datasetDtoService.getDatasetIds();
   }
 
   @Operation(summary = "Get dataset description", tags = TAG)
-  @GetMapping("/datasets/{idDataset}")
-  public Optional<DatasetDto> getDatasetDescription(@PathVariable int idDataset) {
-    return datasetDtoService.getDataset(idDataset);
+  @GetMapping("/datasets/{datasetId}")
+  public Optional<DatasetDto> getDatasetDescription(@PathVariable long datasetId) {
+    return datasetDtoService.getDataset(datasetId);
   }
 
   @Operation(summary = "Delete dataset", tags = TAG)
-  @DeleteMapping("/datasets/{idDataset}")
-  public void deleteDataset(@PathVariable int idDataset) {
-    datasetDtoService.deleteDataset(idDataset);
-    analysisService.deleteAnalysisResults(idDataset);
+  @DeleteMapping("/datasets/{datasetId}")
+  public void deleteDataset(@PathVariable long datasetId) {
+    datasetDtoService.deleteDataset(datasetId);
+    analysisService.deleteAnalysisResults(datasetId);
+    analysisService.deleteTags(datasetId);
   }
 
   @Operation(summary = "Get available dataset descriptions, optionally filtered by plaintextDatasetId", tags =
     TAG)
   @GetMapping("/datasets")
-  public List<DatasetDto> getDatasetDescriptions(@RequestParam(required = false) Integer plaintextDatasetId) {
+  public List<DatasetDto> getDatasetDescriptions(@RequestParam(required = false) Long plaintextDatasetId) {
     return datasetDtoService.getDatasets(Optional.ofNullable(plaintextDatasetId));
   }
 
   @Operation(summary = "Compare dataset", tags = TAG)
-  @GetMapping("/compare/{idDataset0}/{idDataset1}")
-  public Integer compareDatasets(@PathVariable int idDataset0, @PathVariable int idDataset1) {
-    List<RecordDto> records0 = datasetDtoService.getAllRecordsAsDto(idDataset0);
+  @GetMapping("/compare/{datasetId0}/{datasetId1}")
+  public Integer compareDatasets(@PathVariable long datasetId0, @PathVariable long datasetId1) {
+    List<RecordDto> records0 = datasetDtoService.getAllRecordsAsDto(datasetId0);
     Set<String> fingerPrint0 = records0.stream()
       .map(RecordController::getAttributesFingerPrint)
       .collect(Collectors.toSet());
-    List<RecordDto> records1 = datasetDtoService.getAllRecordsAsDto(idDataset1);
+    List<RecordDto> records1 = datasetDtoService.getAllRecordsAsDto(datasetId1);
     long equalFingerPrintCount = 0;
     for (RecordDto record : records1) {
       if (fingerPrint0.contains(getAttributesFingerPrint(record))) {
@@ -152,7 +154,7 @@ public class RecordController {
       }
     }
     log.info("Found {} equal records between datasets {} ({} records) and {} ({} records)",
-      equalFingerPrintCount, idDataset0, records0.size(), idDataset1, records1.size());
+      equalFingerPrintCount, datasetId0, records0.size(), datasetId1, records1.size());
     return (int) equalFingerPrintCount;
   }
 

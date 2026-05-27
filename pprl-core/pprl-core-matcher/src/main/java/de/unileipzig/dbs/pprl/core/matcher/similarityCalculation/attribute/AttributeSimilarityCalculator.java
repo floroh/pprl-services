@@ -18,7 +18,7 @@ package de.unileipzig.dbs.pprl.core.matcher.similarityCalculation.attribute;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import de.unileipzig.dbs.pprl.core.common.model.api.Attribute;
-import de.unileipzig.dbs.pprl.core.matcher.model.AttributePair;
+import de.unileipzig.dbs.pprl.core.common.model.impl.AttributePair;
 import de.unileipzig.dbs.pprl.core.matcher.model.AttributePairWithSimilarity;
 import de.unileipzig.dbs.pprl.core.matcher.model.NamedAttributePair;
 import de.unileipzig.dbs.pprl.core.matcher.similarityCalculation.missing.MissingSimilarityStrategy;

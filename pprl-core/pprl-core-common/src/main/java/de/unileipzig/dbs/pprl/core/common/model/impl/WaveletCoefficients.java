@@ -38,7 +38,7 @@ public class WaveletCoefficients implements NumericArray<Double> {
 
   @Override
   public List<Double> getElements() {
-    return new ArrayList<Double>(Arrays.asList(coeffs));
+    return new ArrayList<>(Arrays.asList(coeffs));
   }
 
   @Override

@@ -1,0 +1,32 @@
+server:
+  port: 8086
+  address: localhost
+  servlet:
+    session:
+      timeout: 30m
+
+logging:
+  level:
+    root: info
+    de.unileipzig.dbs.pprl: debug
+
+spring:
+  profiles.active: mongo
+  jpa.hibernate.ddl-auto: update
+
+management:
+  jmx:
+    metrics:
+      export:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "health,metrics,info,mappings"
+springdoc:
+  show-actuator: true
+
+datasets:
+  usvr:
+    connection-string: "mongodb://root:example@localhost:27018/?authSource=admin"
+    database: usvr

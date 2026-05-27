@@ -23,10 +23,7 @@ import de.unileipzig.dbs.pprl.core.analyzer.results.ResultSet;
 import de.unileipzig.dbs.pprl.core.common.model.api.Record;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -44,10 +41,7 @@ public class ClusterPairwiseEqual extends ClusterPairwiseDiff {
     Map<String, DescriptiveStatistics> stats =
       determineAttributewiseEqualityWithinClusters(clusters);
 
-    List<String> attributeNames = stats.keySet()
-      .stream()
-      .sorted()
-      .collect(Collectors.toList());
+    List<String> attributeNames = new ArrayList<>(stats.keySet());
 
     for (String attributeName : attributeNames) {
       Result result = new Result();
@@ -63,16 +57,15 @@ public class ClusterPairwiseEqual extends ClusterPairwiseDiff {
 
   protected Map<String, DescriptiveStatistics> determineAttributewiseEqualityWithinClusters(
     Map<String, List<Record>> clusters) {
-    Map<String, DescriptiveStatistics> stats = new HashMap<>();
-    stats.put(FULL_RECORD, new DescriptiveStatistics());
-
+    Map<String, DescriptiveStatistics> stats = new LinkedHashMap<>();
+    DescriptiveStatistics fullRecordStats = new DescriptiveStatistics();
     for (List<Record> cluster : clusters.values()) {
       List<Pair<Record>> recordPairs = buildRecordPairs(cluster);
       //TODO Normalize on number of pairs to prevent disproportional influence of large clusters?
       for (Pair<Record> recordPair : recordPairs) {
         double recordDistance = 0;
 
-        for (AttributePair ap : buildAttributePairs(recordPair)) {
+        for (AttributePair ap : buildAttributePairs(recordPair, false)) {
           if (!stats.containsKey(ap.getAttributeName())) {
             stats.put(ap.getAttributeName(), new DescriptiveStatistics());
           }
@@ -81,9 +74,10 @@ public class ClusterPairwiseEqual extends ClusterPairwiseDiff {
             .addValue(attrDistance);
           recordDistance += attrDistance;
         }
-        stats.get(FULL_RECORD).addValue(recordDistance);
+        fullRecordStats.addValue(recordDistance);
       }
     }
+    stats.put(FULL_RECORD, fullRecordStats);
     return stats;
   }
 

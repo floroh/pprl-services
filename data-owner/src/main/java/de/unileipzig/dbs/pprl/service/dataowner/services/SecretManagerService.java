@@ -16,6 +16,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static de.unileipzig.dbs.pprl.service.common.Constants.DUMMY_LINKAGE_PROJECT;
+
 /**
  * Manages secrets that are needed for project-specific encodings
  */
@@ -40,8 +42,8 @@ public class SecretManagerService {
     try {
       KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
       ks.load(new FileInputStream(config.getLocation()), config.getPassword().toCharArray());
-      keyStores.put("exampleProject", ks);
-      log.info("Added keystore for exampleProject with " + ks.size() + " keys");
+      keyStores.put(DUMMY_LINKAGE_PROJECT, ks);
+      log.info("Added keystore for " + DUMMY_LINKAGE_PROJECT + " with " + ks.size() + " keys");
     } catch (Exception e) {
       log.error("Failed to load default keystore: " + e.fillInStackTrace());
     }

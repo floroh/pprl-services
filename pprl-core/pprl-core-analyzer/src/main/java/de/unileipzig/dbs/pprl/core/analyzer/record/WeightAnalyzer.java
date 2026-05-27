@@ -18,6 +18,7 @@ import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.stream.Collectors;
 
@@ -30,9 +31,17 @@ public class WeightAnalyzer extends RecordAnalyzer {
   public static final String U_WEIGHT = "u-weight";
   public static final String NORM_POSTFIX = " (norm)";
   public static final String WEIGHT = "weight";
+
+  private Map<String, Double> attributeErrors;
+
   private AttributeMostFrequent attributeMostFrequent;
 
   private ClusterPairwiseEqual clusterPairwiseEqual;
+
+  public WeightAnalyzer(Map<String, Double> attributeErrors) {
+    this();
+    this.attributeErrors = attributeErrors;
+  }
 
   public WeightAnalyzer() {
     init();
@@ -53,8 +62,7 @@ public class WeightAnalyzer extends RecordAnalyzer {
     Map<String, List<Attribute>> attributes = AttributeAnalyzer.prepareRecords(records);
     List<String> attributeNames = attributes.keySet()
       .stream()
-      .sorted()
-      .collect(Collectors.toList());
+      .toList();
     if (attributeNames.isEmpty()) {
       return resultSet;
     }
@@ -67,17 +75,23 @@ public class WeightAnalyzer extends RecordAnalyzer {
       return resultSet;
     }
     Table errorTable = clusterPairwiseEqual.analyze(cluster).getAsTable();
-    Map<String, Double> attributeErrors = new HashMap<>();
+    if (attributeErrors == null) {
+      attributeErrors = new HashMap<>();
+    }
     errorTable.stream().forEach(r -> {
       String attrName = r.getString(HEADER_ATTRIBUTE);
       Double attrError = r.getDouble("mean");
-      attributeErrors.put(attrName, attrError);
+      if (!attributeErrors.containsKey(attrName)) {
+        attributeErrors.put(attrName, attrError);
+      }
     });
-//    StringColumn colAttribute = StringColumn.create(HEADER_ATTRIBUTE);
-//    DoubleColumn colAvgFrequency = DoubleColumn.create("Avg. frequency");
 
     for (String attributeName : attributeNames) {
-      DoubleColumn colFreq = attributeFrequencies.get(attributeName)
+      Table table = attributeFrequencies.get(attributeName);
+      if (table == null) {
+        continue;
+      }
+      DoubleColumn colFreq = table
         .doubleColumn(HEADER_RELATIVE_FREQUENCY);
       colFreq.sortDescending();
       double equalityByChance = colFreq.asList().stream().mapToDouble(d -> d)
@@ -86,31 +100,30 @@ public class WeightAnalyzer extends RecordAnalyzer {
       OptionalDouble optionalAvgFrequency = colFreq.asList().stream().mapToDouble(d -> d).average();
 
       if (!attributeErrors.containsKey(attributeName)) {
-        logger.info("No error for attribute " + attributeName + " found. Skipping attribute.");
+        logger.info("{}: No error found. Skipping attribute.", attributeName);
         continue;
       }
       Double avgError = attributeErrors.get(attributeName);
       if (avgError == 0) {
-        logger.warn("AvgError of true duplicates for attribute " + attributeName + " is 0 (all equal)." +
-          " To be able to calculate weights it is set to 0.01");
+        logger.warn("{}: AvgError of true duplicates is 0 (all equal)." +
+          " To be able to calculate weights it is set to 0.01", attributeName);
         avgError = 0.01;
       } else if (avgError == 1.0) {
-        logger.warn("AvgError of true duplicates for attribute " + attributeName + " is 1 (all different)." +
-          " To be able to calculate weights it is set to 0.9999");
+        logger.warn("{}: AvgError of true duplicates is 1 (all different)." +
+          " To be able to calculate weights it is set to 0.9999", attributeName);
         avgError = 0.9999;
       }
       double probM = WeightUtils.getProbM(avgError);
 //      double probU = WeightUtils.getProbU(optionalAvgFrequency.getAsDouble());
       double probU = WeightUtils.getProbU(equalityByChance);
       if (probU == 1) {
-        logger.warn("u-Probability is for attribute " + attributeName + " is 1." +
-          " To be able to calculate weights it is set to 0.99");
+        logger.warn("{}: u-Probability is 1. To be able to calculate weights it is set to 0.99", attributeName);
         probU = 0.99;
       }
-      logger.info("p(m) = " + probM + ", p(u) = " + probU);
+      logger.info("{}: p(m) = {}, p(u) = {}", attributeName, probM, probU);
       double weightM = WeightUtils.getWeightM(probM, probU);
       double weightU = WeightUtils.getWeightU(probM, probU);
-      logger.info("w(m) = " + weightM + ", w(u) = " + weightU);
+      logger.info("{}: w(m) = {}, w(u) = {}", attributeName, weightM, weightU);
 //      System.out.println(attributeName + ": "
 //        + "avgError=" + avgError
 //        + ", pM=" + probM
@@ -141,6 +154,10 @@ public class WeightAnalyzer extends RecordAnalyzer {
 
   private void addNormalizedWeights(ResultSet resultSet) {
     Table resultSetAsTable = resultSet.getAsTable();
+    if (!resultSetAsTable.columnNames().contains(M_WEIGHT) || !resultSetAsTable.columnNames().contains(U_WEIGHT)) {
+      logger.info("Cannot compute normalized weights because weight columns are missing.");
+      return;
+    }
     BigDecimal maxMWeight =
       BigDecimal.valueOf(AggregateFunctions.max.summarize(resultSetAsTable.doubleColumn(M_WEIGHT)));
     BigDecimal minUWeight =
@@ -156,6 +173,11 @@ public class WeightAnalyzer extends RecordAnalyzer {
       result.addMetric(U_WEIGHT + NORM_POSTFIX, normalizedUWeight);
       result.addMetric(WEIGHT + NORM_POSTFIX, normalizedMWeight.subtract(normalizedUWeight));
     }
+  }
+
+  private Optional<Double> getAttributeError(String attributeName) {
+    if (attributeErrors == null) return Optional.empty();
+    return Optional.ofNullable(attributeErrors.get(attributeName));
   }
 
   protected String buildDescription() {

@@ -59,12 +59,12 @@ public class MongoRecordUtils {
   }
 
   public static void removeNewFlagFromRecords(ProjectService projectService,
-    int idDataset, Collection<RecordPair> recordPairs) {
+    long datasetId, Collection<RecordPair> recordPairs) {
     Collection<MongoRecord> records = recordPairs.stream()
       .flatMap(recordPair -> Stream.of((MongoRecord) recordPair.getLeftRecord(), (MongoRecord) recordPair.getRightRecord()))
       .peek(record -> record.getProperties().remove(NEW))
       .collect(Collectors.toList());
-    projectService.getDatasetService().addRecords(idDataset, records);
+    projectService.getDatasetService().addRecords(datasetId, records);
   }
 
   public static <T extends RecordPair> Collection<T> removeLabelTag(Collection<T> recordPairs) {

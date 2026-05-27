@@ -15,7 +15,6 @@ import java.util.List;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonPropertyOrder({"unique", "source", "local", "global", "blocks"})
@@ -30,7 +29,11 @@ public class RecordIdDto {
   private String unique;
 
   @Singular
-  private List<String> blocks = new ArrayList<>();
+  private List<String> blocks;
+
+  public RecordIdDto() {
+    blocks = new ArrayList<>();
+  }
 
   public RecordIdDto duplicate() {
     RecordIdDtoBuilder builder = RecordIdDto.builder()

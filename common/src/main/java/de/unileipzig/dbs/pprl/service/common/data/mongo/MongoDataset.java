@@ -1,11 +1,15 @@
 package de.unileipzig.dbs.pprl.service.common.data.mongo;
 
+import de.unileipzig.dbs.pprl.service.common.data.dto.EncodingIdDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Singular;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.Map;
 
 @Document
 @Data
@@ -15,9 +19,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class MongoDataset {
 
   @Id
-  private int datasetId;
-
-  private int plaintextDatasetId;
+  private Long datasetId;
 
   private String datasetName;
+
+  private Long plaintextDatasetId;
+
+  private EncodingIdDto encodingIdDto;
+
+  @Singular
+  private Map<String, String> properties;
 }

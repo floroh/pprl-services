@@ -20,6 +20,7 @@ import de.unileipzig.dbs.pprl.core.common.model.api.Attribute;
 import de.unileipzig.dbs.pprl.core.common.model.api.Record;
 import de.unileipzig.dbs.pprl.core.common.model.api.RecordCluster;
 import de.unileipzig.dbs.pprl.core.common.model.api.RecordId;
+import de.unileipzig.dbs.pprl.core.common.model.impl.PersonalAttributeType;
 import de.unileipzig.dbs.pprl.core.common.model.impl.RecordClusterSimple;
 
 import java.util.Collection;
@@ -59,10 +60,8 @@ public class RecordUtils {
 
   public static <R extends Record> Map<String, List<Attribute>> groupByAttributeName(Collection<R> records) {
     final List<Map<String, Attribute>> attributesList = records.stream()
-      .sequential()
       .map(Record::getAttributes)
       .collect(Collectors.toList());
-    //TODO Rewrite as this implementation needs to much memory
     return HelperUtils.listOfMapsToMapOfLists(attributesList);
   }
 

@@ -15,7 +15,7 @@ public class DatasetReporting {
     this.datasetMongoService = datasetMongoService;
   }
 
-  public ReportGroup createReportOnDataset(int datasetId) {
+  public ReportGroup createReportOnDataset(long datasetId) {
     return ReportGroup.builder().name(DATASET_PROPERTIES).report(Report.builder()
         .name(SIZE)
         .type(ReportType.TEXT)

@@ -19,11 +19,11 @@ import java.util.stream.Collectors;
 public class MongoGroundTruth {
 
   @Id
-  private int datasetId;
+  private long datasetId;
 
   private Collection<MongoRecordIdPair> recordIdPairs;
 
-  public MongoGroundTruth(int datasetId, Collection<MongoRecordIdPair> recordIdPairs) {
+  public MongoGroundTruth(long datasetId, Collection<MongoRecordIdPair> recordIdPairs) {
     this.datasetId = datasetId;
     this.recordIdPairs = recordIdPairs;
   }

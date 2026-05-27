@@ -22,7 +22,6 @@ import de.unileipzig.dbs.pprl.core.common.model.api.RecordPair;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -155,7 +154,7 @@ public final class CandidatePairGrouper<P extends RecordPair> {
   }
 
   private Map<Record, List<P>> groupSequential(Side side) {
-    final HashMap<Record, List<P>> nodes = new HashMap<Record, List<P>>();
+    final HashMap<Record, List<P>> nodes = new HashMap<>();
 
     for (final P candidate : this.classifiedMatches) {
       final Record rec = candidate.getRecord(side);
@@ -164,7 +163,7 @@ public final class CandidatePairGrouper<P extends RecordPair> {
         final List<P> candidates = nodes.get(rec);
         candidates.add(candidate);
       } else {
-        final List<P> candidates = new ArrayList<P>();
+        final List<P> candidates = new ArrayList<>();
         candidates.add(candidate);
         nodes.put(rec, candidates);
       }
@@ -182,7 +181,7 @@ public final class CandidatePairGrouper<P extends RecordPair> {
   }
 
   private Map<Record, List<Record>> groupAndMapRecordsSequential(Side side) {
-    final HashMap<Record, List<Record>> nodes = new HashMap<Record, List<Record>>();
+    final HashMap<Record, List<Record>> nodes = new HashMap<>();
 
     for (final P candidate : this.classifiedMatches) {
       final Record rec = candidate.getRecord(side);
@@ -192,7 +191,7 @@ public final class CandidatePairGrouper<P extends RecordPair> {
         final List<Record> candidates = nodes.get(rec);
         candidates.add(mappedCandidate);
       } else {
-        final List<Record> candidates = new ArrayList<Record>();
+        final List<Record> candidates = new ArrayList<>();
         candidates.add(mappedCandidate);
         nodes.put(rec, candidates);
       }
@@ -309,7 +308,7 @@ public final class CandidatePairGrouper<P extends RecordPair> {
   }
 
   private Map<Record, Long> groupAndCountSequential(Side side) {
-    final Map<Record, Long> nodes = new HashMap<Record, Long>();
+    final Map<Record, Long> nodes = new HashMap<>();
 
     for (final P candidate : this.classifiedMatches) {
       final Record rec = candidate.getRecord(side);
@@ -341,11 +340,11 @@ public final class CandidatePairGrouper<P extends RecordPair> {
 
   private Map<Boolean, Long> countLinksByTypeSequential(Map<Record, Long> nodes) {
     final Set<Entry<Record, Long>> entrySet = nodes.entrySet();
-    final Map<Boolean, Long> countMap = new HashMap<Boolean, Long>();
+    final Map<Boolean, Long> countMap = new HashMap<>();
 
     for (final Entry<Record, Long> entry : entrySet) {
       final boolean isOneToOneLink = (entry.getValue() == 1);
-      countMap.merge(Boolean.valueOf(isOneToOneLink), 1L, Long::sum);
+      countMap.merge(isOneToOneLink, 1L, Long::sum);
     }
 
     return countMap;

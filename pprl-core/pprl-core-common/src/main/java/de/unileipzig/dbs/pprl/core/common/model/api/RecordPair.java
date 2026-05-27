@@ -52,13 +52,10 @@ public interface RecordPair extends RecordIdPair {
   }
 
   default Record getRecord(Side side) {
-    switch (side) {
-      case LEFT:
-        return getLeftRecord();
-      case RIGHT:
-        return getRightRecord();
-    }
-    throw new RuntimeException();
+    return switch (side) {
+      case LEFT -> getLeftRecord();
+      case RIGHT -> getRightRecord();
+    };
   }
 
   static <T extends RecordPair> T sortRecords(T recordPair) {
@@ -88,16 +85,11 @@ public interface RecordPair extends RecordIdPair {
     LEFT, RIGHT;
 
     public static Side other(Side side) {
-      switch (side) {
-        case LEFT:
-          return RIGHT;
-
-        case RIGHT:
-          return LEFT;
-
-        default:
-          return null;
-      }
+      return switch (side) {
+        case LEFT -> RIGHT;
+        case RIGHT -> LEFT;
+        default -> null;
+      };
     }
   }
 }

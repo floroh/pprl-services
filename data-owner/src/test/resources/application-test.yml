@@ -1,0 +1,8 @@
+spring:
+  data:
+    mongodb:
+      auto-index-creation: true
+      authentication-database: admin
+      database: pprldo
+      username: doadmin
+      password: doadminpw

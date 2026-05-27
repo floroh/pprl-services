@@ -1,14 +1,27 @@
 package de.unileipzig.dbs.pprl.service.dataowner.controller;
 
+import de.unileipzig.dbs.pprl.core.common.model.api.BitVector;
+import de.unileipzig.dbs.pprl.core.encoder.RecordEncoderSerialization;
+import de.unileipzig.dbs.pprl.core.encoder.attribute.AttributeEncoder;
+import de.unileipzig.dbs.pprl.core.encoder.attribute.AttributeEncoderGroup;
+import de.unileipzig.dbs.pprl.core.encoder.attribute.BitVectorEncoder;
+import de.unileipzig.dbs.pprl.core.encoder.attribute.MultiAttributeEncoderGroup;
+import de.unileipzig.dbs.pprl.core.encoder.feature.FeatureEncoder;
+import de.unileipzig.dbs.pprl.core.encoder.record.DefaultRecordEncoder;
+import de.unileipzig.dbs.pprl.core.encoder.record.RecordEncoder;
 import de.unileipzig.dbs.pprl.service.common.data.dto.EncodingDto;
 import de.unileipzig.dbs.pprl.service.common.data.dto.EncodingIdDto;
 import de.unileipzig.dbs.pprl.service.common.data.dto.RecordRequirementsDto;
 import de.unileipzig.dbs.pprl.service.common.utils.LocalConfigHandlerUtils;
+import de.unileipzig.dbs.pprl.service.dataowner.data.dto.EncodingCreationRequestDto;
+import de.unileipzig.dbs.pprl.service.dataowner.data.dto.EncodingCreationResponseDto;
 import de.unileipzig.dbs.pprl.service.dataowner.services.EncoderProviderService;
 import de.unileipzig.dbs.pprl.service.dataowner.services.EncoderService;
+import de.unileipzig.dbs.pprl.service.dataowner.services.EncodingCreationService;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,9 +32,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.lang.reflect.Field;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 @Timed
 @Tag(name = ConfigController.TAG, description = "Manage encoding configurations")
@@ -32,12 +52,13 @@ public class ConfigController {
   public static final String TAG = "Configuration management";
 
   private final EncoderProviderService encoderProviderService;
-
+  private final EncodingCreationService encodingCreationService;
   private final EncoderService encoderService;
 
-  public ConfigController(EncoderProviderService encoderProviderService,
-    EncoderService encoderService) {
+  public ConfigController(EncoderProviderService encoderProviderService, EncodingCreationService encodingCreationService,
+                          EncoderService encoderService) {
     this.encoderProviderService = encoderProviderService;
+    this.encodingCreationService = encodingCreationService;
     this.encoderService = encoderService;
   }
 
@@ -59,7 +80,6 @@ public class ConfigController {
     encoderProviderService.removeEncoding(encodingId);
     encoderService.removeEncoder(encodingId);
   }
-
 
   @Operation(summary = "Get the configuration by its ID", tags = ConfigController.TAG)
   @PostMapping("/findById")
@@ -97,4 +117,9 @@ public class ConfigController {
       .collect(Collectors.toList());
   }
 
+  @Operation(summary = "Create an encoding configuration", tags = ConfigController.TAG)
+  @PostMapping("/create")
+  public EncodingCreationResponseDto createEncoding(@RequestBody EncodingCreationRequestDto requestDto) {
+    return encodingCreationService.createEncoding(requestDto);
+  }
 }

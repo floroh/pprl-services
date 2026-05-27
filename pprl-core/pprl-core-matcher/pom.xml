@@ -6,7 +6,7 @@
     <parent>
         <groupId>de.unileipzig.dbs</groupId>
         <artifactId>pprl-core-parent</artifactId>
-        <version>0.1.0-SNAPSHOT</version>
+        <version>2.0</version>
     </parent>
     <artifactId>pprl-core-matcher</artifactId>
     <packaging>jar</packaging>
@@ -14,7 +14,7 @@
     <name>PPRL-Core - Matcher</name>
 
     <properties>
-        <dep.commons-collections.version>4.4</dep.commons-collections.version>
+        <dep.commons-collections.version>4.5.0</dep.commons-collections.version>
         <dep.debatty.string-similarity.version>2.0.0</dep.debatty.string-similarity.version>
         <dep.jgrapht.version>1.5.2</dep.jgrapht.version>
         <dep.weka.version>3.8.6</dep.weka.version>
@@ -24,12 +24,12 @@
         <dependency>
             <groupId>de.unileipzig.dbs</groupId>
             <artifactId>pprl-core-common</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
+            <version>2.0</version>
         </dependency>
         <dependency>
             <groupId>de.unileipzig.dbs</groupId>
             <artifactId>pprl-core-encoder</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
+            <version>2.0</version>
         </dependency>
 
         <dependency>

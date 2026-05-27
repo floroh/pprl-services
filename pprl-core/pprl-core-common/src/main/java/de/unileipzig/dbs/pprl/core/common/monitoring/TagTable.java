@@ -19,20 +19,26 @@ public class TagTable {
 
   public static final String ATTRIBUTE = "attribute";
   public static final String TAG = "tag";
+  public static final String LINK_TAG = "tag";
   public static final String TAG_STRING = "tagString";
   public static final String TAG_NUMERIC = "tagNumeric";
+  public static final String TAG_TABLE_NAME = "Tags";
+  public static final String TAG_TYPE = "Type";
+  public static final String TAG_ORIGIN = "Origin";
 
   private final Table table;
 
   public TagTable() {
     table = Table.create(
-      "Tags",
+            TAG_TABLE_NAME,
       StringColumn.create(ID0),
       StringColumn.create(ID1),
       StringColumn.create(ATTRIBUTE),
       StringColumn.create(TAG),
       StringColumn.create(TAG_STRING),
-      DoubleColumn.create(TAG_NUMERIC)
+      DoubleColumn.create(TAG_NUMERIC),
+      StringColumn.create(TAG_TYPE),
+      StringColumn.create(TAG_ORIGIN)
     );
   }
 
@@ -48,7 +54,7 @@ public class TagTable {
     }
   }
 
-  public static TagTable create(List<Tag> tags) {
+  public static TagTable create(Collection<Tag> tags) {
     TagTable tagTable = new TagTable();
     return tagTable.addTags(tags);
   }
@@ -71,7 +77,7 @@ public class TagTable {
   }
 
   public TagTable addTag(String id0, String id1, String attribute, String tag, String stringValue,
-    Double numericValue) {
+                         Double numericValue) {
     Row row = table.appendRow();
     row.setString(ID0, id0);
     row.setString(ID1, id1);
@@ -79,6 +85,20 @@ public class TagTable {
     row.setString(TAG, tag);
     row.setString(TAG_STRING, stringValue);
     row.setDouble(TAG_NUMERIC, numericValue == null ? Double.NaN : numericValue);
+    return this;
+  }
+
+  public TagTable addTag(String id0, String id1, String attribute, String tag, String stringValue,
+    Double numericValue, String type, String origin) {
+    Row row = table.appendRow();
+    row.setString(ID0, id0);
+    row.setString(ID1, id1);
+    row.setString(ATTRIBUTE, attribute);
+    row.setString(TAG, tag);
+    row.setString(TAG_STRING, stringValue);
+    row.setDouble(TAG_NUMERIC, numericValue == null ? Double.NaN : numericValue);
+    row.setString(TAG_TYPE, type);
+    row.setString(TAG_ORIGIN, origin);
     return this;
   }
 
@@ -90,7 +110,7 @@ public class TagTable {
   public TagTable addTag(Tag tag) {
     return addTag(
       tag.getId0(), tag.getId1(), tag.getAttribute(), tag.getTag(), tag.getStringValue(),
-      tag.getNumericValue()
+      tag.getNumericValue(), tag.getType(), tag.getOrigin()
     );
   }
 
@@ -102,7 +122,9 @@ public class TagTable {
         r.getString(ATTRIBUTE),
         r.getString(TAG),
         r.getString(TAG_STRING),
-        r.getDouble(TAG_NUMERIC)
+        r.getDouble(TAG_NUMERIC),
+        r.getString(TAG_TYPE),
+        r.getString(TAG_ORIGIN)
       ))
       .collect(Collectors.toList());
   }
@@ -122,6 +144,6 @@ public class TagTable {
 
   private static boolean checkColumnTypes(Table table) {
     return new HashSet<>(table.columnNames()).containsAll(
-      List.of(ID0, ID1, ATTRIBUTE, TAG, TAG_STRING, TAG_NUMERIC));
+      List.of(ID0, ID1, ATTRIBUTE, TAG, TAG_STRING, TAG_NUMERIC, TAG_TYPE, TAG_ORIGIN));
   }
 }

@@ -1,9 +1,8 @@
 package de.unileipzig.dbs.pprl.service.protocol.service;
 
-import de.unileipzig.dbs.pprl.service.protocol.api.EncoderApi;
+import de.unileipzig.dbs.pprl.service.common.services.DatasetIdService;
 import de.unileipzig.dbs.pprl.service.protocol.api.MatcherApi;
 import de.unileipzig.dbs.pprl.service.protocol.config.ServicesConfig;
-import de.unileipzig.dbs.pprl.service.protocol.scripts.RecordInserter;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -19,20 +18,21 @@ public class LinkageUnitService {
   private final ServicesConfig config;
 
   @Getter
-  private final MatcherApi matcherApi = new MatcherApi();
+  private final DatasetIdService datasetIdService;
 
   @Getter
-  private RecordInserter recordInserter = new RecordInserter();
+  private final MatcherApi matcherApi = new MatcherApi();
 
-  public LinkageUnitService(ServicesConfig config) {
+
+  public LinkageUnitService(ServicesConfig config, DatasetIdService datasetIdService) {
     this.config = config;
+    this.datasetIdService = datasetIdService;
   }
 
   @PostConstruct
   private void initApi() {
     log.info("Initialising LU Service with url: {}", config.getLinkageUnitEndpoint());
-    MatcherApi.setUrl(config.getLinkageUnitEndpoint());
-    recordInserter = new RecordInserter(config.getLinkageUnitEndpoint());
+    matcherApi.setUrl(config.getLinkageUnitEndpoint());
   }
 
 }

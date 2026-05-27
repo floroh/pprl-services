@@ -55,6 +55,10 @@ public class CsvAttributesFrequencyLookupProvider implements AttributesFrequency
     final boolean filterByAttributeName = !attributesNamesToParse.isEmpty();
     try {
       Path folder = new File(location).toPath();
+      logger.info("Checking {} for frequency lookup files.", folder);
+      if (!Files.isDirectory(folder)) {
+        logger.error("Is not a valid directory: {}", folder);
+      }
       List<String> attrNames = Files.list(folder)
         .filter(p -> !Files.isDirectory(p))
         .map(Path::getFileName)
@@ -62,10 +66,10 @@ public class CsvAttributesFrequencyLookupProvider implements AttributesFrequency
         .map(s -> s.replace(".csv", ""))
         .filter(s -> !filterByAttributeName || attributesNamesToParse.contains(s))
         .collect(Collectors.toList());
-
       final AttributesFrequencyLookup afls = new AttributesFrequencyLookup(transformAttributes);
       for (String attrName : attrNames) {
         String curPath = folder.toAbsolutePath() + File.separator + attrName + ".csv";
+        logger.debug("Parsing frequency lookup file from {}", curPath);
         Map<String, Long> curFrequencies = new HashMap<>();
         Table table = readAttributeFrequencyLookupTable(curPath);
 
@@ -87,6 +91,9 @@ public class CsvAttributesFrequencyLookupProvider implements AttributesFrequency
         }
         afls.addAttributeFrequencyLookup(attrName, afl);
       }
+      if (afls.getAttributes().isEmpty()) {
+        logger.warn("AttributesFrequencyLookup is empty.");
+      }
       return afls;
     } catch (IOException e) {
       throw new RuntimeException("Could not parse attribute frequency lookup files in: " + location);
@@ -96,8 +103,7 @@ public class CsvAttributesFrequencyLookupProvider implements AttributesFrequency
   private static void addFrequency(Map<String, Long> curFrequencies, String attrValue, Long frequency) {
     // Add to frequency if an entry already exists
     if (curFrequencies.containsKey(attrValue)) {
-      long tmpFrequency = curFrequencies.get(attrValue);
-      curFrequencies.put(attrValue, tmpFrequency + frequency);
+      curFrequencies.compute(attrValue, (k, tmpFrequency) -> tmpFrequency + frequency);
     } else {
       curFrequencies.put(attrValue, frequency);
     }

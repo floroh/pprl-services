@@ -19,9 +19,12 @@ package de.unileipzig.dbs.pprl.core.matcher.classification;
 import de.unileipzig.dbs.pprl.core.common.HelperUtils;
 import de.unileipzig.dbs.pprl.core.common.TableSerialization;
 import de.unileipzig.dbs.pprl.core.common.model.api.RecordPair;
+import de.unileipzig.dbs.pprl.core.common.model.impl.MatchGrade;
 import de.unileipzig.dbs.pprl.core.common.model.impl.SerializableTable;
+import de.unileipzig.dbs.pprl.core.matcher.TagUtils;
 import de.unileipzig.dbs.pprl.core.matcher.classification.model.InstanceWeightMethod;
 import de.unileipzig.dbs.pprl.core.matcher.evaluation.QualityResult;
+import org.apache.commons.math3.util.Precision;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import tech.tablesaw.api.DoubleColumn;
@@ -30,6 +33,7 @@ import tech.tablesaw.api.Table;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -57,6 +61,8 @@ public class TrainableThresholdClassifier extends SingleThresholdClassifier impl
 
   private boolean useGlobalDistribution = false;
 
+  private double clericalReviewMatchClassImbalanceThreshold = 0.75;
+
   private InstanceWeightMethod instanceWeightMethod = InstanceWeightMethod.PROBABILITY;
 
   private Map<Label, Collection<WeightedSimilarity>> similaritiesByLabel;
@@ -79,29 +85,60 @@ public class TrainableThresholdClassifier extends SingleThresholdClassifier impl
     similaritiesByLabel = null;
     initUpdater();
     recordPairs.forEach(this::addToSimilarities);
-    updateThreshold();
+    updateThreshold(recordPairs);
   }
 
   @Override
   public void update(RecordPair newRecordPair) {
     initUpdater();
     addToSimilarities(newRecordPair);
-    updateThreshold();
+    updateThreshold(Collections.emptyList());
   }
 
   @Override
   public void update(Collection<RecordPair> newRecordPairs) {
     initUpdater();
     newRecordPairs.forEach(this::addToSimilarities);
-    updateThreshold();
+    updateThreshold(newRecordPairs);
   }
 
-  private static Double getUpdateMeasure(QualityResult qualityResult) {
-//    return qualityResult.getWeightedF1Score();
-    return qualityResult.getWeightedAccuracy();
+  private void updateThreshold(Collection<RecordPair> newRecordPairs) {
+    double previousThreshold = getThreshold();
+    updateThresholdBasedOnQuality();
+    double updatedThreshold = getThreshold();
+    // Apply class imbalanced threshold adaption if threshold was not updated based on quality metric
+    if (Precision.equals(previousThreshold, updatedThreshold, 0.001) && !newRecordPairs.isEmpty()) {
+      logger.info("Threshold did not change. Checking class imbalance");
+      updateThresholdBasedOnClassImbalance(newRecordPairs);
+    }
   }
 
-  private void updateThreshold() {
+  private void updateThresholdBasedOnClassImbalance(Collection<RecordPair> recordPairs) {
+    if (this.clericalReviewMatchClassImbalanceThreshold > 0) {
+      List<RecordPair> clericalReviewPairs = recordPairs.stream()
+              .filter(TagUtils::isFromClericalReview)
+              .toList();
+      long numberOfMatches = clericalReviewPairs.stream()
+              .filter(rp -> rp.getClassification().isAtLeast(MatchGrade.PROBABLE_MATCH))
+              .count();
+      double matchRatio = (float)numberOfMatches / clericalReviewPairs.size();
+      logger.info(String.format(Locale.ENGLISH, "MatchRatio of clerical review pairs is %d/%d (%.3f)",
+        numberOfMatches, clericalReviewPairs.size(), matchRatio));
+      if (matchRatio >= this.clericalReviewMatchClassImbalanceThreshold) {
+        logger.info("Decreasing the threshold by 0.01");
+        this.setThreshold(getThreshold() - 0.01);
+      } else if (matchRatio <= (1 - this.clericalReviewMatchClassImbalanceThreshold)) {
+        logger.info("Increasing the threshold by 0.01");
+        this.setThreshold(getThreshold() - 0.01);
+      } else {
+        logger.info(String.format(Locale.ENGLISH,
+          "MatchRatio does not fulfill the conditions for class imbalance based threshold adaptation" +
+            "(matchRatioThreshold=%.3f)", this.clericalReviewMatchClassImbalanceThreshold));
+      }
+    }
+  }
+
+  private void updateThresholdBasedOnQuality() {
     String similarityStats = getSimilarityDescriptionString();
     logger.info("Updating threshold based on {} labeled instances ({})",
       similaritiesByLabel.values().stream().flatMapToInt(c -> IntStream.of(c.size())).sum(), similarityStats
@@ -119,6 +156,11 @@ public class TrainableThresholdClassifier extends SingleThresholdClassifier impl
       bestThreshold = bestThresholdWithoutGlobalDistribution;
     }
     setThreshold(bestThreshold);
+  }
+
+  private static Double getUpdateMeasure(QualityResult qualityResult) {
+//    return qualityResult.getWeightedF1Score();
+    return qualityResult.getWeightedAccuracy();
   }
 
   private double getBestThreshold(List<Double> thresholdsToTest, double bestThreshold,
@@ -161,7 +203,7 @@ public class TrainableThresholdClassifier extends SingleThresholdClassifier impl
     if (similaritiesByLabel == null) {
       initSimilaritiesByLabel();
     }
-    String similarityStats = String.format(
+    String similarityStats = String.format(Locale.ENGLISH,
       "%d TM, %d TNM, similarities = [%.3f, %.3f]",
       similaritiesByLabel.get(Label.TRUE_MATCH).size(),
       similaritiesByLabel.get(Label.TRUE_NON_MATCH).size(),
@@ -322,9 +364,7 @@ public class TrainableThresholdClassifier extends SingleThresholdClassifier impl
       getProbabilityTag(rp).orElse(1.0);
     WeightedSimilarity instance = new WeightedSimilarity(similarity, probability);
     if (InstanceWeightMethod.WEIGHTED_PROBABILITY.equals(instanceWeightMethod)) {
-      boolean isFromClericalReview = rp.getTags().stream()
-        .filter(tag -> tag.getTag().equals("METHOD"))
-        .anyMatch(tag -> tag.getStringValue().contains("CR"));
+      boolean isFromClericalReview = TagUtils.isFromClericalReview(rp);
       if (isFromClericalReview) {
         instance.setWeight(2 * instance.getWeight());
       }
@@ -350,6 +390,22 @@ public class TrainableThresholdClassifier extends SingleThresholdClassifier impl
 
   public double getMaximalShift() {
     return maximalShift;
+  }
+
+  public boolean isUseGlobalDistribution() {
+    return useGlobalDistribution;
+  }
+
+  public void setUseGlobalDistribution(boolean useGlobalDistribution) {
+    this.useGlobalDistribution = useGlobalDistribution;
+  }
+
+  public double getClericalReviewMatchClassImbalanceThreshold() {
+    return clericalReviewMatchClassImbalanceThreshold;
+  }
+
+  public void setClericalReviewMatchClassImbalanceThreshold(double clericalReviewMatchClassImbalanceThreshold) {
+    this.clericalReviewMatchClassImbalanceThreshold = clericalReviewMatchClassImbalanceThreshold;
   }
 
   public void setMaximalShift(double maximalShift) {

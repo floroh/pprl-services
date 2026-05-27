@@ -45,15 +45,11 @@ public class DefaultSimilarityAggregator implements SimilarityAggregator {
       candidatePairWithSimilarities.stream()
         .map(AttributePairWithSimilarity::getSimilarity)
         .filter(sim -> !sim.equals(MissingSimilarityStrategy.MISSING_SIMILARITY));
-    switch (aggregationMethod) {
-      case MIN:
-        return similarities.min(Double::compareTo).orElse(0d);
-      case MAX:
-        return similarities.max(Double::compareTo).orElse(0d);
-      case AVERAGE:
-        return similarities.mapToDouble(d -> d).average().orElse(0d);
-    }
-    return 0d;
+    return switch (aggregationMethod) {
+      case MIN -> similarities.min(Double::compareTo).orElse(0d);
+      case MAX -> similarities.max(Double::compareTo).orElse(0d);
+      case AVERAGE -> similarities.mapToDouble(d -> d).average().orElse(0d);
+    };
   }
 
   public AggregationMethod getAggregationMethod() {

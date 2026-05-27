@@ -48,17 +48,12 @@ public interface Attribute extends Serializable {
   }
 
   default boolean isType(Class c) {
-    switch (getType()) {
-      case NULL:
-        return c == null;
-      case STRING:
-        return c.isAssignableFrom(String.class);
-      case BITVECTOR:
-        return c.isAssignableFrom(BitVector.class);
-      case INT:
-        return c.isAssignableFrom(Integer.class);
-    }
-    return false;
+    return switch (getType()) {
+      case NULL -> c == null;
+      case STRING -> c.isAssignableFrom(String.class);
+      case BITVECTOR -> c.isAssignableFrom(BitVector.class);
+      case INT -> c.isAssignableFrom(Integer.class);
+    };
   }
 
   default boolean isNull() {

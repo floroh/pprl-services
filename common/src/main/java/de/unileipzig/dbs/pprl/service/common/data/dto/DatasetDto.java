@@ -1,22 +1,26 @@
 package de.unileipzig.dbs.pprl.service.common.data.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DatasetDto {
 
-  private int datasetId;
-
-  private int plaintextDatasetId;
+  private Long datasetId;
 
   private String datasetName;
 
+  private Long plaintextDatasetId;
+
+  private EncodingIdDto encodingIdDto;
+
+  @Builder.Default
+  private Map<String, String> properties = new HashMap<>();
 }

@@ -3,6 +3,7 @@ package de.unileipzig.dbs.pprl.core.analyzer.cluster;
 import de.unileipzig.dbs.pprl.core.analyzer.attribute.AttributeAvailability;
 import de.unileipzig.dbs.pprl.core.analyzer.cluster.data.AttributePair;
 import de.unileipzig.dbs.pprl.core.analyzer.cluster.data.Pair;
+import de.unileipzig.dbs.pprl.core.common.factories.AttributeFactory;
 import de.unileipzig.dbs.pprl.core.common.model.api.Attribute;
 import de.unileipzig.dbs.pprl.core.common.model.api.Record;
 import de.unileipzig.dbs.pprl.core.common.model.impl.PersonalAttributeType;
@@ -28,26 +29,39 @@ public abstract class ClusterPairwiseAnalyzer extends ClusterAnalyzer {
   }
 
   protected List<AttributePair> buildAttributePairs(
-    Pair<Record> recordPair) {
+    Pair<Record> recordPair,
+    boolean omitInvalidOrEmpty) {
     List<AttributePair> attributePairs = new ArrayList<>();
 
     Record r0 = recordPair.getV0();
     Record r1 = recordPair.getV1();
 
-    List<String> matchingAttributeNames = getSortedAttributeNames(new Pair<>(r0, r1));
+    List<String> combinedAttributeNames = omitInvalidOrEmpty ?
+            getMatchingAttributeNames(new Pair<>(r0, r1))
+            : getCombinedAttributeNames(new Pair<>(r0, r1));
 
-    for (String attributeName : matchingAttributeNames) {
-      Attribute attr0 = r0.getAttribute(attributeName).get();
-      Attribute attr1 = r1.getAttribute(attributeName).get();
-      if (!AttributeAvailability.isInvalidOrEmpty(attributeName, attr0) ||
-        !AttributeAvailability.isInvalidOrEmpty(attributeName, attr1)) {
+    for (String attributeName : combinedAttributeNames) {
+      Attribute attr0 = r0.getAttribute(attributeName).orElse(AttributeFactory.getAttribute(""));
+      Attribute attr1 = r1.getAttribute(attributeName).orElse(AttributeFactory.getAttribute(""));
+      if (omitInvalidOrEmpty) {
+        if (!AttributeAvailability.isInvalidOrEmpty(attributeName, attr0) ||
+          !AttributeAvailability.isInvalidOrEmpty(attributeName, attr1)) {
+          attributePairs.add(new AttributePair(attributeName, attr0, attr1));
+        }
+      } else {
         attributePairs.add(new AttributePair(attributeName, attr0, attr1));
       }
     }
     return attributePairs;
   }
 
-  protected List<String> getSortedAttributeNames(Pair<Record> recordPair) {
+  protected List<String> getCombinedAttributeNames(Pair<Record> recordPair) {
+    Set<String> attributeNames = new HashSet<>(recordPair.getV0().getAttributeNames());
+    attributeNames.addAll(recordPair.getV1().getAttributeNames());
+    return sort(attributeNames);
+  }
+
+  protected List<String> getMatchingAttributeNames(Pair<Record> recordPair) {
     Set<String> attributeNames = new HashSet<>();
     for (String attrName0 : recordPair.getV0().getAttributeNames()) {
       Optional<Attribute> optionalName1 = recordPair.getV1().getAttribute(attrName0);

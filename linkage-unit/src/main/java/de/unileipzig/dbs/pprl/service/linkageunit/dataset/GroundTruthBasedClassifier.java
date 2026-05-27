@@ -25,7 +25,7 @@ public class GroundTruthBasedClassifier implements Classifier {
   private final MongoGroundTruthRepository groundTruthRepository;
 
   @JsonIgnore
-  private final Map<Integer, Set<String>> expectedPairIdsByDatasetId = new HashMap<>();
+  private final Map<Long, Set<String>> expectedPairIdsByDatasetId = new HashMap<>();
 
   @JsonIgnore
   private final Random random = new Random();
@@ -41,8 +41,8 @@ public class GroundTruthBasedClassifier implements Classifier {
 
   @Override
   public MatchGrade classify(RecordPair recordPairWithSimilarity) {
-    int idDataset = ((MongoRecordPair) recordPairWithSimilarity).getLeftRecord().getIdDataset();
-    Set<String> expectedPairIds = getOrInitExpectedPairIds(idDataset);
+    long datasetId = ((MongoRecordPair) recordPairWithSimilarity).getLeftRecord().getDatasetId();
+    Set<String> expectedPairIds = getOrInitExpectedPairIds(datasetId);
 
     String pairId = recordPairWithSimilarity.getPairId();
     MatchGrade matchGrade;
@@ -56,17 +56,17 @@ public class GroundTruthBasedClassifier implements Classifier {
     return matchGrade;
   }
 
-  private Set<String> getOrInitExpectedPairIds(int idDataset) {
-    Set<String> expectedPairIds = expectedPairIdsByDatasetId.get(idDataset);
+  private Set<String> getOrInitExpectedPairIds(long datasetId) {
+    Set<String> expectedPairIds = expectedPairIdsByDatasetId.get(datasetId);
     if (expectedPairIds == null) {
-      Optional<MongoGroundTruth> byDatasetId = groundTruthRepository.findByDatasetId(idDataset);
+      Optional<MongoGroundTruth> byDatasetId = groundTruthRepository.findByDatasetId(datasetId);
       if (byDatasetId.isEmpty()) {
-        throw new IllegalStateException("No ground truth for dataset with id " + idDataset + " found.");
+        throw new IllegalStateException("No ground truth for dataset with id " + datasetId + " found.");
       }
       expectedPairIds = byDatasetId.get().getTrueMatchPairIds();
-      log.debug("Build new expected pair ids set for dataset {} with {} entries.", idDataset,
+      log.debug("Build new expected pair ids set for dataset {} with {} entries.", datasetId,
         expectedPairIds.size());
-      expectedPairIdsByDatasetId.put(idDataset, expectedPairIds);
+      expectedPairIdsByDatasetId.put(datasetId, expectedPairIds);
     }
     return expectedPairIds;
   }

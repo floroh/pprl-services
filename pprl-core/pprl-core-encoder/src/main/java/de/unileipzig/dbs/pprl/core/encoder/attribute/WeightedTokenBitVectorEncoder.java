@@ -24,6 +24,7 @@ import de.unileipzig.dbs.pprl.core.common.model.api.BitVector;
 import de.unileipzig.dbs.pprl.core.common.model.impl.BitSetVector;
 import de.unileipzig.dbs.pprl.core.encoder.feature.FeatureEncoder;
 import de.unileipzig.dbs.pprl.core.encoder.feature.FeatureExtractor;
+import de.unileipzig.dbs.pprl.core.encoder.feature.NumHashFunctionsDependent;
 import de.unileipzig.dbs.pprl.core.encoder.feature.RandomHashing;
 import de.unileipzig.dbs.pprl.core.common.preprocessing.AttributePreprocessor;
 import io.micrometer.core.instrument.DistributionSummary;
@@ -73,9 +74,9 @@ public class WeightedTokenBitVectorEncoder<P, F> implements AttributeEncoder<Str
     Collection<F> features = featureExtractor.extract(processedAttributeValue);
     BitVector bv = new BitSetVector(bvLength);
 
-    if (!(featureEncoder instanceof RandomHashing)) {
-      throw new IllegalStateException("Misconfiguration: Feature Encoder must be RandomHashing," +
-        "but it is not.");
+    if (!(featureEncoder instanceof NumHashFunctionsDependent)) {
+      throw new IllegalStateException("Misconfiguration:" +
+              "Feature Encoder must implement NumHashFunctionsDependent interface, but it does not.");
     }
 
     for (F feature : features) {
@@ -83,11 +84,11 @@ public class WeightedTokenBitVectorEncoder<P, F> implements AttributeEncoder<Str
       double scale = weightCalculator.getScale(attributeName, plainValue);
 //      scale = 1;
       if (scale != 1) {
-        int kBase = ((RandomHashing) featureEncoder).getNumHashFunctions();
+        int kBase = ((NumHashFunctionsDependent) featureEncoder).getNumHashFunctions();
         int kNew = (int) (scale * kBase);
-        ((RandomHashing) featureEncoder).setNumHashFunctions(kNew);
+        ((NumHashFunctionsDependent) featureEncoder).setNumHashFunctions(kNew);
         bv.or(featureEncoder.encode(bvLength, feature));
-        ((RandomHashing) featureEncoder).setNumHashFunctions(kBase);
+        ((NumHashFunctionsDependent) featureEncoder).setNumHashFunctions(kBase);
       } else {
         bv.or(featureEncoder.encode(bvLength, feature));
       }

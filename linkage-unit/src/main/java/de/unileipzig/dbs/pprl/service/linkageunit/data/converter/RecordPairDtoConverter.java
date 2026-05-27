@@ -8,6 +8,7 @@ import de.unileipzig.dbs.pprl.service.common.data.converter.RecordConverter;
 import de.unileipzig.dbs.pprl.service.common.data.mongo.MongoRecord;
 import de.unileipzig.dbs.pprl.service.common.data.mongo.MongoRecordPair;
 import de.unileipzig.dbs.pprl.service.linkageunit.data.dto.RecordPairDto;
+import de.unileipzig.dbs.pprl.service.linkageunit.data.dto.RecordPairWithRecordsDto;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
@@ -18,6 +19,8 @@ import java.util.Set;
 
 
 public class RecordPairDtoConverter {
+
+  private static final RecordConverter recordConverter = new RecordConverter();
 
   public static RecordPairDto convertRecordPairToDto(RecordPair recordPair) {
     Map<String, Double> attributeSimilarities = recordPair.getAttributeSimilarities().orElse(null);
@@ -56,6 +59,12 @@ public class RecordPairDtoConverter {
       AbstractRecordConverter.emptyRecord(dto.getId1()),
       dto.getSimilarity(),
       MatchGrade.valueOf(dto.getMatchGrade())
+    );
+  }
+  public static RecordPair convertDtoToRecordPair(RecordPairWithRecordsDto dto) {
+    return new RecordPairSimple(
+      recordConverter.toRecord(dto.getRecord0()),
+      recordConverter.toRecord(dto.getRecord1())
     );
   }
 

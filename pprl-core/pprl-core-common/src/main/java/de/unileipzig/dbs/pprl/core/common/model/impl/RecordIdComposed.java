@@ -97,18 +97,14 @@ public class RecordIdComposed implements RecordId {
   @Override
   public Optional<String> getOptionalId(String name) {
 //    checkType(name);
-    switch (name) {
-      case LOCAL_ID:
-        return Optional.of(getLocalId());
-      case SOURCE_ID:
-        return Optional.of(getSourceId());
-      case GLOBAL_ID:
-        return getGlobalId();
-      case UNIQUE_ID:
-        return Optional.of(getUniqueId());
-    }
-    return Optional.empty();
-//    throw new RuntimeException("Cannot be reached due to type check");
+    return switch (name) {
+      case LOCAL_ID -> Optional.of(getLocalId());
+      case SOURCE_ID -> Optional.of(getSourceId());
+      case GLOBAL_ID -> getGlobalId();
+      case UNIQUE_ID -> Optional.of(getUniqueId());
+      default -> Optional.empty();
+    };
+    //    throw new RuntimeException("Cannot be reached due to type check");
   }
 
   @Override

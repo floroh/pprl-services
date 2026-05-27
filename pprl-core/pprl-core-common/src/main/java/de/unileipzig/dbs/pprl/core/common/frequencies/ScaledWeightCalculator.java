@@ -23,6 +23,7 @@ public class ScaledWeightCalculator extends DefaultWeightCalculator {
   private boolean useFellegiSunter = false;
 
   private boolean normalizeScale = true;
+
   private boolean useNonlinearRescaling = false;
 
   private boolean useInverseDocumentFrequency = false;
@@ -46,13 +47,13 @@ public class ScaledWeightCalculator extends DefaultWeightCalculator {
   private static Logger logger = LogManager.getLogger(ScaledWeightCalculator.class);
 
   public ScaledWeightCalculator(
-    AttributesFrequencyLookupProvider frequencyLookupProvider, Map<String, Double> defaultWeights) {
+          AttributesFrequencyLookupProvider frequencyLookupProvider, Map<String, Double> defaultWeights) {
     super(defaultWeights);
     this.frequencyLookupProvider = frequencyLookupProvider;
   }
 
   public ScaledWeightCalculator(
-    AttributesFrequencyLookup frequencyLookup, Map<String, Double> defaultWeights) {
+          AttributesFrequencyLookup frequencyLookup, Map<String, Double> defaultWeights) {
     super(defaultWeights);
     this.frequencyLookup = frequencyLookup;
     initScaleBoundaries();
@@ -80,28 +81,27 @@ public class ScaledWeightCalculator extends DefaultWeightCalculator {
     referenceInverseDocumentFrequency = new HashMap<>();
     for (String attribute : frequencyLookup.getAttributes()) {
       AttributeFrequencyLookup afl =
-        frequencyLookup.getAttributeFrequencyLookup(attribute).get();
+              frequencyLookup.getAttributeFrequencyLookup(attribute).get();
       double ref = 1.0;
       if (useInverseDocumentFrequency) {
         if (!afl.getFrequencies().isEmpty()) {
           logger.info("Using idf with relativeTop=" + relativeTop);
           Optional<Long> frequency = Optional.empty();
-          if (relativeTop == 0) { // Median
-            String referenceValue = afl.getMedianValue().get();
-            frequency = afl.getFrequency(referenceValue);
-            logger.info("Reference entry for scale normalization: " + referenceValue + ", " + frequency.get());
-          } else if (relativeTop < 0) { // Lowest frequency in (absolute top filtered) AFL
+          if (relativeTop < 0) { // Lowest frequency in (absolute top filtered) AFL
             frequency = Optional.of(afl.getLowestFrequency());
             logger.info("Reference frequency for scale normalization (least frequent): " + frequency.get());
-          } else if (relativeTop > 1.001) {
-            String referenceValue = afl.getAbsoluteTopValue((int) Math.round(relativeTop)).get();
-            frequency = afl.getFrequency(referenceValue);
-            logger.info("Reference entry for scale normalization: " + referenceValue + ", " + frequency.get());
           } else {
-            int pos = (int) (relativeTop * afl.getUniqueCount());
-            String referenceValue = afl.getAttributesReverseSortedByFrequency().get(pos);
+            String referenceValue;
+            if (relativeTop == 0) { // Median
+              referenceValue = afl.getMedianValue().get();
+            } else if (relativeTop > 1.001) {
+              referenceValue = afl.getAbsoluteTopValue((int) Math.round(relativeTop)).get();
+            } else {
+              int pos = (int) (relativeTop * afl.getUniqueCount());
+              referenceValue = afl.getAttributesReverseSortedByFrequency().get(pos);
+            }
             frequency = afl.getFrequency(referenceValue);
-            logger.info("Reference entry for scale normalization: " + referenceValue + ", " + frequency.get());
+            logger.info("Reference entry for scale normalization: " + referenceValue + ", " + frequency);
           }
           if (frequency.isPresent()) {
             ref = getInverseDocumentFrequency(frequency.get(), attribute);
@@ -117,10 +117,9 @@ public class ScaledWeightCalculator extends DefaultWeightCalculator {
       lowestScale.put(attribute, low);
       highestScale.put(attribute, high);
       logger.info("Scale range for " + attribute + ": " +
-        "[low=" + low + ", ref=" + ref + ", high=" + high + "]");
+              "[low=" + low + ", ref=" + ref + ", high=" + high + "]");
     }
-
-    System.out.println(this);
+    logger.info("Initialized: {}", this);
   }
 
   @Override
@@ -146,7 +145,7 @@ public class ScaledWeightCalculator extends DefaultWeightCalculator {
 //      weightU = -3.7925;
     } else if (attributeName.equals(PersonalAttributeType.LASTNAME.asString())) {
       probM = 0.7187;
-      probU = 0.0010  ;
+      probU = 0.0010;
 //      weightU = -1.8106;
     }
     Optional<Long> frequency = frequencyLookup.getFrequency(attributeName, attributeValue);
@@ -165,8 +164,6 @@ public class ScaledWeightCalculator extends DefaultWeightCalculator {
       double attributeWeight = getWeight(attributeName, attributeValue);
       double defaultWeight = getDefaultWeights().get(attributeName);
       return attributeWeight / defaultWeight;
-//      throw new RuntimeException("Fellegi-Sunter Weight calculation works via getWeight only, not via " +
-//        "getScale");
     }
     double scale = 1.0;
     Optional<Long> frequency = frequencyLookup.getFrequency(attributeName, attributeValue);
@@ -238,7 +235,7 @@ public class ScaledWeightCalculator extends DefaultWeightCalculator {
   private static void checkIsInRange(double x, double lowerBound, double upperBound) {
     if (x < lowerBound || x > upperBound) {
       throw new UnexpectedRuntimeConditionException("Out of expected range " +
-        "[" + lowerBound + ", " + upperBound + "]: " + x);
+              "[" + lowerBound + ", " + upperBound + "]: " + x);
     }
   }
 
@@ -258,6 +255,7 @@ public class ScaledWeightCalculator extends DefaultWeightCalculator {
   private double getScaleInverseDocumentFrequency(Long valueFrequency, String attributeName) {
     return 1 + getInverseDocumentFrequency(valueFrequency, attributeName) - referenceInverseDocumentFrequency.get(attributeName);
   }
+
   private double getInverseDocumentFrequency(Long valueFrequency, String attributeName) {
     Long total = frequencyLookup.getTotalCount(attributeName);
     double idf = Math.log(total / (double) valueFrequency) / Math.log(2);

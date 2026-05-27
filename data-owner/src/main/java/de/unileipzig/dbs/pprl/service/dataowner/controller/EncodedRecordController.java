@@ -106,23 +106,23 @@ public class EncodedRecordController {
   @PostMapping("/encode-multiple-same")
   public List<RecordDto> encodeMultipleSame(@RequestBody MultiRecordEncodingRetrievalRequestDto requestDto) {
     log.info("Received bulk encoding request for encoding {}", requestDto.getEncodingId());
-    List<RecordDto> allRecordsAsDto;
+    List<RecordDto> recordsAsDto;
     if (requestDto.getRecordIds() != null && !requestDto.getRecordIds().isEmpty()) {
-      allRecordsAsDto = requestDto.getRecordIds().stream()
+      recordsAsDto = requestDto.getRecordIds().stream()
         .map(rid -> datasetDtoService.getRecordAsDto(requestDto.getDatasetId(), rid))
         .collect(Collectors.toList());
     } else {
-      allRecordsAsDto = datasetDtoService.getAllRecordsAsDto(requestDto.getDatasetId());
+      if (requestDto.getDatasetSource() != null && !requestDto.getDatasetSource().isBlank()) {
+        recordsAsDto = datasetDtoService.getRecordsBySourceAsDto(requestDto.getDatasetId(), requestDto.getDatasetSource());
+      } else {
+        recordsAsDto = datasetDtoService.getAllRecordsAsDto(requestDto.getDatasetId());
+      }
     }
-    log.info("Encoding {} records", allRecordsAsDto.size());
+    log.info("Encoding {} records", recordsAsDto.size());
     return encoderService.encode(MultiRecordEncodingRequestDto.builder()
       .encodingId(requestDto.getEncodingId())
-      .records(allRecordsAsDto)
+      .records(recordsAsDto)
       .build());
-//    return allRecordsAsDto.stream()
-//      .map(r -> new EncodingRequestDto(requestDto.getEncodingId(), r, null))
-//      .map(encoderService::encode)
-//      .collect(Collectors.toList());
   }
 
 }

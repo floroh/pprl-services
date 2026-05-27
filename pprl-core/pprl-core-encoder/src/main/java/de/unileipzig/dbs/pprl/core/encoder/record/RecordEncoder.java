@@ -30,10 +30,6 @@ import java.util.stream.Collectors;
 @JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, property = "@class")
 public interface RecordEncoder {
 
-  RecordEncoder addAttributeEncoderGroup(AttributeEncoderGroup attributeEncoderGroup);
-
-  RecordEncoder addBlockingKeyExtractor(BlockingKeyExtractor blockingKeyExtractor);
-
   Record encode(Record record);
 
   default Collection<Record> encode(Collection<Record> records) {

@@ -16,6 +16,8 @@
 
 package de.unileipzig.dbs.pprl.core.matcher.evaluation;
 
+import com.google.common.hash.HashFunction;
+import com.google.common.hash.Hashing;
 import de.unileipzig.dbs.pprl.core.common.comparators.ComposedIdComparator;
 import de.unileipzig.dbs.pprl.core.common.model.api.Record;
 import de.unileipzig.dbs.pprl.core.common.model.api.RecordId;
@@ -28,15 +30,18 @@ import de.unileipzig.dbs.pprl.core.common.model.impl.RecordSimple;
 import de.unileipzig.dbs.pprl.core.matcher.clustering.ConnectedComponents;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import tech.tablesaw.api.LongColumn;
 import tech.tablesaw.api.Row;
 import tech.tablesaw.api.StringColumn;
 import tech.tablesaw.api.Table;
 import tech.tablesaw.table.TableSlice;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -196,7 +201,10 @@ public class GroundTruth {
     StringColumn colId0 = StringColumn.create(LEFT_ID);
     StringColumn colId1 = StringColumn.create(RIGHT_ID);
 
-    List<TableSlice> slices = raw.splitOn(ASSIGNED_ID).getSlices();
+    raw = raw.copy();
+    String ASSIGNED_ID_LONG = "assignedIdLong";
+    addSipHashedLongColumn(raw, ASSIGNED_ID, ASSIGNED_ID_LONG);
+    List<TableSlice> slices = raw.splitOn(ASSIGNED_ID_LONG).getSlices();
     long c = 0;
     for (TableSlice slice : slices) {
       if (c % 1000 == 1) {
@@ -224,11 +232,50 @@ public class GroundTruth {
     return Table.create("Links", colId0, colId1);
   }
 
+  public static void addSipHashedLongColumn(Table raw, String inputColumnName, String outputColumnName) {
+    StringColumn sc = (StringColumn) raw.column(inputColumnName);
+    LongColumn lc = LongColumn.create(outputColumnName, sc.size());
+
+    // Guava SipHash-2-4 (64-bit)
+    HashFunction sip = Hashing.sipHash24();
+
+
+    // Map for collision check: hash -> original string
+    Map<Long, String> hashMap = new HashMap<>();
+
+    for (int i = 0; i < sc.size(); i++) {
+      String s = sc.get(i);
+      if (s == null || s.isEmpty()) {
+        lc.setMissing(i);
+      } else {
+        long h = sip.hashString(s, StandardCharsets.UTF_8).asLong();
+
+        // Collision resolution: increment until unique
+        long originalH = h;
+        int attempts = 0;
+        while (hashMap.containsKey(h) && !hashMap.get(h).equals(s)) {
+          attempts++;
+          h++; // linear probing
+        }
+        if (attempts > 0) {
+          logger.warn(String.format(
+                  "Hash collision detected for string '%s' (original hash %d). Resolved after %d increments to %d.",
+                  s, originalH, attempts, h
+          ));
+        }
+
+        lc.set(i, h);
+        hashMap.put(h, s);
+      }
+    }
+    raw.addColumns(lc);
+  }
+
   public static Table sortLinks(Table links) {
     Table sorted = links.emptyCopy();
     links.stream()
       .map(r -> new RowSorter().sort(r))
-      .forEach(sorted::addRow);
+      .forEach(sorted::append);
 //        sorted = sorted.sortOn(new GroundTruth.RowComparator());
     return sorted;
   }

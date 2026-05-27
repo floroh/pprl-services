@@ -257,46 +257,51 @@ public class RecordOverlapEstimate extends RecordAnalyzer {
     }
 
     protected Optional<String> get(Record r, String name) {
-      if (name.equals("fn")) {
-        return r.getAttribute(PersonalAttributeType.FIRSTNAME.name())
-          .map(Attribute::getAsString);
-      } else if (name.equals("ln")) {
-        return r.getAttribute(PersonalAttributeType.LASTNAME.name())
-          .map(Attribute::getAsString);
-      } else if (name.equals("yob")) {
-        Optional<String> optYOB = r.getAttribute(PersonalAttributeType.YEAROFBIRTH.name())
-          .map(Attribute::getAsString);
-        if (optYOB.isEmpty() && r.getAttributeNames()
-          .contains(PersonalAttributeType.DATEOFBIRTH.name())) {
-          String sb = String.valueOf(r.getAttribute(PersonalAttributeType.DAYOFBIRTH.name())
-            .map(Attribute::getAsString)) +
-            r.getAttribute(PersonalAttributeType.MONTHOFBIRTH.name())
-              .map(Attribute::getAsString) + r.getAttribute(PersonalAttributeType.YEAROFBIRTH.name())
-            .map(Attribute::getAsString);
-          return Optional.of(r.getAttribute(PersonalAttributeType.DATEOFBIRTH.name())
-            .map(Attribute::getAsString)
-            .map(a -> a.substring(a.length() - 4))
-          .get());
+      switch (name) {
+        case "fn" -> {
+          return r.getAttribute(PersonalAttributeType.FIRSTNAME.name())
+                  .map(Attribute::getAsString);
         }
-        return optYOB;
-      } else if (name.equals("dob")) {
-        Optional<String> optDOB = r.getAttribute(PersonalAttributeType.DATEOFBIRTH.name())
-          .map(Attribute::getAsString);
-        if (optDOB.isEmpty() && r.getAttributeNames()
-          .containsAll(
-            Arrays.asList(
-              PersonalAttributeType.DAYOFBIRTH.name(),
-              PersonalAttributeType.MONTHOFBIRTH.name(),
-              PersonalAttributeType.YEAROFBIRTH.name()
-            ))) {
-          String sb = String.valueOf(r.getAttribute(PersonalAttributeType.DAYOFBIRTH.name())
-            .map(Attribute::getAsString)) +
-            r.getAttribute(PersonalAttributeType.MONTHOFBIRTH.name())
-              .map(Attribute::getAsString) + r.getAttribute(PersonalAttributeType.YEAROFBIRTH.name())
-            .map(Attribute::getAsString);
-          return Optional.of(sb);
+        case "ln" -> {
+          return r.getAttribute(PersonalAttributeType.LASTNAME.name())
+                  .map(Attribute::getAsString);
         }
-        return optDOB;
+        case "yob" -> {
+          Optional<String> optYOB = r.getAttribute(PersonalAttributeType.YEAROFBIRTH.name())
+                  .map(Attribute::getAsString);
+          if (optYOB.isEmpty() && r.getAttributeNames()
+                  .contains(PersonalAttributeType.DATEOFBIRTH.name())) {
+            String sb = String.valueOf(r.getAttribute(PersonalAttributeType.DAYOFBIRTH.name())
+                    .map(Attribute::getAsString)) +
+                    r.getAttribute(PersonalAttributeType.MONTHOFBIRTH.name())
+                            .map(Attribute::getAsString) + r.getAttribute(PersonalAttributeType.YEAROFBIRTH.name())
+                    .map(Attribute::getAsString);
+            return Optional.of(r.getAttribute(PersonalAttributeType.DATEOFBIRTH.name())
+                    .map(Attribute::getAsString)
+                    .map(a -> a.substring(a.length() - 4))
+                    .get());
+          }
+          return optYOB;
+        }
+        case "dob" -> {
+          Optional<String> optDOB = r.getAttribute(PersonalAttributeType.DATEOFBIRTH.name())
+                  .map(Attribute::getAsString);
+          if (optDOB.isEmpty() && r.getAttributeNames()
+                  .containsAll(
+                          Arrays.asList(
+                                  PersonalAttributeType.DAYOFBIRTH.name(),
+                                  PersonalAttributeType.MONTHOFBIRTH.name(),
+                                  PersonalAttributeType.YEAROFBIRTH.name()
+                          ))) {
+            String sb = String.valueOf(r.getAttribute(PersonalAttributeType.DAYOFBIRTH.name())
+                    .map(Attribute::getAsString)) +
+                    r.getAttribute(PersonalAttributeType.MONTHOFBIRTH.name())
+                            .map(Attribute::getAsString) + r.getAttribute(PersonalAttributeType.YEAROFBIRTH.name())
+                    .map(Attribute::getAsString);
+            return Optional.of(sb);
+          }
+          return optDOB;
+        }
       }
       return r.getAttribute(name)
         .map(Attribute::getAsString);

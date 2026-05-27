@@ -20,7 +20,7 @@ public class CsvDatasetConfig {
 
     private String location;
 
-    private int datasetId;
+    private long datasetId;
 
     private String source;
   }

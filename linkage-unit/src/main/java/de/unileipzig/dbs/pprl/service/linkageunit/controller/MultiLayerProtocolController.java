@@ -1,6 +1,5 @@
 package de.unileipzig.dbs.pprl.service.linkageunit.controller;
 
-import de.unileipzig.dbs.pprl.core.matcher.model.api.LinkageProcessDataSet;
 import de.unileipzig.dbs.pprl.service.common.data.dto.RecordEncodingWishDto;
 import de.unileipzig.dbs.pprl.service.common.data.mongo.MongoRecordPair;
 import de.unileipzig.dbs.pprl.service.linkageunit.data.converter.RecordPairDtoConverter;
@@ -117,10 +116,10 @@ public class MultiLayerProtocolController {
     if (projectIds.size() == 1) {
       ObjectId projectId = projectIds.getFirst();
       BatchMatchProject project = projectService.getProject(projectId);
-      int datasetId = project.getDatasetId();
+      long datasetId = project.getDatasetId();
       mongoPairs.forEach(mrp -> {
-        mrp.getLeftRecord().setIdDataset(datasetId);
-        mrp.getRightRecord().setIdDataset(datasetId);
+        mrp.getLeftRecord().setDatasetId(datasetId);
+        mrp.getRightRecord().setDatasetId(datasetId);
       });
       if (merge) {
         projectService.mergeNewImprovedRecordPairs(projectId, mongoPairs);
@@ -144,11 +143,11 @@ public class MultiLayerProtocolController {
     if (projectIds.size() == 1) {
       ObjectId projectId = projectIds.getFirst();
       BatchMatchProject project = projectService.getProject(projectId);
-      int datasetId = project.getDatasetId();
+      long datasetId = project.getDatasetId();
       mongoPairs = mongoPairs.parallelStream()
         .peek(mrp -> {
-          mrp.getLeftRecord().setIdDataset(datasetId);
-          mrp.getRightRecord().setIdDataset(datasetId);
+          mrp.getLeftRecord().setDatasetId(datasetId);
+          mrp.getRightRecord().setDatasetId(datasetId);
 //          mrp.getProperties().remove(LinkageProcessDataSet.NEW);
         })
         .peek(DatabaseLinkageProcessDataset::updateActiveProperty)

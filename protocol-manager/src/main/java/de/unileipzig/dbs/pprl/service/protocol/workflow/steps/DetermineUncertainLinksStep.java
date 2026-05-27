@@ -47,6 +47,7 @@ public class DetermineUncertainLinksStep extends ProcessingStep {
   public void execute(MultiLayerProtocolRunner runner) {
     super.execute(runner);
     List<RecordPairDto> pairs = runner.getMatcher().determineUncertainLinks(getProjectId());
+    getProperties().put("method", "bucket-based-uncertainty-sampling");
     setNumberOfUncertainLinks(pairs.size());
     phaseProgress.setProgress(1.0);
     phaseProgress.setDone(true);

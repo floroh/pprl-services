@@ -8,20 +8,33 @@ import de.unileipzig.dbs.pprl.core.analyzer.attribute.AttributeLength;
 import de.unileipzig.dbs.pprl.core.analyzer.attribute.AttributeMostFrequent;
 import de.unileipzig.dbs.pprl.core.analyzer.attribute.AttributePatternFrequency;
 import de.unileipzig.dbs.pprl.core.analyzer.results.ResultSet;
+import de.unileipzig.dbs.pprl.core.analyzer.tags.record.BitVectorRecordAnalyzer;
+import de.unileipzig.dbs.pprl.core.analyzer.tags.record.PlainRecordAnalyzer;
+import de.unileipzig.dbs.pprl.core.analyzer.tags.record.RecordAnalyzer;
+import de.unileipzig.dbs.pprl.core.analyzer.tags.recordpair.PlainRecordPairAnalyzer;
 import de.unileipzig.dbs.pprl.core.common.model.api.Record;
+import de.unileipzig.dbs.pprl.core.common.model.api.RecordPair;
 import de.unileipzig.dbs.pprl.core.common.model.impl.PersonalAttributeType;
+import de.unileipzig.dbs.pprl.core.common.model.impl.RecordPairSimple;
+import de.unileipzig.dbs.pprl.core.common.monitoring.Tag;
+import de.unileipzig.dbs.pprl.core.common.monitoring.TagTableSerialization;
 import de.unileipzig.dbs.pprl.core.common.validation.impl.DetailedValidationResult;
 import de.unileipzig.dbs.pprl.core.common.validation.impl.FieldErrorCode;
 import de.unileipzig.dbs.pprl.service.common.config.ReportingConfig;
 import de.unileipzig.dbs.pprl.service.common.config.SourceConfig;
 import de.unileipzig.dbs.pprl.service.common.data.converter.RecordConverter;
+import de.unileipzig.dbs.pprl.service.common.data.dto.RecordIdPairDto;
 import de.unileipzig.dbs.pprl.service.common.data.dto.RecordRequirementsDto;
 import de.unileipzig.dbs.pprl.service.common.data.dto.analysis.AnalysisRequestDto;
 import de.unileipzig.dbs.pprl.service.common.data.dto.analysis.AnalysisResultDto;
 import de.unileipzig.dbs.pprl.service.common.data.dto.reporting.Report;
 import de.unileipzig.dbs.pprl.service.common.data.dto.reporting.ReportGroup;
 import de.unileipzig.dbs.pprl.service.common.data.mongo.MongoAnalysisResult;
+import de.unileipzig.dbs.pprl.service.common.data.mongo.MongoTag;
+import de.unileipzig.dbs.pprl.service.common.dataset.MongoAttributesFrequencyLookupProvider;
 import de.unileipzig.dbs.pprl.service.common.persistence.repositories.mongo.MongoAnalysisResultRepository;
+import de.unileipzig.dbs.pprl.service.common.persistence.repositories.mongo.MongoFrequencyLookupRepository;
+import de.unileipzig.dbs.pprl.service.common.persistence.repositories.mongo.MongoTagRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,12 +44,10 @@ import tech.tablesaw.api.Row;
 import tech.tablesaw.api.StringColumn;
 import tech.tablesaw.api.Table;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static de.unileipzig.dbs.pprl.core.analyzer.DataSetAnalyzer.RECORD_GROUP_ALL;
 
 /**
  * Provides descriptions of a dataset that can be used for
@@ -53,6 +64,8 @@ public class AnalysisService {
 
   private final DatasetDtoService datasetDtoService;
 
+  private final DatasetMongoService datasetMongoService;
+
   private final ValidationService validationService;
 
   private static final RecordConverter converter = new RecordConverter();
@@ -61,26 +74,37 @@ public class AnalysisService {
 
   private final MongoAnalysisResultRepository analysisResultRepository;
 
+  private final MongoTagRepository tagRepository;
+
+  private MongoAttributesFrequencyLookupProvider frequencyLookupProvider;
+
   @PostConstruct
   private void init() {
     availableAnalysisTypes.add(MongoAnalysisResult.Type.VALIDATION.name());
     availableAnalysisTypes.add(MongoAnalysisResult.Type.DATASET_DESCRIPTION.name());
+    availableAnalysisTypes.add(MongoAnalysisResult.Type.TAG_BASED_DATASET_ANALYSIS.name());
   }
 
   public AnalysisService(SourceConfig sourceConfig, ReportingConfig reportingConfig, DatasetDtoService datasetDtoService,
-    ValidationService validationService, MongoAnalysisResultRepository analysisResultRepository) {
+                         DatasetMongoService datasetMongoService, ValidationService validationService,
+                         MongoAnalysisResultRepository analysisResultRepository, MongoTagRepository tagRepository,
+                         MongoFrequencyLookupRepository mongoFrequencyLookupRepository) {
     this.sourceConfig = sourceConfig;
     this.reportingConfig = reportingConfig;
     this.datasetDtoService = datasetDtoService;
+    this.datasetMongoService = datasetMongoService;
     this.validationService = validationService;
     this.analysisResultRepository = analysisResultRepository;
+    this.tagRepository = tagRepository;
+    this.frequencyLookupProvider = new MongoAttributesFrequencyLookupProvider(
+            mongoFrequencyLookupRepository, datasetMongoService);
   }
 
   public List<String> getAvailableAnalysisTypes() {
     return availableAnalysisTypes;
   }
 
-  public int deleteAnalysisResults(int datasetId) {
+  public int deleteAnalysisResults(long datasetId) {
     Collection<MongoAnalysisResult> byDatasetId = analysisResultRepository.findByDatasetId(datasetId);
     log.info("Deleting " + byDatasetId.size() + " analysis results for dataset " + datasetId);
     analysisResultRepository.deleteAll(byDatasetId);
@@ -113,8 +137,54 @@ public class AnalysisService {
     }
     MongoAnalysisResult mongoAnalysisResult = runAnalysis(requestDto);
     mongoAnalysisResult.setSource(sourceConfig.getName());
-    analysisResultRepository.save(mongoAnalysisResult);
+//    analysisResultRepository.save(mongoAnalysisResult);  # May exceed mongodb document size limit of 16MB
     return mongoAnalysisResult.getResult();
+  }
+
+  public void saveTags(long datasetId, Collection<Tag> tags) {
+    log.info("Adding {} tags to dataset {}", tags.size(), datasetId);
+    List<MongoTag> mongoTags = tags.stream().map(t -> MongoTag.create(datasetId, t))
+            .toList();
+    tagRepository.saveAll(mongoTags);
+  }
+
+  public void deleteTags(long datasetId) {
+    log.info("Delete all tags from dataset {}", datasetId);
+    tagRepository.deleteByDatasetId(datasetId);
+  }
+
+  public Collection<Tag> getTags(long datasetId, String origin) {
+    Collection<MongoTag> tags;
+    if (origin == null) {
+      tags = tagRepository.findByDatasetId(datasetId);
+    } else {
+      tags = tagRepository.findByDatasetIdAndOrigin(datasetId, origin);
+    }
+    return tags.stream().map(MongoTag::getTag).collect(Collectors.toList());
+  }
+
+  public Collection<Tag> runPairAnalysis(long datasetId, List<RecordIdPairDto> idPairs) {
+    log.info("Running pair analysis for dataset {} on {} record pairs.", datasetId, idPairs.size());
+    List<Record> records = getRecordsFromDatabase(datasetId);
+    Map<String, Record> recordsById = records.stream()
+            .collect(Collectors.toMap(r -> r.getId().getUniqueLikeId(), r -> r));
+    List<RecordPair> recordPairs = new ArrayList<>();
+    for (RecordIdPairDto idPair : idPairs) {
+      Record leftRecord = recordsById.get(idPair.getLeftRecordId().getUniqueLike());
+      Record rightRecord = recordsById.get(idPair.getRightRecordId().getUniqueLike());
+      if ((leftRecord == null) || (rightRecord == null)) {
+        log.error("A record not found in: " + idPair);
+        continue;
+      }
+      RecordPairSimple pair = new RecordPairSimple(leftRecord, rightRecord);
+      recordPairs.add(pair);
+    }
+
+    PlainRecordPairAnalyzer analyzer = new PlainRecordPairAnalyzer();
+    List<Tag> tags = recordPairs.stream()
+            .flatMap(rp -> analyzer.getTags(rp).stream())
+            .toList();
+    return tags;
   }
 
   public MongoAnalysisResult runAnalysis(AnalysisRequestDto requestDto) {
@@ -122,6 +192,44 @@ public class AnalysisService {
     if (MongoAnalysisResult.Type.VALIDATION.name().equals(type)) {
       throw new RuntimeException("Error: Analysis of type " + MongoAnalysisResult.Type.VALIDATION.name()
         + " must be run via validateDataSet()");
+    }
+
+    if (MongoAnalysisResult.Type.TAG_BASED_DATASET_ANALYSIS.name().equals(type)) {
+      Collection<Tag> outputTags = new ArrayList<>();
+      if (!requestDto.getParameters().containsKey("onlyStored")) {
+        log.info("not: onlyStored");
+        Optional<Collection<Tag>> tags = runTagBasedAnalysis(requestDto);
+        tags.ifPresent(outputTags::addAll);
+      }
+      if (!requestDto.getParameters().containsKey("skipStored")) {
+        log.info("not: skipStored");
+        Collection<Tag> storedTags = getTags(requestDto.getDatasetId(), null);
+        outputTags.addAll(storedTags);
+      }
+      log.info("Building AnalysisResultDto...");
+      AnalysisResultDto analysisResultDto;
+      if (outputTags.isEmpty()) {
+        analysisResultDto = AnalysisResultDto.builder()
+                .description("No tags have been generated by the analysis")
+                .build();
+      } else {
+//                saveTags(requestDto.getDatasetId(), tags.get());
+        analysisResultDto = AnalysisResultDto.builder()
+                .name(MongoAnalysisResult.Type.TAG_BASED_DATASET_ANALYSIS.name())
+                .description("Tags for dataset " + requestDto.getDatasetId())
+                .reportGroup(ReportGroup.builder()
+                        .name(RECORD_GROUP_ALL)
+                        .report(Report.createTableReport(TagTableSerialization.convertToTable(outputTags))                        )
+                        .build()
+                )
+                .build();
+      }
+      log.info("Finished building AnalysisResultDto");
+      return MongoAnalysisResult.builder()
+              .datasetId(requestDto.getDatasetId())
+              .type(MongoAnalysisResult.Type.TAG_BASED_DATASET_ANALYSIS)
+              .result(analysisResultDto)
+              .build();
     }
 
     if (MongoAnalysisResult.Type.DATASET_DESCRIPTION.name().equals(type)) {
@@ -136,8 +244,30 @@ public class AnalysisService {
     throw new RuntimeException("Unknown analysis type: " + type);
   }
 
-  public AnalysisResultDto validateDataSet(int idDataset, RecordRequirementsDto recordRequirements) {
-    List<Record> records = getRecordsFromDatabase(idDataset);
+  public Optional<Collection<Tag>> runTagBasedAnalysis(AnalysisRequestDto analysisRequestDto) {
+    if (analysisRequestDto.getDatasetId() > 0) {
+      List<Tag> tags = new ArrayList<>();
+      List<Record> records = getRecordsFromDatabase(analysisRequestDto.getDatasetId());
+      RecordAnalyzer recordAnalyzer;
+      if (DataSetAnalyzerCreator.isEncoded(records)) {
+          recordAnalyzer = new BitVectorRecordAnalyzer();
+      } else {
+          recordAnalyzer = new PlainRecordAnalyzer();
+          ((PlainRecordAnalyzer)recordAnalyzer).useAttributeFrequencyLookup(
+                  frequencyLookupProvider.provide(analysisRequestDto.getDatasetId())
+          );
+      }
+      records.forEach(r -> {
+        List<Tag> recordTags = recordAnalyzer.getTags(r);
+        tags.addAll(recordTags);
+      });
+      return Optional.of(tags);
+    }
+    return Optional.empty();
+  }
+
+  public AnalysisResultDto validateDataSet(long datasetId, RecordRequirementsDto recordRequirements) {
+    List<Record> records = getRecordsFromDatabase(datasetId);
 
     long total = records.size();
     long validWithReport = 0;
@@ -194,20 +324,20 @@ public class AnalysisService {
       .build();
   }
 
-  public AnalysisResultDto runDataSetAnalyzer(int idDataset, Map<String, String> parameters) {
-    List<Record> records = datasetDtoService.getRecordsWithGlobalIdIfAvailable(idDataset).stream()
+  public AnalysisResultDto runDataSetAnalyzer(long datasetId, Map<String, String> parameters) {
+    List<Record> records = datasetDtoService.getRecordsWithGlobalIdIfAvailable(datasetId).stream()
       .map(converter::toRecord)
       .collect(Collectors.toList());
     DataSetAnalyzer dsa = DataSetAnalyzerCreator.createForDataSet(records);
     if (parameters.get("runPerSource") != null) {
       dsa.setRunPerSource(Boolean.parseBoolean(parameters.get("runPerSource")));
     }
+    ReportingConfig reportingConfig = new ReportingConfig();
+    if (parameters.get("includeAdditionalResults") != null) {
+      reportingConfig.setIncludeAdditionalResultsByDefault(Boolean.parseBoolean(parameters.get("includeAdditionalResults")));
+    }
     AnalysisResult analysisResult = dsa.run(records);
-    return buildAnalysisResultDto(analysisResult);
-  }
-
-  public static AnalysisResultDto buildAnalysisResultDto(AnalysisResult analysisResult) {
-    return buildAnalysisResultDto(analysisResult, new ReportingConfig());
+    return buildAnalysisResultDto(analysisResult, reportingConfig);
   }
 
   public static AnalysisResultDto buildAnalysisResultDto(AnalysisResult analysisResult, ReportingConfig config) {
@@ -242,7 +372,7 @@ public class AnalysisService {
   }
 
   public static String buildAdditionalResultName(String resultName, String additionResultName) {
-    return resultName + " >>> " + additionResultName;
+    return resultName + ">>>" + additionResultName;
   }
 
   private static Report buildReport(ResultSet resultSet) {
@@ -270,8 +400,8 @@ public class AnalysisService {
     return dsa;
   }
 
-  private List<Record> getRecordsFromDatabase(int idDataset) {
-    return datasetDtoService.getAllRecordsAsDto(idDataset).stream()
+  private List<Record> getRecordsFromDatabase(long datasetId) {
+    return datasetDtoService.getAllRecordsAsDto(datasetId).stream()
       .map(converter::toRecord)
       .collect(Collectors.toList());
   }

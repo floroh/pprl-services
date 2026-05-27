@@ -21,12 +21,13 @@ public class MongoAnalysisResult {
 
   private Type type;
 
-  private int datasetId;
+  private long datasetId;
 
   private AnalysisResultDto result;
 
   public enum Type {
     DATASET_DESCRIPTION,
-    VALIDATION
+    VALIDATION,
+    TAG_BASED_DATASET_ANALYSIS
   }
 }

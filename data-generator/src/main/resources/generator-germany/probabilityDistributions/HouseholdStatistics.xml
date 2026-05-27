@@ -1,0 +1,479 @@
+<!--
+Tag names are needed by the program.
+-->
+<HouseholdStatistics>
+    <GeneralData>
+        <!--
+        The value of the youngest age to become a parent is self defined.
+        -->
+        <YoungestAgeToBecomeAParent>15</YoungestAgeToBecomeAParent>
+    </GeneralData>
+    <HouseholdSizes>
+        <!--
+        Share of different household sizes.
+
+        Source:
+        https://www.destatis.de/DE/Themen/Gesellschaft-Umwelt/Bevoelkerung/Haushalte-Familien/Publikationen/Downloads-Haushalte/haushalte-familien-2010300217004.html
+        table: 1.2.1
+        -->
+        <Housesize size="1">16619</Housesize>
+        <Housesize size="2">13862</Housesize>
+        <Housesize size="3">4876</Housesize>
+        <Housesize size="4">3906</Housesize>
+        <Housesize size="5">1420</Housesize>
+    </HouseholdSizes>
+    <!--<AverageNumberOfChildrenPerMother>
+
+        A list which describes a frequency distribution of how many children a mother has.
+        List must not have gaps (missing numbers) and must be ordered, otherwise the underlying method doesn't work.
+
+        <numberOfChildren number="1">3370</numberOfChildren>
+        <numberOfChildren number="2">4611</numberOfChildren>
+        <numberOfChildren number="3">1446</numberOfChildren>
+        <numberOfChildren number="4">573</numberOfChildren>
+    </AverageNumberOfChildrenPerMother>-->
+    <GenderOfChildren>
+        <!--
+        According to:
+        https://www.destatis.de/DE/Themen/Gesellschaft-Umwelt/Bevoelkerung/Geburten/_inhalt.html
+        approximately 55% of all new born children in Germany are male.
+        -->
+        <maleNewBorn>55</maleNewBorn>
+    </GenderOfChildren>
+    <ChildSpacing>
+        <!--
+        Values form year 1 to year 5 are from source:
+        https://www.destatis.de/DE/Methoden/WISTA-Wirtschaft-und-Statistik/2012/02/geburtenfolge-geburtenabstand-022012.pdf
+        of the year 2010.
+
+        What the numbers mean:
+        Example for Child 2:
+        17,4 % of all second children were born in less then 2 years after the the birth of the first child.
+        44,6 % of all second children were born in less then 3 years after the the birth of the first child.
+
+        Example for Child 3:
+        16,4 % of all third children were born in less then 2 years after the the birth of the second child.
+
+        Values for the years greater 5 are self defined to get more possible child spacing.
+        To simplify the calculation, siblings can't have the same age (difference with less then 1 year removed).
+        -->
+        <Child2>
+            <!--AgeDifference year="1">6</AgeDifference-->
+            <AgeDifference year="2">174</AgeDifference>
+            <AgeDifference year="3">446</AgeDifference>
+            <AgeDifference year="4">631</AgeDifference>
+            <AgeDifference year="5">741</AgeDifference>
+            <AgeDifference year="6">841</AgeDifference>
+            <AgeDifference year="7">941</AgeDifference>
+            <AgeDifference year="8">961</AgeDifference>
+            <AgeDifference year="9">981</AgeDifference>
+            <AgeDifference year="10">991</AgeDifference>
+            <AgeDifference year="11">993</AgeDifference>
+            <AgeDifference year="12">995</AgeDifference>
+            <AgeDifference year="13">997</AgeDifference>
+            <AgeDifference year="14">999</AgeDifference>
+            <AgeDifference year="15">1000</AgeDifference>
+        </Child2>
+        <Child3>
+            <!--AgeDifference year="1">8</AgeDifference-->
+            <AgeDifference year="2">164</AgeDifference>
+            <AgeDifference year="3">363</AgeDifference>
+            <AgeDifference year="4">513</AgeDifference>
+            <AgeDifference year="5">627</AgeDifference>
+            <AgeDifference year="6">727</AgeDifference>
+            <AgeDifference year="7">827</AgeDifference>
+            <AgeDifference year="8">927</AgeDifference>
+            <AgeDifference year="9">937</AgeDifference>
+            <AgeDifference year="10">947</AgeDifference>
+            <AgeDifference year="11">957</AgeDifference>
+            <AgeDifference year="12">967</AgeDifference>
+            <AgeDifference year="13">977</AgeDifference>
+            <AgeDifference year="14">987</AgeDifference>
+            <AgeDifference year="15">1000</AgeDifference>
+        </Child3>
+        <Child4>
+            <!--AgeDifference year="1">13</AgeDifference-->
+            <AgeDifference year="2">207</AgeDifference>
+            <AgeDifference year="3">419</AgeDifference>
+            <AgeDifference year="4">566</AgeDifference>
+            <AgeDifference year="5">675</AgeDifference>
+            <AgeDifference year="6">775</AgeDifference>
+            <AgeDifference year="7">875</AgeDifference>
+            <AgeDifference year="8">975</AgeDifference>
+            <AgeDifference year="9">985</AgeDifference>
+            <AgeDifference year="10">990</AgeDifference>
+            <AgeDifference year="11">992</AgeDifference>
+            <AgeDifference year="12">994</AgeDifference>
+            <AgeDifference year="13">996</AgeDifference>
+            <AgeDifference year="14">998</AgeDifference>
+            <AgeDifference year="15">1000</AgeDifference>
+        </Child4>
+    </ChildSpacing>
+    <ChildrenLivingInParentsHousehold>
+        <!--
+        Source:
+        https://www.destatis.de/DE/Presse/Pressemitteilungen/Grafiken/Soziales/2020/_Interaktiv/20200805-kinder-im-elterlichen-haushalt.html
+        Probability for living in parents household, depending on gender and age.
+        -->
+        <MaleChildren>
+            <Age value="14">100000000</Age>
+            <Age value="15">99259843</Age>
+            <Age value="16">99106536</Age>
+            <Age value="17">98234311</Age>
+            <Age value="18">93253139</Age>
+            <Age value="19">84741828</Age>
+            <Age value="20">73728340</Age>
+            <Age value="21">63316216</Age>
+            <Age value="22">57892853</Age>
+            <Age value="23">48263396</Age>
+            <Age value="24">40968911</Age>
+            <Age value="25">33934767</Age>
+            <Age value="26">27200966</Age>
+            <Age value="27">23162029</Age>
+            <Age value="28">19113646</Age>
+            <Age value="29">14776968</Age>
+            <Age value="30">13041982</Age>
+            <Age value="31">10795766</Age>
+            <Age value="32">8690804</Age>
+            <Age value="33">7850215</Age>
+            <Age value="34">6358697</Age>
+            <Age value="35">5626538</Age>
+            <Age value="36">4838156</Age>
+            <Age value="37">5263329</Age>
+            <Age value="38">4548181</Age>
+            <Age value="39">4452276</Age>
+            <Age value="40">3637661</Age>
+            <Age value="41">3965263</Age>
+            <Age value="42">3149739</Age>
+            <Age value="43">3115713</Age>
+            <Age value="44">3086423</Age>
+            <Age value="45">1025214</Age>
+        </MaleChildren>
+        <FemaleChildren>
+            <Age value="14">100000000</Age>
+            <Age value="15">99638567</Age>
+            <Age value="16">98659801</Age>
+            <Age value="17">97178282</Age>
+            <Age value="18">90408101</Age>
+            <Age value="19">79686668</Age>
+            <Age value="20">65501169</Age>
+            <Age value="21">53297347</Age>
+            <Age value="22">44488890</Age>
+            <Age value="23">34600571</Age>
+            <Age value="24">28983332</Age>
+            <Age value="25">20656821</Age>
+            <Age value="26">16336070</Age>
+            <Age value="27">12338941</Age>
+            <Age value="28">8979082</Age>
+            <Age value="29">6683648</Age>
+            <Age value="30">5253731</Age>
+            <Age value="31">4138290</Age>
+            <Age value="32">3711236</Age>
+            <Age value="33">3075967</Age>
+            <Age value="34">2330386</Age>
+            <Age value="35">2257728</Age>
+            <Age value="36">2191531</Age>
+            <Age value="37">1653270</Age>
+            <Age value="38">1704113</Age>
+            <Age value="39">1691658</Age>
+            <Age value="40">1271788</Age>
+            <Age value="41">1178075</Age>
+            <Age value="42">1123602</Age>
+            <Age value="43">1542807</Age>
+            <Age value="44">1151850</Age>
+            <Age value="45">354496</Age>
+        </FemaleChildren>
+    </ChildrenLivingInParentsHousehold>
+    <AgeOfMotherDuringFirstBirth>
+        <!--
+        Data show, how many mothers of a specific age gave birth to their first child in 2020.
+        Value for age="15" is estimated, because it was not given.
+        Lower and upper limits are defined with 15 and 50 years.
+        Source:
+        https://www-genesis.destatis.de/genesis/online?sequenz=tabelleErgebnis&selectionname=12612-0005#abreadcrumb
+        -->
+        <Mother age="15">350</Mother>
+        <Mother age="16">608</Mother>
+        <Mother age="17">1187</Mother>
+        <Mother age="18">2280</Mother>
+        <Mother age="19">3887</Mother>
+        <Mother age="20">5586</Mother>
+        <Mother age="21">6812</Mother>
+        <Mother age="22">8012</Mother>
+        <Mother age="23">9579</Mother>
+        <Mother age="24">11925</Mother>
+        <Mother age="25">13892</Mother>
+        <Mother age="26">17011</Mother>
+        <Mother age="27">20497</Mother>
+        <Mother age="28">23601</Mother>
+        <Mother age="29">26920</Mother>
+        <Mother age="30">31628</Mother>
+        <Mother age="31">30866</Mother>
+        <Mother age="32">29024</Mother>
+        <Mother age="33">24870</Mother>
+        <Mother age="34">20969</Mother>
+        <Mother age="35">17263</Mother>
+        <Mother age="36">13974</Mother>
+        <Mother age="37">11112</Mother>
+        <Mother age="38">8489</Mother>
+        <Mother age="39">6613</Mother>
+        <Mother age="40">5015</Mother>
+        <Mother age="41">3328</Mother>
+        <Mother age="42">2030</Mother>
+        <Mother age="43">1235</Mother>
+        <Mother age="44">671</Mother>
+        <Mother age="45">351</Mother>
+        <Mother age="46">214</Mother>
+        <Mother age="47">121</Mother>
+        <Mother age="48">67</Mother>
+        <Mother age="49">74</Mother>
+        <Mother age="50">87</Mother>
+    </AgeOfMotherDuringFirstBirth>
+    <AgeDifferencesBetweenSpouses factor="0.81">
+        <!--
+        Frequency distribution shows the age difference between spouses.
+        Factor of 0.81 means, that in 81% of all cases with an age difference,
+        partner 1 (husband) is older then partner 2 (wife).
+        The factor is needed, so that a random generator can be created, that allows partner 2 to be older then partner 1.
+
+        Age differences where originally only given in groups: 0, 1-3, 4-6, 7-10 and 11-15 years of age difference.
+        Uniform distribution in those groups where assumed.
+        Values form 16-20 years of age difference are self defined.
+
+        Source:
+        https://www.destatis.de/DE/Themen/Gesellschaft-Umwelt/Bevoelkerung/Haushalte-Familien/Publikationen/Downloads-Haushalte/haushalte-familien-2010300217004.html
+        table 3.2.1
+        -->
+        <Difference years="0">1834</Difference>
+        <Difference years="1">2798</Difference>
+        <Difference years="2">2798</Difference>
+        <Difference years="3">2798</Difference>
+        <Difference years="4">1424</Difference>
+        <Difference years="5">1424</Difference>
+        <Difference years="6">1424</Difference>
+        <Difference years="7">521</Difference>
+        <Difference years="8">521</Difference>
+        <Difference years="9">521</Difference>
+        <Difference years="10">521</Difference>
+        <Difference years="11">149</Difference>
+        <Difference years="12">149</Difference>
+        <Difference years="13">149</Difference>
+        <Difference years="14">149</Difference>
+        <Difference years="15">149</Difference>
+        <Difference years="16">149</Difference>
+        <Difference years="17">80</Difference>
+        <Difference years="18">35</Difference>
+        <Difference years="19">25</Difference>
+        <Difference years="20">13</Difference>
+    </AgeDifferencesBetweenSpouses>
+    <LivingArrangements>
+        <LivingArrangementTypAndNumberOfChildren>
+            <!--
+            - number specifies number of children
+            - type specifies type of living arrangements
+            type 1: mixed marriage
+            type 2: male marriage
+            type 3: female marriage
+            type 4: mixed cohabitation
+            type 5: male cohabitation
+            type 6: female cohabitation
+            type 7: single father
+            type 8: single mother
+
+            Source:
+            https://www.destatis.de/DE/Themen/Gesellschaft-Umwelt/Bevoelkerung/Haushalte-Familien/Publikationen/Downloads-Haushalte/haushalte-familien-2010300217004.html
+            table: 5.1.1
+            -->
+            <Combination type="1" number="1">34740</Combination>
+            <Combination type="1" number="2">32660</Combination>
+            <Combination type="1" number="3">8660</Combination>
+            <Combination type="1" number="4">1860</Combination>
+            <Combination type="1" number="5">700</Combination>
+            <!---->
+            <Combination type="2" number="1">130</Combination>
+            <Combination type="2" number="2">105</Combination>
+            <Combination type="2" number="3">25</Combination>
+            <Combination type="2" number="4">5</Combination>
+            <Combination type="2" number="5">5</Combination>
+            <!---->
+            <Combination type="3" number="1">130</Combination>
+            <Combination type="3" number="2">105</Combination>
+            <Combination type="3" number="3">25</Combination>
+            <Combination type="3" number="4">5</Combination>
+            <Combination type="3" number="5">5</Combination>
+            <!---->
+            <Combination type="4" number="1">6550</Combination>
+            <Combination type="4" number="2">3400</Combination>
+            <Combination type="4" number="3">640</Combination>
+            <Combination type="4" number="4">160</Combination>
+            <Combination type="4" number="5">0</Combination>
+            <!---->
+            <Combination type="5" number="1">45</Combination>
+            <Combination type="5" number="2">25</Combination>
+            <Combination type="5" number="3">5</Combination>
+            <Combination type="5" number="4">0</Combination>
+            <Combination type="5" number="5">0</Combination>
+            <!---->
+            <Combination type="6" number="1">45</Combination>
+            <Combination type="6" number="2">25</Combination>
+            <Combination type="6" number="3">5</Combination>
+            <Combination type="6" number="4">0</Combination>
+            <Combination type="6" number="5">0</Combination>
+            <!---->
+            <Combination type="7" number="1">3420</Combination>
+            <Combination type="7" number="2">970</Combination>
+            <Combination type="7" number="3">190</Combination>
+            <Combination type="7" number="4">0</Combination>
+            <Combination type="7" number="5">0</Combination>
+            <!---->
+            <Combination type="8" number="1">14430</Combination>
+            <Combination type="8" number="2">5540</Combination>
+            <Combination type="8" number="3">1190</Combination>
+            <Combination type="8" number="4">270</Combination>
+            <Combination type="8" number="5">90</Combination>
+        </LivingArrangementTypAndNumberOfChildren>
+        <LivingArrangementsWithSingleFatherAndChildren>
+            <Type number="1" info="mixed gender marriage">78620</Type>
+            <Type number="2" info="male male marriage">270</Type>
+            <Type number="4" info="mixed gender cohabitation">10750</Type>
+            <Type number="5" info="male male cohabitation">75</Type>
+        </LivingArrangementsWithSingleFatherAndChildren>
+        <LivingArrangementsWithSingleMotherAndChildren>
+            <Type number="1" info="mixed gender marriage">78620</Type>
+            <Type number="3" info="female female marriage">270</Type>
+            <Type number="4" info="mixed gender cohabitation">10750</Type>
+            <Type number="6" info="female female cohabitation">75</Type>
+        </LivingArrangementsWithSingleMotherAndChildren>
+        <LivingArrangementsWithoutChildren factor="1.03269">
+            <!--
+            There were about 11 624 000 households in 2021 in germany with at least 1 parent and at least 1 child
+            (type of households, that were generated in phase 1).
+            There were about 12 004 000 households in 2021 in germany with couples, that had no child
+            (type of household, that must be generated in phase 2).
+            The amount of households, that are now generated in phase 2 depends on the amount of households that were
+            generated during phase 1.
+            factor = (12 004) / (11 624) = 1.03269
+
+            Source:
+            https://www.destatis.de/DE/Themen/Gesellschaft-Umwelt/Bevoelkerung/Haushalte-Familien/Publikationen/Downloads-Haushalte/haushalte-familien-2010300217004.html
+            table: 3.1.0
+
+
+            The age tag specifies the age group of partner1, from is inclusive, to is exclusive.
+            The text content specifies, how many partner1 of that age group for that type of living arrangement exists.
+            Values in the text content were multiplied by 10 compared to original values, to get integer values.
+
+            The given data were independent from federal states. Federal states are added during construction of the
+            respective random generator.
+
+            - from 18 to less than 25...
+            -->
+            <Type number="1" info="mixed gender marriage">
+                <Age from="18" to="25">270</Age>
+                <Age from="25" to="35">4370</Age>
+                <Age from="35" to="45">3610</Age>
+                <Age from="45" to="55">8350</Age>
+                <Age from="55" to="65">27050</Age>
+                <Age from="65" to="75">27950</Age>
+                <Age from="75" to="85">19900</Age>
+                <Age from="85" to="111">4480</Age>
+            </Type>
+            <Type number="2" info="male male marriage">
+                <Age from="18" to="25">5</Age>
+                <Age from="25" to="35">50</Age>
+                <Age from="35" to="45">75</Age>
+                <Age from="45" to="55">95</Age>
+                <Age from="55" to="65">160</Age>
+                <Age from="65" to="75">105</Age>
+                <Age from="75" to="85">90</Age>
+                <Age from="85" to="111">20</Age>
+            </Type>
+            <Type number="3" info="female female marriage">
+                <Age from="18" to="25">5</Age>
+                <Age from="25" to="35">50</Age>
+                <Age from="35" to="45">75</Age>
+                <Age from="45" to="55">95</Age>
+                <Age from="55" to="65">160</Age>
+                <Age from="65" to="75">105</Age>
+                <Age from="75" to="85">90</Age>
+                <Age from="85" to="111">20</Age>
+            </Type>
+            <Type number="4" info="mixed gender cohabitation">
+                <Age from="18" to="25">1770</Age>
+                <Age from="25" to="35">8260</Age>
+                <Age from="35" to="45">3110</Age>
+                <Age from="45" to="55">2750</Age>
+                <Age from="55" to="65">3210</Age>
+                <Age from="65" to="75">1600</Age>
+                <Age from="75" to="85">910</Age>
+                <Age from="85" to="111">180</Age>
+            </Type>
+            <Type number="5" info="male male cohabitation">
+                <Age from="18" to="25">35</Age>
+                <Age from="25" to="35">130</Age>
+                <Age from="35" to="45">125</Age>
+                <Age from="45" to="55">95</Age>
+                <Age from="55" to="65">95</Age>
+                <Age from="65" to="75">30</Age>
+                <Age from="75" to="85">25</Age>
+                <Age from="85" to="111">5</Age>
+            </Type>
+            <Type number="6" info="female female cohabitation">
+                <Age from="18" to="25">35</Age>
+                <Age from="25" to="35">130</Age>
+                <Age from="35" to="45">125</Age>
+                <Age from="45" to="55">95</Age>
+                <Age from="55" to="65">95</Age>
+                <Age from="65" to="75">30</Age>
+                <Age from="75" to="85">25</Age>
+                <Age from="85" to="111">5</Age>
+            </Type>
+        </LivingArrangementsWithoutChildren>
+    </LivingArrangements>
+    <SurnameVariationsForLivingArranements>
+        <!--
+        Info attribute inside tag is not needed for algorithm.
+        Original name of partner1 = N1.
+        Original name of partner2 = N2.
+        Vector = x,y,z in info means:
+        x = new name of partner1,
+        y = new name of partner2,
+        z = name for all children.
+
+        Values were estimated based on source:
+        https://gfds.de/familiennamen-bei-der-heirat-und-vornamenprognose-2018/
+        -->
+        <SurnameVariationsMarriage>
+            <Variation number="1" info="N1, N1, N1">798</Variation>
+            <Variation number="2" info="N1, N2, N1">110</Variation>
+            <Variation number="3" info="N1, N2, N2">20</Variation>
+            <Variation number="4" info="N1, N1-N2, N1">33</Variation>
+            <Variation number="5" info="N1, N2-N1, N1">33</Variation>
+            <Variation number="6" info="N1-N2, N2, N2">3</Variation>
+            <Variation number="7" info="N2-N1, N2, N2">3</Variation>
+        </SurnameVariationsMarriage>
+        <SurnameVariationsForCohabitation>
+            <Variation number="1" info="N1, N2, N1">9248</Variation>
+            <Variation number="2" info="N1, N2, N2">752</Variation>
+        </SurnameVariationsForCohabitation>
+    </SurnameVariationsForLivingArranements>
+    <AgeGroupsOfOnePersonHouseholds>
+        <!--
+        Data describe distribution of single households across different age groups.
+        The range is needed by the program.
+        It specifies the age group.
+
+        Source:
+        https://www.destatis.de/DE/Themen/Gesellschaft-Umwelt/Bevoelkerung/Haushalte-Familien/Publikationen/Downloads-Haushalte/haushalte-familien-2010300217004.html
+        table 1.2.2
+        -->
+        <AgeGroup number="1" range="0-24">78</AgeGroup>
+        <AgeGroup number="2" range="25-34">168</AgeGroup>
+        <AgeGroup number="3" range="35-44">108</AgeGroup>
+        <AgeGroup number="4" range="45-54">121</AgeGroup>
+        <AgeGroup number="5" range="55-64">171</AgeGroup>
+        <AgeGroup number="6" range="65-74">138</AgeGroup>
+        <AgeGroup number="7" range="75-84">147</AgeGroup>
+        <AgeGroup number="8" range="85-150">71</AgeGroup>
+    </AgeGroupsOfOnePersonHouseholds>
+</HouseholdStatistics>

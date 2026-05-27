@@ -21,10 +21,13 @@ import de.unileipzig.dbs.pprl.core.analyzer.results.ResultSet;
 import de.unileipzig.dbs.pprl.core.common.RecordUtils;
 import de.unileipzig.dbs.pprl.core.common.model.api.Attribute;
 import de.unileipzig.dbs.pprl.core.common.model.api.Record;
+import de.unileipzig.dbs.pprl.core.common.model.impl.PersonalAttributeType;
 
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Analyzer of all attributes values grouped by the attribute name
@@ -41,6 +44,16 @@ public abstract class AttributeAnalyzer extends Analyzer {
   public abstract ResultSet analyze(Map<String, List<Attribute>> attributes);
 
   public static Map<String, List<Attribute>> prepareRecords(Collection<Record> records) {
-    return RecordUtils.groupByAttributeName(records);
+    Map<String, List<Attribute>> stringListMap = RecordUtils.groupByAttributeName(records);
+    PersonalAttributeType.AttributeNameComparator comparator = new PersonalAttributeType.AttributeNameComparator();
+
+    return stringListMap.entrySet().stream()
+            .sorted(Map.Entry.comparingByKey(comparator))
+            .collect(Collectors.toMap(
+                    Map.Entry::getKey,
+                    Map.Entry::getValue,
+                    (e1, e2) -> e1,
+                    LinkedHashMap::new
+            ));
   }
 }

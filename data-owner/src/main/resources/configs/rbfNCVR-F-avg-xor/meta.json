@@ -1,4 +1,3 @@
 {
-  "method" : "DBSLeipzig/RBF/NCVR-F-avg-xor",
-  "project" : "exampleProject"
+  "method" : "DBSLeipzig/RBF/NCVR-F-avg-xor"
 }

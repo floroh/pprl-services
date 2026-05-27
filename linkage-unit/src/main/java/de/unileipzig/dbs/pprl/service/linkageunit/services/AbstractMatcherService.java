@@ -33,12 +33,10 @@ public abstract class AbstractMatcherService {
   }
 
   public Matcher trainMatcher(Matcher matcher, boolean update, Collection<RecordPair> labeledPairs) {
-    if (matcher instanceof DatasetBasedBatchMatcher) {
-      DatasetBasedBatchMatcher batchMatcher = (DatasetBasedBatchMatcher) matcher;
+    if (matcher instanceof DatasetBasedBatchMatcher batchMatcher) {
       DefaultLinker linker = (DefaultLinker) ((DatasetBasedBatchMatcher) matcher).getLinker();
       Classifier classifier = linker.getClassifier();
-      if (classifier instanceof TrainableClassifier) {
-        TrainableClassifier updatableClassifier = (TrainableClassifier) classifier;
+      if (classifier instanceof TrainableClassifier updatableClassifier) {
         if (update) {
           updatableClassifier.update(labeledPairs);
         } else {

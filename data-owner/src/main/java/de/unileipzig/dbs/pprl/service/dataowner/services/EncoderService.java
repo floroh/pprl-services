@@ -49,7 +49,7 @@ public class EncoderService {
   public RecordDto encode(EncodingRequestDto encodingRequest) {
     RecordDto dtoIn = encodingRequest.getRecord();
     RecordIdDto idIn = dtoIn.getId().duplicate();
-    int datasetIdIn = dtoIn.getDatasetId();
+    long datasetIdIn = dtoIn.getDatasetId();
     addDummyLocalIdIfMissing(dtoIn);
 
     Record in = dtoInConverter.toRecord(dtoIn);
@@ -147,7 +147,7 @@ public class EncoderService {
       dtoIn.setId(RecordIdDto.builder().local(LOCAL_ID_DUMMY).build());
     } else if (dtoIn.getId().getLocal() == null) {
       RecordIdDto idDto = dtoIn.getId();
-      idDto.setLocal("DUMMY");
+      idDto.setLocal(LOCAL_ID_DUMMY);
       dtoIn.setId(idDto);
     }
   }

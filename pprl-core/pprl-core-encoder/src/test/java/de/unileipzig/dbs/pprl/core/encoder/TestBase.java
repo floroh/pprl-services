@@ -61,7 +61,7 @@ public class TestBase {
     return this.getClass().getClassLoader().getResource(path).getFile();
   }
 
-  protected RecordEncoder getRecordEncoder() {
+  protected DefaultRecordEncoder getRecordEncoder() {
     // Create components of the RecordEncoder
     FeatureExtractor<String, String> biGramExtractor = new NGramTokenizer(2, false);
 
@@ -87,7 +87,7 @@ public class TestBase {
         .addAttributeEncoder(PersonalAttributeType.DATEOFBIRTH.toString(), ae2);
 
     // Create RecordEncoder
-    RecordEncoder recordEncoder = new DefaultRecordEncoder().addAttributeEncoderGroup(aeg1)
+    DefaultRecordEncoder recordEncoder = new DefaultRecordEncoder().addAttributeEncoderGroup(aeg1)
       .addAttributeEncoderGroup(aeg2);
     return recordEncoder;
   }
@@ -100,7 +100,7 @@ public class TestBase {
     AttributeMerger<String> hashUnion = new HashUnion();
 
     AttributeEncoderGroup<String> aeg1 =
-      new MultiAttributeEncoderGroup<String>("names", hashUnion).addAttributeEncoder(
+            new MultiAttributeEncoderGroup<>("names", hashUnion).addAttributeEncoder(
         PersonalAttributeType.FIRSTNAME.toString(), ae1)
         .addAttributeEncoder(PersonalAttributeType.LASTNAME.toString(), ae2);
 
@@ -108,13 +108,13 @@ public class TestBase {
       new SingleAttributeEncoderGroup<>("dob", PersonalAttributeType.DATEOFBIRTH.toString(), ae1);
 
     // Create RecordEncoder
-    RecordEncoder recordEncoder = new DefaultRecordEncoder().addAttributeEncoderGroup(aeg1)
+    DefaultRecordEncoder recordEncoder = new DefaultRecordEncoder().addAttributeEncoderGroup(aeg1)
       .addAttributeEncoderGroup(aeg2);
     return recordEncoder;
   }
 
   protected RecordEncoder getRecordEncoderWithBlocking() {
-    RecordEncoder re = getRecordEncoder();
+    DefaultRecordEncoder re = getRecordEncoder();
 
     BlockingKeyExtractor bke =
       new HashedDateOfBirth("hdob", PersonalAttributeType.DATEOFBIRTH.toString(), "yyyy-mm-dd", true);
@@ -148,7 +148,7 @@ public class TestBase {
         .addHardener(new Balancing(1234L));
 
     // Create RecordEncoder
-    RecordEncoder recordEncoder = new DefaultRecordEncoder();
+    DefaultRecordEncoder recordEncoder = new DefaultRecordEncoder();
     recordEncoder.addAttributeEncoderGroup(aeg1);
     recordEncoder.addAttributeEncoderGroup(aeg2);
     return recordEncoder;

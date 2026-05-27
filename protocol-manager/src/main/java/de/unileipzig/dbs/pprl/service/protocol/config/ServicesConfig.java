@@ -13,4 +13,6 @@ public class ServicesConfig {
 
   private String linkageUnitEndpoint;
 
+  private String dataGeneratorEndpoint;
+
 }

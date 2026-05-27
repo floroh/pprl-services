@@ -39,4 +39,9 @@ public class ParallelPlainRecordEncoder extends DefaultRecordEncoder {
     return encodedRecord;
   }
 
+  @Override
+  public String toString() {
+    return "ParallelPlainRecordEncoder{" + "encoderGroups=" + encoderGroups + ", blockingKeyExtractors=" +
+            blockingKeyExtractors + '}';
+  }
 }

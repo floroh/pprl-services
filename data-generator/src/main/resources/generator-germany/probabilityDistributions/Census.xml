@@ -1,0 +1,450 @@
+<FederalStates population="80209997">
+    <FederalState name="Baden-Württemberg" population="10486660">
+        <MalePopulation>
+            <AgeGroup from="0" toLessThen="3">138095</AgeGroup>
+            <AgeGroup from="3" toLessThen="6">142779</AgeGroup>
+            <AgeGroup from="6" toLessThen="15">493470</AgeGroup>
+            <AgeGroup from="15" toLessThen="18">176760</AgeGroup>
+            <AgeGroup from="18" toLessThen="25">461058</AgeGroup>
+            <AgeGroup from="25" toLessThen="30">323892</AgeGroup>
+            <AgeGroup from="30" toLessThen="40">626092</AgeGroup>
+            <AgeGroup from="40" toLessThen="50">878952</AgeGroup>
+            <AgeGroup from="50" toLessThen="65">1014073</AgeGroup>
+            <AgeGroup from="65" toLessThen="75">521676</AgeGroup>
+            <AgeGroup from="75" toLessThen="120">355708</AgeGroup>
+        </MalePopulation>
+        <FemalePopulation>
+            <AgeGroup from="0" toLessThen="3">131133</AgeGroup>
+            <AgeGroup from="3" toLessThen="6">136570</AgeGroup>
+            <AgeGroup from="6" toLessThen="15">466691</AgeGroup>
+            <AgeGroup from="15" toLessThen="18">167190</AgeGroup>
+            <AgeGroup from="18" toLessThen="25">440934</AgeGroup>
+            <AgeGroup from="25" toLessThen="30">321334</AgeGroup>
+            <AgeGroup from="30" toLessThen="40">633238</AgeGroup>
+            <AgeGroup from="40" toLessThen="50">858899</AgeGroup>
+            <AgeGroup from="50" toLessThen="65">1039660</AgeGroup>
+            <AgeGroup from="65" toLessThen="75">581919</AgeGroup>
+            <AgeGroup from="75" toLessThen="120">576537</AgeGroup>
+        </FemalePopulation>
+    </FederalState>
+    <FederalState name="Bayern" population="12397614">
+        <MalePopulation>
+            <AgeGroup from="0" toLessThen="3">159792</AgeGroup>
+            <AgeGroup from="3" toLessThen="6">163937</AgeGroup>
+            <AgeGroup from="6" toLessThen="15">559735</AgeGroup>
+            <AgeGroup from="15" toLessThen="18">201177</AgeGroup>
+            <AgeGroup from="18" toLessThen="25">525372</AgeGroup>
+            <AgeGroup from="25" toLessThen="30">380058</AgeGroup>
+            <AgeGroup from="30" toLessThen="40">761016</AgeGroup>
+            <AgeGroup from="40" toLessThen="50">1057019</AgeGroup>
+            <AgeGroup from="50" toLessThen="65">1219132</AgeGroup>
+            <AgeGroup from="65" toLessThen="75">627148</AgeGroup>
+            <AgeGroup from="75" toLessThen="120">408315</AgeGroup>
+        </MalePopulation>
+        <FemalePopulation>
+            <AgeGroup from="0" toLessThen="3">151577</AgeGroup>
+            <AgeGroup from="3" toLessThen="6">155435</AgeGroup>
+            <AgeGroup from="6" toLessThen="15">530413</AgeGroup>
+            <AgeGroup from="15" toLessThen="18">189238</AgeGroup>
+            <AgeGroup from="18" toLessThen="25">508507</AgeGroup>
+            <AgeGroup from="25" toLessThen="30">383254</AgeGroup>
+            <AgeGroup from="30" toLessThen="40">764069</AgeGroup>
+            <AgeGroup from="40" toLessThen="50">1032377</AgeGroup>
+            <AgeGroup from="50" toLessThen="65">1239890</AgeGroup>
+            <AgeGroup from="65" toLessThen="75">695686</AgeGroup>
+            <AgeGroup from="75" toLessThen="120">684467</AgeGroup>
+        </FemalePopulation>
+    </FederalState>
+    <FederalState name="Berlin" population="3292365">
+        <MalePopulation>
+            <AgeGroup from="0" toLessThen="3">48501</AgeGroup>
+            <AgeGroup from="3" toLessThen="6">44467</AgeGroup>
+            <AgeGroup from="6" toLessThen="15">122315</AgeGroup>
+            <AgeGroup from="15" toLessThen="18">37646</AgeGroup>
+            <AgeGroup from="18" toLessThen="25">131625</AgeGroup>
+            <AgeGroup from="25" toLessThen="30">129760</AgeGroup>
+            <AgeGroup from="30" toLessThen="40">233279</AgeGroup>
+            <AgeGroup from="40" toLessThen="50">276984</AgeGroup>
+            <AgeGroup from="50" toLessThen="65">306935</AgeGroup>
+            <AgeGroup from="65" toLessThen="75">175707</AgeGroup>
+            <AgeGroup from="75" toLessThen="120">92434</AgeGroup>
+        </MalePopulation>
+        <FemalePopulation>
+            <AgeGroup from="0" toLessThen="3">46366</AgeGroup>
+            <AgeGroup from="3" toLessThen="6">42286</AgeGroup>
+            <AgeGroup from="6" toLessThen="15">116856</AgeGroup>
+            <AgeGroup from="15" toLessThen="18">35946</AgeGroup>
+            <AgeGroup from="18" toLessThen="25">139787</AgeGroup>
+            <AgeGroup from="25" toLessThen="30">133794</AgeGroup>
+            <AgeGroup from="30" toLessThen="40">231006</AgeGroup>
+            <AgeGroup from="40" toLessThen="50">262704</AgeGroup>
+            <AgeGroup from="50" toLessThen="65">317756</AgeGroup>
+            <AgeGroup from="65" toLessThen="75">200381</AgeGroup>
+            <AgeGroup from="75" toLessThen="120">165830</AgeGroup>
+        </FemalePopulation>
+    </FederalState>
+    <FederalState name="Brandenburg" population="2455780">
+        <MalePopulation>
+            <AgeGroup from="0" toLessThen="3">29213</AgeGroup>
+            <AgeGroup from="3" toLessThen="6">29470</AgeGroup>
+            <AgeGroup from="6" toLessThen="15">90054</AgeGroup>
+            <AgeGroup from="15" toLessThen="18">24240</AgeGroup>
+            <AgeGroup from="18" toLessThen="25">91613</AgeGroup>
+            <AgeGroup from="25" toLessThen="30">72452</AgeGroup>
+            <AgeGroup from="30" toLessThen="40">137005</AgeGroup>
+            <AgeGroup from="40" toLessThen="50">216030</AgeGroup>
+            <AgeGroup from="50" toLessThen="65">282067</AgeGroup>
+            <AgeGroup from="65" toLessThen="75">148502</AgeGroup>
+            <AgeGroup from="75" toLessThen="120">87681</AgeGroup>
+        </MalePopulation>
+        <FemalePopulation>
+            <AgeGroup from="0" toLessThen="3">27728</AgeGroup>
+            <AgeGroup from="3" toLessThen="6">28049</AgeGroup>
+            <AgeGroup from="6" toLessThen="15">85307</AgeGroup>
+            <AgeGroup from="15" toLessThen="18">22530</AgeGroup>
+            <AgeGroup from="18" toLessThen="25">81541</AgeGroup>
+            <AgeGroup from="25" toLessThen="30">63783</AgeGroup>
+            <AgeGroup from="30" toLessThen="40">129369</AgeGroup>
+            <AgeGroup from="40" toLessThen="50">209856</AgeGroup>
+            <AgeGroup from="50" toLessThen="65">280356</AgeGroup>
+            <AgeGroup from="65" toLessThen="75">169634</AgeGroup>
+            <AgeGroup from="75" toLessThen="120">149300</AgeGroup>
+        </FemalePopulation>
+    </FederalState>
+    <FederalState name="Bremen" population="650863">
+        <MalePopulation>
+            <AgeGroup from="0" toLessThen="3">8116</AgeGroup>
+            <AgeGroup from="3" toLessThen="6">8144</AgeGroup>
+            <AgeGroup from="6" toLessThen="15">25928</AgeGroup>
+            <AgeGroup from="15" toLessThen="18">9005</AgeGroup>
+            <AgeGroup from="18" toLessThen="25">29119</AgeGroup>
+            <AgeGroup from="25" toLessThen="30">24073</AgeGroup>
+            <AgeGroup from="30" toLessThen="40">41530</AgeGroup>
+            <AgeGroup from="40" toLessThen="50">51381</AgeGroup>
+            <AgeGroup from="50" toLessThen="65">61356</AgeGroup>
+            <AgeGroup from="65" toLessThen="75">35429</AgeGroup>
+            <AgeGroup from="75" toLessThen="120">22021</AgeGroup>
+        </MalePopulation>
+        <FemalePopulation>
+            <AgeGroup from="0" toLessThen="3">7523</AgeGroup>
+            <AgeGroup from="3" toLessThen="6">7392</AgeGroup>
+            <AgeGroup from="6" toLessThen="15">24147</AgeGroup>
+            <AgeGroup from="15" toLessThen="18">8625</AgeGroup>
+            <AgeGroup from="18" toLessThen="25">29543</AgeGroup>
+            <AgeGroup from="25" toLessThen="30">22594</AgeGroup>
+            <AgeGroup from="30" toLessThen="40">39183</AgeGroup>
+            <AgeGroup from="40" toLessThen="50">50299</AgeGroup>
+            <AgeGroup from="50" toLessThen="65">65089</AgeGroup>
+            <AgeGroup from="65" toLessThen="75">39835</AgeGroup>
+            <AgeGroup from="75" toLessThen="120">40531</AgeGroup>
+        </FemalePopulation>
+    </FederalState>
+    <FederalState name="Hamburg" population="1706696">
+        <MalePopulation>
+            <AgeGroup from="0" toLessThen="3">24592</AgeGroup>
+            <AgeGroup from="3" toLessThen="6">23535</AgeGroup>
+            <AgeGroup from="6" toLessThen="15">68410</AgeGroup>
+            <AgeGroup from="15" toLessThen="18">22247</AgeGroup>
+            <AgeGroup from="18" toLessThen="25">65318</AgeGroup>
+            <AgeGroup from="25" toLessThen="30">64069</AgeGroup>
+            <AgeGroup from="30" toLessThen="40">131132</AgeGroup>
+            <AgeGroup from="40" toLessThen="50">143686</AgeGroup>
+            <AgeGroup from="50" toLessThen="65">146514</AgeGroup>
+            <AgeGroup from="65" toLessThen="75">84092</AgeGroup>
+            <AgeGroup from="75" toLessThen="120">51856</AgeGroup>
+        </MalePopulation>
+        <FemalePopulation>
+            <AgeGroup from="0" toLessThen="3">23165</AgeGroup>
+            <AgeGroup from="3" toLessThen="6">22040</AgeGroup>
+            <AgeGroup from="6" toLessThen="15">64066</AgeGroup>
+            <AgeGroup from="15" toLessThen="18">19992</AgeGroup>
+            <AgeGroup from="18" toLessThen="25">73007</AgeGroup>
+            <AgeGroup from="25" toLessThen="30">72244</AgeGroup>
+            <AgeGroup from="30" toLessThen="40">127106</AgeGroup>
+            <AgeGroup from="40" toLessThen="50">136985</AgeGroup>
+            <AgeGroup from="50" toLessThen="65">154675</AgeGroup>
+            <AgeGroup from="65" toLessThen="75">94379</AgeGroup>
+            <AgeGroup from="75" toLessThen="120">93586</AgeGroup>
+        </FemalePopulation>
+    </FederalState>
+    <FederalState name="Hessen" population="5971816">
+        <MalePopulation>
+            <AgeGroup from="0" toLessThen="3">78019</AgeGroup>
+            <AgeGroup from="3" toLessThen="6">80210</AgeGroup>
+            <AgeGroup from="6" toLessThen="15">264978</AgeGroup>
+            <AgeGroup from="15" toLessThen="18">91457</AgeGroup>
+            <AgeGroup from="18" toLessThen="25">241379</AgeGroup>
+            <AgeGroup from="25" toLessThen="30">178645</AgeGroup>
+            <AgeGroup from="30" toLessThen="40">362051</AgeGroup>
+            <AgeGroup from="40" toLessThen="50">511159</AgeGroup>
+            <AgeGroup from="50" toLessThen="65">594948</AgeGroup>
+            <AgeGroup from="65" toLessThen="75">305387</AgeGroup>
+            <AgeGroup from="75" toLessThen="120">205629</AgeGroup>
+        </MalePopulation>
+        <FemalePopulation>
+            <AgeGroup from="0" toLessThen="3">73636</AgeGroup>
+            <AgeGroup from="3" toLessThen="6">75055</AgeGroup>
+            <AgeGroup from="6" toLessThen="15">253098</AgeGroup>
+            <AgeGroup from="15" toLessThen="18">88470</AgeGroup>
+            <AgeGroup from="18" toLessThen="25">233943</AgeGroup>
+            <AgeGroup from="25" toLessThen="30">181509</AgeGroup>
+            <AgeGroup from="30" toLessThen="40">373783</AgeGroup>
+            <AgeGroup from="40" toLessThen="50">499942</AgeGroup>
+            <AgeGroup from="50" toLessThen="65">609489</AgeGroup>
+            <AgeGroup from="65" toLessThen="75">334903</AgeGroup>
+            <AgeGroup from="75" toLessThen="120">334126</AgeGroup>
+        </FemalePopulation>
+    </FederalState>
+    <FederalState name="Mecklenburg-Vorpommern" population="1609982">
+        <MalePopulation>
+            <AgeGroup from="0" toLessThen="3">19405</AgeGroup>
+            <AgeGroup from="3" toLessThen="6">18958</AgeGroup>
+            <AgeGroup from="6" toLessThen="15">56409</AgeGroup>
+            <AgeGroup from="15" toLessThen="18">14829</AgeGroup>
+            <AgeGroup from="18" toLessThen="25">66738</AgeGroup>
+            <AgeGroup from="25" toLessThen="30">54212</AgeGroup>
+            <AgeGroup from="30" toLessThen="40">93037</AgeGroup>
+            <AgeGroup from="40" toLessThen="50">133248</AgeGroup>
+            <AgeGroup from="50" toLessThen="65">188063</AgeGroup>
+            <AgeGroup from="65" toLessThen="75">91915</AgeGroup>
+            <AgeGroup from="75" toLessThen="120">56326</AgeGroup>
+        </MalePopulation>
+        <FemalePopulation>
+            <AgeGroup from="0" toLessThen="3">19257</AgeGroup>
+            <AgeGroup from="3" toLessThen="6">18530</AgeGroup>
+            <AgeGroup from="6" toLessThen="15">53852</AgeGroup>
+            <AgeGroup from="15" toLessThen="18">13961</AgeGroup>
+            <AgeGroup from="18" toLessThen="25">59672</AgeGroup>
+            <AgeGroup from="25" toLessThen="30">47389</AgeGroup>
+            <AgeGroup from="30" toLessThen="40">81064</AgeGroup>
+            <AgeGroup from="40" toLessThen="50">127413</AgeGroup>
+            <AgeGroup from="50" toLessThen="65">187584</AgeGroup>
+            <AgeGroup from="65" toLessThen="75">107787</AgeGroup>
+            <AgeGroup from="75" toLessThen="120">100332</AgeGroup>
+        </FemalePopulation>
+    </FederalState>
+    <FederalState name="Niedersachsen" population="7777992">
+        <MalePopulation>
+            <AgeGroup from="0" toLessThen="3">95455</AgeGroup>
+            <AgeGroup from="3" toLessThen="6">101321</AgeGroup>
+            <AgeGroup from="6" toLessThen="15">366871</AgeGroup>
+            <AgeGroup from="15" toLessThen="18">131465</AgeGroup>
+            <AgeGroup from="18" toLessThen="25">323085</AgeGroup>
+            <AgeGroup from="25" toLessThen="30">211641</AgeGroup>
+            <AgeGroup from="30" toLessThen="40">436107</AgeGroup>
+            <AgeGroup from="40" toLessThen="50">660603</AgeGroup>
+            <AgeGroup from="50" toLessThen="65">783061</AgeGroup>
+            <AgeGroup from="65" toLessThen="75">420637</AgeGroup>
+            <AgeGroup from="75" toLessThen="120">273530</AgeGroup>
+        </MalePopulation>
+        <FemalePopulation>
+            <AgeGroup from="0" toLessThen="3">90280</AgeGroup>
+            <AgeGroup from="3" toLessThen="6">95390</AgeGroup>
+            <AgeGroup from="6" toLessThen="15">349796</AgeGroup>
+            <AgeGroup from="15" toLessThen="18">124781</AgeGroup>
+            <AgeGroup from="18" toLessThen="25">303517</AgeGroup>
+            <AgeGroup from="25" toLessThen="30">211018</AgeGroup>
+            <AgeGroup from="30" toLessThen="40">439177</AgeGroup>
+            <AgeGroup from="40" toLessThen="50">652701</AgeGroup>
+            <AgeGroup from="50" toLessThen="65">786211</AgeGroup>
+            <AgeGroup from="65" toLessThen="75">461437</AgeGroup>
+            <AgeGroup from="75" toLessThen="120">459908</AgeGroup>
+        </FemalePopulation>
+    </FederalState>
+    <FederalState name="Nordrhein-Westfalen" population="17538251">
+        <MalePopulation>
+            <AgeGroup from="0" toLessThen="3">219530</AgeGroup>
+            <AgeGroup from="3" toLessThen="6">228440</AgeGroup>
+            <AgeGroup from="6" toLessThen="15">798541</AgeGroup>
+            <AgeGroup from="15" toLessThen="18">284163</AgeGroup>
+            <AgeGroup from="18" toLessThen="25">736897</AgeGroup>
+            <AgeGroup from="25" toLessThen="30">515517</AgeGroup>
+            <AgeGroup from="30" toLessThen="40">1011856</AgeGroup>
+            <AgeGroup from="40" toLessThen="50">1487632</AgeGroup>
+            <AgeGroup from="50" toLessThen="65">1735256</AgeGroup>
+            <AgeGroup from="65" toLessThen="75">887535</AgeGroup>
+            <AgeGroup from="75" toLessThen="120">612567</AgeGroup>
+        </MalePopulation>
+        <FemalePopulation>
+            <AgeGroup from="0" toLessThen="3">208081</AgeGroup>
+            <AgeGroup from="3" toLessThen="6">216420</AgeGroup>
+            <AgeGroup from="6" toLessThen="15">758986</AgeGroup>
+            <AgeGroup from="15" toLessThen="18">270978</AgeGroup>
+            <AgeGroup from="18" toLessThen="25">709498</AgeGroup>
+            <AgeGroup from="25" toLessThen="30">518468</AgeGroup>
+            <AgeGroup from="30" toLessThen="40">1034894</AgeGroup>
+            <AgeGroup from="40" toLessThen="50">1461855</AgeGroup>
+            <AgeGroup from="50" toLessThen="65">1788258</AgeGroup>
+            <AgeGroup from="65" toLessThen="75">1016166</AgeGroup>
+            <AgeGroup from="75" toLessThen="120">1036714</AgeGroup>
+        </FemalePopulation>
+    </FederalState>
+    <FederalState name="Rheinland-Pfalz" population="3989808">
+        <MalePopulation>
+            <AgeGroup from="0" toLessThen="3">48641</AgeGroup>
+            <AgeGroup from="3" toLessThen="6">50442</AgeGroup>
+            <AgeGroup from="6" toLessThen="15">177253</AgeGroup>
+            <AgeGroup from="15" toLessThen="18">65631</AgeGroup>
+            <AgeGroup from="18" toLessThen="25">169751</AgeGroup>
+            <AgeGroup from="25" toLessThen="30">114749</AgeGroup>
+            <AgeGroup from="30" toLessThen="40">219122</AgeGroup>
+            <AgeGroup from="40" toLessThen="50">336223</AgeGroup>
+            <AgeGroup from="50" toLessThen="65">420293</AgeGroup>
+            <AgeGroup from="65" toLessThen="75">203196</AgeGroup>
+            <AgeGroup from="75" toLessThen="120">145051</AgeGroup>
+        </MalePopulation>
+        <FemalePopulation>
+            <AgeGroup from="0" toLessThen="3">45517</AgeGroup>
+            <AgeGroup from="3" toLessThen="6">47224</AgeGroup>
+            <AgeGroup from="6" toLessThen="15">167922</AgeGroup>
+            <AgeGroup from="15" toLessThen="18">61959</AgeGroup>
+            <AgeGroup from="18" toLessThen="25">164643</AgeGroup>
+            <AgeGroup from="25" toLessThen="30">112745</AgeGroup>
+            <AgeGroup from="30" toLessThen="40">223031</AgeGroup>
+            <AgeGroup from="40" toLessThen="50">331107</AgeGroup>
+            <AgeGroup from="50" toLessThen="65">421447</AgeGroup>
+            <AgeGroup from="65" toLessThen="75">225295</AgeGroup>
+            <AgeGroup from="75" toLessThen="120">238566</AgeGroup>
+        </FemalePopulation>
+    </FederalState>
+    <FederalState name="Saarland" population="999623">
+        <MalePopulation>
+            <AgeGroup from="0" toLessThen="3">10200</AgeGroup>
+            <AgeGroup from="3" toLessThen="6">10769</AgeGroup>
+            <AgeGroup from="6" toLessThen="15">39749</AgeGroup>
+            <AgeGroup from="15" toLessThen="18">15378</AgeGroup>
+            <AgeGroup from="18" toLessThen="25">41109</AgeGroup>
+            <AgeGroup from="25" toLessThen="30">29367</AgeGroup>
+            <AgeGroup from="30" toLessThen="40">51824</AgeGroup>
+            <AgeGroup from="40" toLessThen="50">81940</AgeGroup>
+            <AgeGroup from="50" toLessThen="65">111644</AgeGroup>
+            <AgeGroup from="65" toLessThen="75">54093</AgeGroup>
+            <AgeGroup from="75" toLessThen="120">38977</AgeGroup>
+        </MalePopulation>
+        <FemalePopulation>
+            <AgeGroup from="0" toLessThen="3">10330</AgeGroup>
+            <AgeGroup from="3" toLessThen="6">10508</AgeGroup>
+            <AgeGroup from="6" toLessThen="15">37603</AgeGroup>
+            <AgeGroup from="15" toLessThen="18">14521</AgeGroup>
+            <AgeGroup from="18" toLessThen="25">38536</AgeGroup>
+            <AgeGroup from="25" toLessThen="30">26883</AgeGroup>
+            <AgeGroup from="30" toLessThen="40">53174</AgeGroup>
+            <AgeGroup from="40" toLessThen="50">82277</AgeGroup>
+            <AgeGroup from="50" toLessThen="65">113354</AgeGroup>
+            <AgeGroup from="65" toLessThen="75">62069</AgeGroup>
+            <AgeGroup from="75" toLessThen="120">65318</AgeGroup>
+        </FemalePopulation>
+    </FederalState>
+    <FederalState name="Sachsen" population="4056799">
+        <MalePopulation>
+            <AgeGroup from="0" toLessThen="3">52696</AgeGroup>
+            <AgeGroup from="3" toLessThen="6">50586</AgeGroup>
+            <AgeGroup from="6" toLessThen="15">140301</AgeGroup>
+            <AgeGroup from="15" toLessThen="18">35027</AgeGroup>
+            <AgeGroup from="18" toLessThen="25">155486</AgeGroup>
+            <AgeGroup from="25" toLessThen="30">138113</AgeGroup>
+            <AgeGroup from="30" toLessThen="40">246539</AgeGroup>
+            <AgeGroup from="40" toLessThen="50">316300</AgeGroup>
+            <AgeGroup from="50" toLessThen="65">429198</AgeGroup>
+            <AgeGroup from="65" toLessThen="75">250364</AgeGroup>
+            <AgeGroup from="75" toLessThen="120">162957</AgeGroup>
+        </MalePopulation>
+        <FemalePopulation>
+            <AgeGroup from="0" toLessThen="3">49259</AgeGroup>
+            <AgeGroup from="3" toLessThen="6">47328</AgeGroup>
+            <AgeGroup from="6" toLessThen="15">133879</AgeGroup>
+            <AgeGroup from="15" toLessThen="18">33471</AgeGroup>
+            <AgeGroup from="18" toLessThen="25">145413</AgeGroup>
+            <AgeGroup from="25" toLessThen="30">120997</AgeGroup>
+            <AgeGroup from="30" toLessThen="40">218659</AgeGroup>
+            <AgeGroup from="40" toLessThen="50">296345</AgeGroup>
+            <AgeGroup from="50" toLessThen="65">440782</AgeGroup>
+            <AgeGroup from="65" toLessThen="75">296384</AgeGroup>
+            <AgeGroup from="75" toLessThen="120">296715</AgeGroup>
+        </FemalePopulation>
+    </FederalState>
+    <FederalState name="Sachsen-Anhalt" population="2287040">
+        <MalePopulation>
+            <AgeGroup from="0" toLessThen="3">25912</AgeGroup>
+            <AgeGroup from="3" toLessThen="6">25843</AgeGroup>
+            <AgeGroup from="6" toLessThen="15">76669</AgeGroup>
+            <AgeGroup from="15" toLessThen="18">20330</AgeGroup>
+            <AgeGroup from="18" toLessThen="25">88834</AgeGroup>
+            <AgeGroup from="25" toLessThen="30">72754</AgeGroup>
+            <AgeGroup from="30" toLessThen="40">130049</AgeGroup>
+            <AgeGroup from="40" toLessThen="50">188136</AgeGroup>
+            <AgeGroup from="50" toLessThen="65">260092</AgeGroup>
+            <AgeGroup from="65" toLessThen="75">142426</AgeGroup>
+            <AgeGroup from="75" toLessThen="120">85971</AgeGroup>
+        </MalePopulation>
+        <FemalePopulation>
+            <AgeGroup from="0" toLessThen="3">24864</AgeGroup>
+            <AgeGroup from="3" toLessThen="6">24314</AgeGroup>
+            <AgeGroup from="6" toLessThen="15">72060</AgeGroup>
+            <AgeGroup from="15" toLessThen="18">19871</AgeGroup>
+            <AgeGroup from="18" toLessThen="25">81465</AgeGroup>
+            <AgeGroup from="25" toLessThen="30">62791</AgeGroup>
+            <AgeGroup from="30" toLessThen="40">112585</AgeGroup>
+            <AgeGroup from="40" toLessThen="50">179812</AgeGroup>
+            <AgeGroup from="50" toLessThen="65">264703</AgeGroup>
+            <AgeGroup from="65" toLessThen="75">167873</AgeGroup>
+            <AgeGroup from="75" toLessThen="120">159686</AgeGroup>
+        </FemalePopulation>
+    </FederalState>
+    <FederalState name="Schleswig-Holstein" population="2800119">
+        <MalePopulation>
+            <AgeGroup from="0" toLessThen="3">34369</AgeGroup>
+            <AgeGroup from="3" toLessThen="6">36551</AgeGroup>
+            <AgeGroup from="6" toLessThen="15">128582</AgeGroup>
+            <AgeGroup from="15" toLessThen="18">45583</AgeGroup>
+            <AgeGroup from="18" toLessThen="25">111361</AgeGroup>
+            <AgeGroup from="25" toLessThen="30">71552</AgeGroup>
+            <AgeGroup from="30" toLessThen="40">150860</AgeGroup>
+            <AgeGroup from="40" toLessThen="50">239649</AgeGroup>
+            <AgeGroup from="50" toLessThen="65">277519</AgeGroup>
+            <AgeGroup from="65" toLessThen="75">167090</AgeGroup>
+            <AgeGroup from="75" toLessThen="120">97368</AgeGroup>
+        </MalePopulation>
+        <FemalePopulation>
+            <AgeGroup from="0" toLessThen="3">31827</AgeGroup>
+            <AgeGroup from="3" toLessThen="6">33404</AgeGroup>
+            <AgeGroup from="6" toLessThen="15">123198</AgeGroup>
+            <AgeGroup from="15" toLessThen="18">43331</AgeGroup>
+            <AgeGroup from="18" toLessThen="25">105634</AgeGroup>
+            <AgeGroup from="25" toLessThen="30">74320</AgeGroup>
+            <AgeGroup from="30" toLessThen="40">156945</AgeGroup>
+            <AgeGroup from="40" toLessThen="50">242921</AgeGroup>
+            <AgeGroup from="50" toLessThen="65">285499</AgeGroup>
+            <AgeGroup from="65" toLessThen="75">181315</AgeGroup>
+            <AgeGroup from="75" toLessThen="120">161241</AgeGroup>
+        </FemalePopulation>
+    </FederalState>
+    <FederalState name="Thüringen" population="2188589">
+        <MalePopulation>
+            <AgeGroup from="0" toLessThen="3">25814</AgeGroup>
+            <AgeGroup from="3" toLessThen="6">25394</AgeGroup>
+            <AgeGroup from="6" toLessThen="15">75898</AgeGroup>
+            <AgeGroup from="15" toLessThen="18">20285</AgeGroup>
+            <AgeGroup from="18" toLessThen="25">86743</AgeGroup>
+            <AgeGroup from="25" toLessThen="30">74552</AgeGroup>
+            <AgeGroup from="30" toLessThen="40">130777</AgeGroup>
+            <AgeGroup from="40" toLessThen="50">176183</AgeGroup>
+            <AgeGroup from="50" toLessThen="65">249727</AgeGroup>
+            <AgeGroup from="65" toLessThen="75">131244</AgeGroup>
+            <AgeGroup from="75" toLessThen="120">79457</AgeGroup>
+        </MalePopulation>
+        <FemalePopulation>
+            <AgeGroup from="0" toLessThen="3">25332</AgeGroup>
+            <AgeGroup from="3" toLessThen="6">24077</AgeGroup>
+            <AgeGroup from="6" toLessThen="15">71524</AgeGroup>
+            <AgeGroup from="15" toLessThen="18">18663</AgeGroup>
+            <AgeGroup from="18" toLessThen="25">78962</AgeGroup>
+            <AgeGroup from="25" toLessThen="30">63312</AgeGroup>
+            <AgeGroup from="30" toLessThen="40">113502</AgeGroup>
+            <AgeGroup from="40" toLessThen="50">167650</AgeGroup>
+            <AgeGroup from="50" toLessThen="65">251642</AgeGroup>
+            <AgeGroup from="65" toLessThen="75">153025</AgeGroup>
+            <AgeGroup from="75" toLessThen="120">144826</AgeGroup>
+        </FemalePopulation>
+    </FederalState>
+</FederalStates>

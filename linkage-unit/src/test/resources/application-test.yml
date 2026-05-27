@@ -1,0 +1,8 @@
+spring:
+  data:
+    mongodb:
+      auto-index-creation: true
+      authentication-database: admin
+      database: pprllu
+      username: luadmin
+      password: luadminpw

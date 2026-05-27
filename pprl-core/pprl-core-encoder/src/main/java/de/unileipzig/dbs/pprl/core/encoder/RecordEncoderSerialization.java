@@ -18,6 +18,7 @@ package de.unileipzig.dbs.pprl.core.encoder;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.unileipzig.dbs.pprl.core.common.exceptions.PprlException;
 import de.unileipzig.dbs.pprl.core.encoder.record.RecordEncoder;
 
 import java.io.IOException;
@@ -28,16 +29,33 @@ import java.io.IOException;
 public class RecordEncoderSerialization {
 
   public static ObjectMapper om = new ObjectMapper();
+  private static RecordEncoder recordEncoder;
 //			.enableDefaultTypingAsProperty(ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE, "@class");
 
   public static RecordEncoder deserializeJson(String jsonString) throws IOException {
     return om.readValue(jsonString, RecordEncoder.class);
   }
 
-  public static String serializeJson(RecordEncoder recordEncoder) {
+  public static RecordEncoder deserializeJsonSafe(String jsonString) {
     try {
-      return om.writerWithDefaultPrettyPrinter()
-        .writeValueAsString(recordEncoder);
+      return om.readValue(jsonString, RecordEncoder.class);
+    } catch (JsonProcessingException e) {
+      throw new PprlException("Failed to deserialize encoder " + jsonString);
+    }
+  }
+
+  public static String serializeJson(RecordEncoder recordEncoder) {
+    return serializeJson(recordEncoder, true);
+  }
+
+  public static String serializeJson(RecordEncoder recordEncoder, boolean pretty) {
+    try {
+      if (pretty) {
+        return om.writerWithDefaultPrettyPrinter()
+                .writeValueAsString(recordEncoder);
+      } else {
+        return om.writeValueAsString(recordEncoder);
+      }
     } catch (JsonProcessingException e) {
       throw new RuntimeException(e.fillInStackTrace());
     }

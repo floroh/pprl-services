@@ -8,6 +8,6 @@ import java.util.Optional;
 
 public interface MongoGroundTruthRepository extends MongoRepository<MongoGroundTruth, ObjectId> {
 
-  Optional<MongoGroundTruth> findByDatasetId(int idDataset);
+  Optional<MongoGroundTruth> findByDatasetId(long datasetId);
 
 }

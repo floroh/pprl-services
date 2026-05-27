@@ -1,7 +1,6 @@
 package de.unileipzig.dbs.pprl.core.matcher.classification.weka;
 
 import de.unileipzig.dbs.pprl.core.common.model.api.Record;
-import de.unileipzig.dbs.pprl.core.matcher.classification.WekaClassifier;
 import de.unileipzig.dbs.pprl.core.matcher.classification.model.ClassifierConfig;
 import de.unileipzig.dbs.pprl.core.matcher.classification.model.InstanceCommon;
 import org.apache.logging.log4j.LogManager;

@@ -20,7 +20,6 @@ import de.unileipzig.dbs.pprl.core.analyzer.results.Result;
 import de.unileipzig.dbs.pprl.core.analyzer.results.ResultSet;
 import de.unileipzig.dbs.pprl.core.common.model.api.Attribute;
 import de.unileipzig.dbs.pprl.core.common.model.api.BitVector;
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import tech.tablesaw.api.DoubleColumn;
 import tech.tablesaw.api.IntColumn;
 import tech.tablesaw.api.LongColumn;
@@ -28,7 +27,6 @@ import tech.tablesaw.api.Table;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;

@@ -32,7 +32,7 @@ import java.util.Random;
  * using the Random Hashing scheme.
  * Salting is used to create different encodings for the same String.
  */
-public class KeyStoreRandomHashing implements FeatureEncoder<String, BitVector>, KeyedEncoderComponent {
+public class KeyStoreRandomHashing implements FeatureEncoder<String, BitVector>, KeyedEncoderComponent, NumHashFunctionsDependent {
 
   /**
    * Number of hash functions to apply on each feature which is (ignoring collusion) the number of bits
@@ -84,8 +84,14 @@ public class KeyStoreRandomHashing implements FeatureEncoder<String, BitVector>,
     secret = key.getEncoded();
   }
 
+  @Override
   public int getNumHashFunctions() {
     return numHashFunctions;
+  }
+
+  @Override
+  public void setNumHashFunctions(int numHashFunctions) {
+    this.numHashFunctions = numHashFunctions;
   }
 
   public String getKeyName() {
@@ -96,4 +102,11 @@ public class KeyStoreRandomHashing implements FeatureEncoder<String, BitVector>,
     this.keyName = keyName;
   }
 
+  @Override
+  public String toString() {
+    return "KeyStoreRandomHashing{" +
+      "numHashFunctions=" + numHashFunctions +
+      ", keyName='" + keyName + '\'' +
+      '}';
+  }
 }

@@ -23,7 +23,7 @@ import java.util.stream.IntStream;
  */
 public class TableSerialization {
 
-  public static final int DEFAULT_MAX_ROWS = 1000000;
+  public static final int DEFAULT_MAX_ROWS = 5000000;
 
   private static final String TOO_SHORT_COLUMN_MARKER = "?";
 
@@ -67,7 +67,17 @@ public class TableSerialization {
     }
     for (int r = 0; r < serializableTable.getData().length; r++) {
       for (int c = 0; c < serializableTable.getData()[r].length; c++) {
-        columns.get(c).appendCell(serializableTable.getData()[r][c]);
+        try {
+          String val = serializableTable.getData()[r][c];
+          if (val.equals("...")) {
+             continue;
+          }
+          columns.get(c).appendCell(val);
+        } catch (NumberFormatException e) {
+          columns.get(c).appendCell("NaN");
+//          String[] row = serializableTable.getData()[r];
+//          throw new RuntimeException(e);
+        }
       }
     }
     return table.addColumns(columns.toArray(new Column[0]));
@@ -87,9 +97,7 @@ public class TableSerialization {
     final String[] types = new String[colCount];
     IntStream.range(0, colCount)
       .forEach(
-        colIndex -> {
-          types[colIndex] = frame.column(colIndex).type().name();
-        });
+        colIndex -> types[colIndex] = frame.column(colIndex).type().name());
     return types;
   }
 
@@ -104,9 +112,7 @@ public class TableSerialization {
     final String[] header = new String[colCount];
     IntStream.range(0, colCount)
       .forEach(
-        colIndex -> {
-          header[colIndex] = frame.column(colIndex).name();
-        });
+        colIndex -> header[colIndex] = frame.column(colIndex).name());
     return header;
   }
 

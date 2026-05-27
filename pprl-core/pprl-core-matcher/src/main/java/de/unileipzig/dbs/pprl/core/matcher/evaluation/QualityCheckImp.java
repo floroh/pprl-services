@@ -116,7 +116,7 @@ public class QualityCheckImp implements QualityCheck {
           } else {
             row.setString(LINK_LABEL, Label.FPs.toString());
           }
-          additionalLinks.addRow(row);
+          additionalLinks.append(row);
         } else {
           Row curRow = result.row(expectedPairIdToRowNumber.get(pairId));
           curRow.setString(2, Label.TP.toString());

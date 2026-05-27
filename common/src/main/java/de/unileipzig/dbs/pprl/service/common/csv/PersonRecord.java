@@ -29,6 +29,8 @@ public class PersonRecord {
 
   private String nameAtBirth;
 
+  private String age;
+
   private String dateOfBirth;
 
   private String dayOfBirth;
@@ -38,6 +40,8 @@ public class PersonRecord {
   private String yearOfBirth;
 
   private String placeOfBirth;
+
+  private String cityOfBirth;
 
   private String address;
 
@@ -51,11 +55,16 @@ public class PersonRecord {
 
   private String street;
 
+  private String streetNumber;
+
   private String country;
 
   private String insuranceNumber;
 
   private String registrationDate;
+  private String householdRole;
+  private String householdStructure;
+  private String householdId;
 
   public RecordDto toRecordDto() {
     RecordDto.RecordDtoBuilder builder = RecordDto.builder()
@@ -64,7 +73,7 @@ public class PersonRecord {
     addIfExisting(builder, PersonalAttributeType.FIRSTNAME, this.getFirstName());
     addIfExisting(builder, PersonalAttributeType.MIDDLENAME, this.getMiddleName());
     addIfExisting(builder, PersonalAttributeType.LASTNAME, this.getLastName());
-    addIfExisting(builder, PersonalAttributeType.GENDER, this.getGender());
+    addIfExisting(builder, PersonalAttributeType.SEX, this.getGender());
     addIfExisting(builder, PersonalAttributeType.NAMEATBIRTH, this.getNameAtBirth());
     addIfExisting(builder, PersonalAttributeType.DATEOFBIRTH, this.getDateOfBirth());
     addIfExisting(builder, PersonalAttributeType.DAYOFBIRTH, this.getDayOfBirth());
@@ -77,9 +86,15 @@ public class PersonRecord {
     addIfExisting(builder, PersonalAttributeType.SUBURB, this.getSuburb());
     addIfExisting(builder, PersonalAttributeType.STATE, this.getState());
     addIfExisting(builder, PersonalAttributeType.STREET, this.getStreet());
+    addIfExisting(builder, PersonalAttributeType.STREET_NUMBER, this.getStreetNumber());
     addIfExisting(builder, PersonalAttributeType.COUNTRY, this.getCountry());
     addIfExisting(builder, PersonalAttributeType.INSURANCENUMBER, this.getInsuranceNumber());
     addIfExisting(builder, PersonalAttributeType.REGISTRATION_DATE, this.getRegistrationDate());
+    addIfExisting(builder, "AGE", this.getAge());
+    addIfExisting(builder, "CITYOFBIRTH", this.getCityOfBirth());
+    addIfExisting(builder, "HOUSEHOLD-ID", this.getHouseholdId());
+    addIfExisting(builder, "HOUSEHOLD-ROLE", this.getHouseholdRole());
+    addIfExisting(builder, "HOUSEHOLD-STRUCTURE", this.getHouseholdStructure());
 
     return builder.build();
   }
@@ -87,8 +102,13 @@ public class PersonRecord {
   private static void addIfExisting(RecordDto.RecordDtoBuilder builder,
     PersonalAttributeType attrType,
     String attrValue) {
+    addIfExisting(builder, attrType.name(), attrValue);
+  }
+  private static void addIfExisting(RecordDto.RecordDtoBuilder builder,
+    String attrName,
+    String attrValue) {
     if (attrValue != null) {
-      builder.attribute(attrType.name(), toAttributeDto(attrValue));
+      builder.attribute(attrName, toAttributeDto(attrValue));
     }
   }
 

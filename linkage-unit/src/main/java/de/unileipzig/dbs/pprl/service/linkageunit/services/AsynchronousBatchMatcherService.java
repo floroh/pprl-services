@@ -52,16 +52,14 @@ public class AsynchronousBatchMatcherService extends AbstractMatcherService {
     DatasetBasedBatchMatcher datasetBasedBatchMatcher;
     if (matcher instanceof DatasetBasedBatchMatcher) {
       datasetBasedBatchMatcher = (DatasetBasedBatchMatcher) matcher;
-    } else if (matcher instanceof DefaultBatchMatcher) {
+    } else if (matcher instanceof DefaultBatchMatcher defaultBatchMatcher) {
       log.info("Converting DefaultBatchMatcher to DatasetBasedBatchMatcher");
-      DefaultBatchMatcher defaultBatchMatcher = (DefaultBatchMatcher) matcher;
       datasetBasedBatchMatcher = new DatasetBasedBatchMatcher(
         defaultBatchMatcher.getBlocker(),
         defaultBatchMatcher.getLinker(),
         defaultBatchMatcher.getClusterer()
       );
-      if (matcher instanceof TwoStepBatchMatcher) {
-        TwoStepBatchMatcher twoStepBatchMatcher = (TwoStepBatchMatcher) matcher;
+      if (matcher instanceof TwoStepBatchMatcher twoStepBatchMatcher) {
         datasetBasedBatchMatcher.setLinksPostprocessor(twoStepBatchMatcher.getLinksPostprocessor());
       } else {
         defaultBatchMatcher.setLinksPostprocessor(defaultBatchMatcher.getLinksPostprocessor());

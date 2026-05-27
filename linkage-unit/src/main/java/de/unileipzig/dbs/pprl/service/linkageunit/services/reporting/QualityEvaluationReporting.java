@@ -2,6 +2,7 @@ package de.unileipzig.dbs.pprl.service.linkageunit.services.reporting;
 
 import de.unileipzig.dbs.pprl.core.common.model.api.RecordIdPair;
 import de.unileipzig.dbs.pprl.core.common.model.api.RecordPair;
+import de.unileipzig.dbs.pprl.core.matcher.TagUtils;
 import de.unileipzig.dbs.pprl.core.matcher.model.api.LinkageProcessDataSet;
 import de.unileipzig.dbs.pprl.core.matcher.postprocessing.LinksPostprocessor;
 import de.unileipzig.dbs.pprl.core.matcher.evaluation.ExtendedQualityResult;
@@ -12,7 +13,6 @@ import de.unileipzig.dbs.pprl.service.common.data.dto.reporting.Report;
 import de.unileipzig.dbs.pprl.service.common.data.dto.reporting.ReportGroup;
 import de.unileipzig.dbs.pprl.service.common.data.mongo.MongoRecordPair;
 import de.unileipzig.dbs.pprl.core.common.TableSerialization;
-import de.unileipzig.dbs.pprl.service.linkageunit.services.LinkImprovementService;
 import lombok.extern.slf4j.Slf4j;
 import tech.tablesaw.api.LongColumn;
 import tech.tablesaw.api.Table;
@@ -148,10 +148,8 @@ public class QualityEvaluationReporting {
       }
     }
     long ppcrCount = recordPairs.stream()
-      .filter(rp -> rp.getTags().stream()
-        .filter(tag -> tag.getTag().equals(LinkImprovementService.TAG_ENCODING_METHOD))
-        .anyMatch(tag -> tag.getStringValue().contains("PPCR"))
-      ).count();
+      .filter(TagUtils::isFromClericalReview)
+      .count();
     log.debug("PPCR count: " + ppcrCount);
     Table activeLinksHistoryResultTable = createActiveLinksHistoryResultTable(activePairsResultTable,
       totalCount, nonReplacedCount, improvedCount, ppcrCount

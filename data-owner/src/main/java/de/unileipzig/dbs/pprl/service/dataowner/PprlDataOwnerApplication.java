@@ -15,9 +15,15 @@ import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @SpringBootApplication
-@EntityScan("de.unileipzig.dbs.pprl.service.common.data.mongo")
+@EntityScan({
+        "de.unileipzig.dbs.pprl.service.common.data.mongo",
+        "de.unileipzig.dbs.pprl.service.dataowner.data.mongo",
+})
 @ComponentScan("de.unileipzig.dbs.pprl.service")
-@EnableMongoRepositories(value = "de.unileipzig.dbs.pprl.service.common.persistence.repositories.mongo")
+@EnableMongoRepositories({
+        "de.unileipzig.dbs.pprl.service.common.persistence.repositories.mongo",
+        "de.unileipzig.dbs.pprl.service.dataowner.persistence.repositories",
+})
 public class PprlDataOwnerApplication {
 
   public static void main(String[] args) {
@@ -26,7 +32,7 @@ public class PprlDataOwnerApplication {
 
   @Bean
   public MappingMongoConverter mongoConverter(
-    MongoDatabaseFactory mongoFactory, MongoMappingContext mongoMappingContext) {
+          MongoDatabaseFactory mongoFactory, MongoMappingContext mongoMappingContext) {
     DbRefResolver dbRefResolver = new DefaultDbRefResolver(mongoFactory);
     MappingMongoConverter mongoConverter = new MappingMongoConverter(dbRefResolver, mongoMappingContext);
     mongoConverter.setMapKeyDotReplacement("-DOT");

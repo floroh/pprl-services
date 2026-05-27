@@ -23,7 +23,7 @@ public class BatchMatchProject {
 
   private String description;
 
-  private int datasetId;
+  private long datasetId;
 
   private ProjectState state = ProjectState.COLLECTING;
 

@@ -5,7 +5,6 @@ import de.unileipzig.dbs.pprl.core.analyzer.cluster.data.Pair;
 import de.unileipzig.dbs.pprl.core.analyzer.results.Result;
 import de.unileipzig.dbs.pprl.core.analyzer.results.ResultSet;
 import de.unileipzig.dbs.pprl.core.common.HelperUtils;
-import de.unileipzig.dbs.pprl.core.common.comparators.ComposedIdComparator;
 import de.unileipzig.dbs.pprl.core.common.comparators.RecordIdComparator;
 import de.unileipzig.dbs.pprl.core.common.model.api.Record;
 import de.unileipzig.dbs.pprl.core.common.model.api.RecordId;
@@ -28,7 +27,7 @@ import java.util.Map;
  */
 public class ClusterPairwiseDiffPattern extends ClusterPairwiseDiff {
 
-  public static final String HEADER_SCHEMA = "SCHEMA";
+  public static final String HEADER_SCHEMA = "Schema";
   public static final double VERY_SIMILAR_BOUNDARY = 0.8;
   public static final double DISSIMILAR_BOUNDARY = 0.2;
 
@@ -74,7 +73,7 @@ public class ClusterPairwiseDiffPattern extends ClusterPairwiseDiff {
   private String constructSchemaString(Pair<Record> recordPair) {
     StringBuilder schema = new StringBuilder();
     // TODO Use RecordUtils.getAttributeNames to get all names because so far both missing is not working
-    for (AttributePairDiff apd : buildAttributePairDiffs(recordPair)) {
+    for (AttributePairDiff apd : buildAttributePairDiffs(recordPair, false)) {
       String attributeName = apd.getAttributeName();
       String attrSchemaMarker = determineAttributeSchemaMarker(apd);
       schema.append("_").append(attributeName);
@@ -149,12 +148,6 @@ public class ClusterPairwiseDiffPattern extends ClusterPairwiseDiff {
       idList.sort(new RecordIdComparator());
       colId0.append(idList.get(0).getUniqueId());
       colId1.append(idList.get(1).getUniqueId());
-//      List<String> idList = new ArrayList<>();
-//      idList.add(pair.getV0().getUniqueId());
-//      idList.add(pair.getV1().getUniqueId());
-////      idList.sort(new ComposedIdComparator());
-//      colId0.append(idList.get(0));
-//      colId1.append(idList.get(1));
     });
     return Table.create("Links", colId0, colId1);
   }
@@ -164,7 +157,7 @@ public class ClusterPairwiseDiffPattern extends ClusterPairwiseDiff {
       "The attribute values of the same type are compared for each record pair within each cluster.\n" +
         "These attribute pair similarities are combined to construct record difference patterns.\n" +
         "(==) equal, (SS) very similar (sim > " + VERY_SIMILAR_BOUNDARY + ")," +
-        " (ss) somewhat similar, (DD) dissimlar (sim < " + DISSIMILAR_BOUNDARY + ")\n" +
+        " (ss) somewhat similar, (DD) dissimilar (sim < " + DISSIMILAR_BOUNDARY + ")\n" +
         "(??) both missing, (?.) one missing";
   }
 

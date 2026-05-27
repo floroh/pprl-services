@@ -8,8 +8,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Data
 @Builder
@@ -25,12 +26,16 @@ public class AnalysisResultDto {
 
   private Map<String, ReportGroup> reportGroups;
 
+  public Optional<ReportGroup> getReportGroup(String reportGroupName) {
+    return Optional.ofNullable(reportGroups.get(reportGroupName));
+  }
+
   public static class AnalysisResultDtoBuilder {
     private Map<String, ReportGroup> reportGroups;
 
     public AnalysisResultDtoBuilder reportGroup(ReportGroup reportGroup) {
       if (reportGroups == null) {
-        reportGroups = new HashMap<>();
+        reportGroups = new LinkedHashMap<>();
       }
       reportGroups.put(reportGroup.getName(), reportGroup);
       return this;

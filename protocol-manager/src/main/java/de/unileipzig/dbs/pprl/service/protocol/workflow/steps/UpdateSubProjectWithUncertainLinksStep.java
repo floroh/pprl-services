@@ -1,14 +1,9 @@
 package de.unileipzig.dbs.pprl.service.protocol.workflow.steps;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.unileipzig.dbs.pprl.service.common.data.dto.EncodingIdDto;
-import de.unileipzig.dbs.pprl.service.common.data.dto.GroundTruthDto;
-import de.unileipzig.dbs.pprl.service.common.data.dto.RecordDto;
-import de.unileipzig.dbs.pprl.service.common.data.dto.RecordEncodingWishDto;
-import de.unileipzig.dbs.pprl.service.common.data.dto.RecordIdPairDto;
+import de.unileipzig.dbs.pprl.service.common.data.dto.*;
 import de.unileipzig.dbs.pprl.service.common.data.dto.reporting.ReportGroup;
 import de.unileipzig.dbs.pprl.service.dataowner.data.dto.EncodingRetrievalRequestDto;
-import de.unileipzig.dbs.pprl.service.linkageunit.data.dto.BatchMatchProjectDto;
 import de.unileipzig.dbs.pprl.service.linkageunit.data.dto.MatcherUpdateType;
 import de.unileipzig.dbs.pprl.service.linkageunit.data.mongo.PhaseProgress;
 import de.unileipzig.dbs.pprl.service.linkageunit.services.LinkImprovementService;
@@ -89,16 +84,20 @@ public class UpdateSubProjectWithUncertainLinksStep extends ProcessingStep {
       subLayer.setNumberOfReviews(usedBudget);
     }
 
-
+    long plaintextDatasetId = runner.getProtocol().getPlaintextDatasetId();
     List<EncodingRetrievalRequestDto> requests = buildEncodingRequest(
-      runner.getProtocol().getPlaintextDatasetId(), recordEncodingWishes);
+            plaintextDatasetId, recordEncodingWishes, runner.getProtocol().getLinkageProject());
     List<RecordDto> reencodedRecords = getReEncodedRecords(runner.getProtocolService(), requests);
     if (!reencodedRecords.isEmpty()) {
       GroundTruthDto fullGroundTruth =
-        runner.getProtocolService().getLinkageUnitService().getRecordInserter()
+        runner.getProtocolService().getLinkageUnitService().getMatcherApi()
           .getGroundTruth(runner.getProtocol().getLayerOfProject(parentProjectId).getProject().getDatasetId());
+
+      long encodedDatasetId = subLayer.getProject().getDatasetId();
+      runner.getProtocolService().addDescriptionForEncodedDatasetIfMissing(plaintextDatasetId, encodedDatasetId,
+              EncodingIdDto.builder().method("UNKNOWN").build());
       addNewRecordsToProject(
-        runner.getProtocolService(), subLayer.getProject(), fullGroundTruth, reencodedRecords);
+        runner.getProtocolService(), encodedDatasetId, fullGroundTruth, reencodedRecords);
       if (MatcherUpdateType.NEW_IMPROVED.equals(subLayer.getUpdateType())) {
         log.debug("Running matcher for new records...");
         subLayer.setProject(runner.getMatcher().runProjectForNewRecords(subLayer.getProjectId()));
@@ -122,15 +121,14 @@ public class UpdateSubProjectWithUncertainLinksStep extends ProcessingStep {
     phaseProgress.setDone(true);
   }
 
-  private BatchMatchProjectDto addNewRecordsToProject(
+  private void addNewRecordsToProject(
     ProtocolService protocolService,
-    BatchMatchProjectDto project,
+    long newDatasetId,
     GroundTruthDto groundTruthFull,
     List<RecordDto> reencodedRecords) {
-    int newDatasetId = project.getDatasetId();
     reencodedRecords.forEach(record -> record.setDatasetId(newDatasetId));
     log.debug("Inserting reencoded records to matcher...");
-    protocolService.getLinkageUnitService().getRecordInserter().batchInsert(reencodedRecords);
+    protocolService.getLinkageUnitService().getMatcherApi().batchInsert(reencodedRecords);
     log.debug("Inserted reencoded records to matcher.");
 
     GroundTruthDto groundTruthPartial = determinePartialGroundTruth(groundTruthFull, reencodedRecords,
@@ -138,7 +136,7 @@ public class UpdateSubProjectWithUncertainLinksStep extends ProcessingStep {
     );
     try {
       GroundTruthDto previousGroundTruth =
-        protocolService.getLinkageUnitService().getRecordInserter().getGroundTruth(newDatasetId);
+        protocolService.getLinkageUnitService().getMatcherApi().getGroundTruth(newDatasetId);
       Set<String> pairIds = groundTruthPartial.getRecordIdPairs().stream()
         .map(RecordIdPairDto::getUniqueLikePairId)
         .collect(Collectors.toSet());
@@ -148,13 +146,12 @@ public class UpdateSubProjectWithUncertainLinksStep extends ProcessingStep {
     } catch (Exception e) {
       log.debug("No previous ground truth found. Adding new ground truth to matcher...");
     }
-    protocolService.getLinkageUnitService().getRecordInserter().addGroundTruth(groundTruthPartial);
+    protocolService.getLinkageUnitService().getMatcherApi().addGroundTruth(groundTruthPartial);
     log.debug("Added partial ground truth to matcher.");
-    return project;
   }
 
   private GroundTruthDto determinePartialGroundTruth(GroundTruthDto groundTruthFull,
-    List<RecordDto> reencodedRecords, int newDatasetId) {
+    List<RecordDto> reencodedRecords, long newDatasetId) {
     List<String> recordIds = reencodedRecords.stream()
       .map(record -> record.getId().getBlocks().getFirst())
       .toList();
@@ -195,11 +192,11 @@ public class UpdateSubProjectWithUncertainLinksStep extends ProcessingStep {
   }
 
   private static List<EncodingRetrievalRequestDto> buildEncodingRequest(
-    int plainDatasetId, List<RecordEncodingWishDto> recordEncodingWishes) {
+    long plainDatasetId, List<RecordEncodingWishDto> recordEncodingWishes, String linkageProject) {
     List<EncodingRetrievalRequestDto> requestDtos = recordEncodingWishes.stream()
       .map(wish -> {
           EncodingIdDto curEncodingId = wish.getEncodingId();
-          curEncodingId.setProject("exampleProject");
+          curEncodingId.setProject(linkageProject);
           return EncodingRetrievalRequestDto.builder()
             .encodingId(curEncodingId)
             .datasetId(plainDatasetId)

@@ -18,7 +18,7 @@ package de.unileipzig.dbs.pprl.core.matcher.similarityCalculation.attribute;
 
 import de.unileipzig.dbs.pprl.core.common.factories.AttributeFactory;
 import de.unileipzig.dbs.pprl.core.common.model.api.Attribute;
-import de.unileipzig.dbs.pprl.core.matcher.model.AttributePair;
+import de.unileipzig.dbs.pprl.core.common.model.impl.AttributePair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

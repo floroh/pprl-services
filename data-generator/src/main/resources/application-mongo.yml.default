@@ -1,0 +1,10 @@
+spring:
+  data:
+    mongodb:
+      auto-index-creation: true
+      authentication-database: admin
+      database: pprldg
+      username: dgadmin
+      password: dgadminpw
+      host: localhost
+      port: 27017

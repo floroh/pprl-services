@@ -1,35 +1,38 @@
 services:
 
   mongo:
-    image: mongo:7.0
+    image: mongo:8.0
     container_name: pprl-services-mongo
     restart: always
     ports:
       - "127.0.0.1:27017:27017"
     volumes:
-      - ./mongo-storage:/data/db    # Storage location of MongoDB
-      - ./dev/mongodb/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro  # Init service-specific collections and users
+      - ./data/mongo-storage:/data/db    # Storage location of MongoDB
+      - ./db/dumps:/data/dumps
+      - ./db/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro  # Init service-specific collections and users
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
     networks:
-      - backend
+      - pprl-services-net
 
   pprl-do:
+    image: ${DOCKER_REGISTRY}/${DOCKER_ORG}/pprl-do-service:${DOCKER_IMAGE_TAG:-latest}  # Name of the built image
     build:
       context: ./
       dockerfile: Dockerfile
       target: pprl-do-runner
-    restart: always
+    restart: no
     ports:
       - "127.0.0.1:8081:8081"
     volumes:
-      - ./logs/do:/pprl-do-service/logs
+      - ./logs/do:/opt/pprl-services/logs
 #      - ./data-owner/application-docker.yml:/pprl-do-service/application.yml
     networks:
-      - backend
+      - pprl-services-net
 
   pprl-lu:
+    image: ${DOCKER_REGISTRY}/${DOCKER_ORG}/pprl-lu-service:${DOCKER_IMAGE_TAG:-latest}
     build:
       context: ./
       dockerfile: Dockerfile
@@ -38,25 +41,42 @@ services:
     ports:
       - "127.0.0.1:8082:8082"
     volumes:
-      - ./logs/lu:/pprl-lu-service/logs
-#      - ./linkage-unit/application-docker.yml:/pprl-lu-service/application.yml
+      - ./logs/lu:/opt/pprl-services/logs
+#      - ./linkage-unit/application-docker.yml:/opt/pprl-services/application.yml
     networks:
-      - backend
+      - pprl-services-net
 
   pprl-pm:
+    image: ${DOCKER_REGISTRY}/${DOCKER_ORG}/pprl-pm-service:${DOCKER_IMAGE_TAG:-latest}
     build:
       context: ./
       dockerfile: Dockerfile
       target: pprl-pm-runner
-    restart: always
+    restart: no
     ports:
       - "127.0.0.1:8085:8085"
     volumes:
-      - ./logs/pm:/pprl-pm-service/logs
+      - ./logs/pm:/opt/pprl-services/logs
       - ./data/datasets:/datasets
 #      - ./protocol-manager/application-docker.yml:/pprl-pm-service/application.yml
     networks:
-      - backend
+      - pprl-services-net
+
+  pprl-dg:
+    image: ${DOCKER_REGISTRY}/${DOCKER_ORG}/pprl-dg-service:${DOCKER_IMAGE_TAG:-latest}
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: pprl-dg-runner
+    restart: no
+    ports:
+      - "127.0.0.1:8086:8086"
+    volumes:
+      - ./logs/dg:/opt/pprl-services/logs
+#      - ./data-generator/application-docker.yml:/pprl-dg-service/application.yml
+    networks:
+      - pprl-services-net
+
 networks:
-  backend:
-    internal: false
+  pprl-services-net:
+    external: true

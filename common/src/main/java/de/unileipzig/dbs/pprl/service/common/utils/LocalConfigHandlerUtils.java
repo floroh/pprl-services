@@ -72,7 +72,8 @@ public class LocalConfigHandlerUtils {
       if (attribute.getDisplayName() == null || attribute.getDisplayName().isEmpty()) {
         try {
           PersonalAttributeType type = PersonalAttributeType.valueOf(attribute.getName());
-          attribute.setDisplayName(PersonalAttributeType.getDisplayName(type));
+//          attribute.setDisplayName(PersonalAttributeType.getDisplayName(type));
+          attribute.setDisplayName(type.asString());
         } catch (IllegalArgumentException e) {
           attribute.setDisplayName(attribute.getName());
         }

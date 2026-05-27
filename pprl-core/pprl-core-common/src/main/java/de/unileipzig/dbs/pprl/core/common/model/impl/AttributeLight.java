@@ -77,53 +77,37 @@ public class AttributeLight implements Attribute {
   }
 
   protected byte getTypeByte(Object value) {
-    if (value == null) {
-      return TYPE_NULL;
-    } else if (value instanceof String) {
-      return TYPE_STRING;
-    } else if (value instanceof Integer) {
-      return TYPE_INTEGER;
-    } else if (value instanceof BitVector) {
-      return TYPE_BITVECTOR;
-    } else if (value instanceof HashValue) {
-      return TYPE_HASH;
-    } else {
-      throw new RuntimeException("Unsupported attribute type: " + value.getClass()
-        .getSimpleName());
-    }
+    return switch (value) {
+      case null -> TYPE_NULL;
+      case String s -> TYPE_STRING;
+      case Integer i -> TYPE_INTEGER;
+      case BitVector bitVector -> TYPE_BITVECTOR;
+      case HashValue hashValue -> TYPE_HASH;
+      default -> throw new RuntimeException("Unsupported attribute type: " + value.getClass()
+              .getSimpleName());
+    };
   }
 
   protected Class getTypeClass() {
-    switch (rawBytes[0]) {
-      case TYPE_NULL:
-        return null;
-      case TYPE_STRING:
-        return String.class;
-      case TYPE_INTEGER:
-        return Integer.class;
-      case TYPE_BITVECTOR:
-        return BitVector.class;
-      case TYPE_HASH:
-        return HashValue.class;
-      default:
-        throw new RuntimeException("Invalid internal attribute type: " + rawBytes[0]);
-    }
+    return switch (rawBytes[0]) {
+      case TYPE_NULL -> null;
+      case TYPE_STRING -> String.class;
+      case TYPE_INTEGER -> Integer.class;
+      case TYPE_BITVECTOR -> BitVector.class;
+      case TYPE_HASH -> HashValue.class;
+      default -> throw new RuntimeException("Invalid internal attribute type: " + rawBytes[0]);
+    };
   }
 
   @Override
   public Type getType() {
-    switch (rawBytes[0]) {
-      case TYPE_NULL:
-        return Type.NULL;
-      case TYPE_STRING:
-        return Type.STRING;
-      case TYPE_INTEGER:
-        return Type.INT;
-      case TYPE_BITVECTOR:
-        return Type.BITVECTOR;
-      default:
-        throw new RuntimeException("Invalid internal attribute type: " + rawBytes[0]);
-    }
+    return switch (rawBytes[0]) {
+      case TYPE_NULL -> Type.NULL;
+      case TYPE_STRING -> Type.STRING;
+      case TYPE_INTEGER -> Type.INT;
+      case TYPE_BITVECTOR -> Type.BITVECTOR;
+      default -> throw new RuntimeException("Invalid internal attribute type: " + rawBytes[0]);
+    };
   }
 
   public boolean isString() {
@@ -179,18 +163,13 @@ public class AttributeLight implements Attribute {
   }
 
   private void setObject(Object value) {
-    if (value == null) {
-      rawBytes = new byte[] {TYPE_NULL};
-    } else if (value instanceof String) {
-      setString((String) value);
-    } else if (value instanceof Integer) {
-      setInt((Integer) value);
-    } else if (value instanceof BitVector) {
-      setBitSet((BitVector) value);
-    } else if (value instanceof HashValue) {
-      setHash((HashValue) value);
-    } else {
-      throw new RuntimeException("Unsupported attribute type: " + value.getClass().getCanonicalName());
+    switch (value) {
+      case null -> rawBytes = new byte[]{TYPE_NULL};
+      case String s -> setString(s);
+      case Integer i -> setInt(i);
+      case BitVector bitVector -> setBitSet(bitVector);
+      case HashValue hashValue -> setHash(hashValue);
+      default -> throw new RuntimeException("Unsupported attribute type: " + value.getClass().getCanonicalName());
     }
   }
 

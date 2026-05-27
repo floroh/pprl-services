@@ -9,6 +9,8 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 
+import static de.unileipzig.dbs.pprl.service.common.Constants.DUMMY_LINKAGE_PROJECT;
+
 public class KeyStoreInitializer {
 
   public static void main(String[] args) throws KeyStoreException, CertificateException, IOException,
@@ -20,7 +22,7 @@ public class KeyStoreInitializer {
     KeyManager.addSecret(
       keyStore,
       KeyManager.BASE_KEY_NAME,
-      "exampleProject".getBytes(),
+      DUMMY_LINKAGE_PROJECT.getBytes(),
       "ksPass".toCharArray()
     );
     try (FileOutputStream fos = new FileOutputStream("pprl-data-owner.jks")) {

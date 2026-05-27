@@ -20,7 +20,7 @@ import de.unileipzig.dbs.pprl.core.common.factories.AttributeFactory;
 import de.unileipzig.dbs.pprl.core.common.model.api.Attribute;
 import de.unileipzig.dbs.pprl.core.common.model.impl.BitSetVector;
 import de.unileipzig.dbs.pprl.core.matcher.MatcherTestBase;
-import de.unileipzig.dbs.pprl.core.matcher.model.AttributePair;
+import de.unileipzig.dbs.pprl.core.common.model.impl.AttributePair;
 import de.unileipzig.dbs.pprl.core.matcher.similarityCalculation.missing.MissingSimilarityStrategy;
 import org.junit.jupiter.api.Test;
 

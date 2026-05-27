@@ -30,7 +30,7 @@ public class EncodingRetrievalRequestDto {
   @JsonUnwrapped(prefix = "id.")
   private RecordIdDto recordId;
 
-  private int datasetId;
+  private long datasetId;
 
   private String recordSecret;
 }

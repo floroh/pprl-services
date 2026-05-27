@@ -1,8 +1,7 @@
 package de.unileipzig.dbs.pprl.service.protocol.controller;
 
-import de.unileipzig.dbs.pprl.service.linkageunit.data.dto.BatchMatchRequestDto;
-import de.unileipzig.dbs.pprl.service.linkageunit.data.dto.MatchResultDto;
 import de.unileipzig.dbs.pprl.service.protocol.model.dto.DatasetCsvDto;
+import de.unileipzig.dbs.pprl.service.protocol.model.dto.DatasetGeneratorDto;
 import de.unileipzig.dbs.pprl.service.protocol.service.DataOwnerService;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,10 +29,14 @@ public class DataOwnerController {
 
   @Operation(summary = "Insert dataset from csv file", tags = TAG)
   @PostMapping("/record")
-  public int insertFromCsv(@RequestBody DatasetCsvDto datasetCsvDto) {
-    dataOwnerService.getRecordInserter().insertDatasetFromCsv(datasetCsvDto.getPath(),
-      datasetCsvDto.getDatasetId());
-    return datasetCsvDto.getDatasetId();
+  public long insertFromCsv(@RequestBody DatasetCsvDto datasetCsvDto) {
+    return dataOwnerService.insertDatasetFromCsv(datasetCsvDto);
+  }
+
+  @Operation(summary = "Insert dataset from generator", tags = TAG)
+  @PostMapping("/record/generate")
+  public long addGeneratedDataset(@RequestBody DatasetGeneratorDto datasetGeneratorDto) {
+    return dataOwnerService.addGeneratedDataset(datasetGeneratorDto);
   }
 
 }

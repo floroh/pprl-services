@@ -9,6 +9,6 @@ import java.util.Optional;
 
 public interface MongoFrequencyLookupRepository extends MongoRepository<MongoFrequencyLookup, ObjectId> {
 
-  Optional<MongoFrequencyLookup> findByDatasetId(int datasetId);
+  Optional<MongoFrequencyLookup> findByDatasetIdAndDatasetSourceAndConfig(long datasetId, String datasetSource, String config);
 
 }

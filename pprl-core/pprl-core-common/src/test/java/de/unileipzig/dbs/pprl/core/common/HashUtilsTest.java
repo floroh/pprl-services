@@ -70,8 +70,6 @@ class HashUtilsTest {
       .collect(
         Collectors.groupingBy(Function.identity(), Collectors.counting()));
 
-    bins.forEach((blk, count) -> {
-      assertEquals((float) numberOfDays / outRange, count, 0.05 * (numberOfDays / outRange));
-    });
+    bins.forEach((blk, count) -> assertEquals((float) numberOfDays / outRange, count, 0.05 * (numberOfDays / outRange)));
   }
 }

@@ -3,10 +3,7 @@ package de.unileipzig.dbs.pprl.service.common.data.dto.reporting;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.unileipzig.dbs.pprl.core.common.model.impl.SerializableTable;
 import de.unileipzig.dbs.pprl.core.common.TableSerialization;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import tech.tablesaw.api.Table;
 
 import java.util.Optional;
@@ -21,6 +18,7 @@ public class Report {
   /**
    * Name of this report
    */
+  @NonNull
   private String name;
 
   /**

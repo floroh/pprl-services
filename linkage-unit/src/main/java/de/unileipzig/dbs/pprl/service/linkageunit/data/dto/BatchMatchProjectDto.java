@@ -32,7 +32,7 @@ public class BatchMatchProjectDto {
 
   private String description;
 
-  private int datasetId;
+  private long datasetId;
 
   /**
    * Determine if the project should be run fully automated or allows human interaction

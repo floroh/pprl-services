@@ -110,4 +110,12 @@ public class AttributesFrequencyLookup {
 //    return input.toUpperCase();
     return normalized;
   }
+
+  @Override
+  public String toString() {
+    return "AttributesFrequencyLookup{" +
+            "transformAttributes=" + transformAttributes +
+            ", attributeFrequencyLookups=" + attributeFrequencyLookups +
+            '}';
+  }
 }

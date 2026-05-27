@@ -4,8 +4,12 @@ import de.unileipzig.dbs.pprl.core.common.model.api.BlockedDataSet;
 import de.unileipzig.dbs.pprl.core.common.model.api.BlockingKey;
 import de.unileipzig.dbs.pprl.core.common.model.api.Record;
 import de.unileipzig.dbs.pprl.core.common.model.api.RecordId;
+import de.unileipzig.dbs.pprl.core.common.monitoring.TagTable;
 import de.unileipzig.dbs.pprl.service.common.data.mongo.MongoRecord;
 import de.unileipzig.dbs.pprl.service.common.services.DatasetMongoService;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.NotImplementedException;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
@@ -19,46 +23,35 @@ import java.util.stream.Collectors;
  */
 public class DatabaseBlockedDataSet implements BlockedDataSet {
 
-  private int idDataset;
+  @Setter
+  @Getter
+  private long datasetId;
 
+  @Setter
+  @Getter
   protected ObjectId projectId;
 
   private final DatasetMongoService datasetMongoService;
+
 
   public DatabaseBlockedDataSet(DatasetMongoService datasetMongoService) {
     this.datasetMongoService = datasetMongoService;
   }
 
-  public int getIdDataset() {
-    return idDataset;
-  }
-
-  public void setIdDataset(int idDataset) {
-    this.idDataset = idDataset;
-  }
-
-  public ObjectId getProjectId() {
-    return projectId;
-  }
-
-  public void setProjectId(ObjectId projectId) {
-    this.projectId = projectId;
-  }
-
   @Override
   public void addRecord(Record record) {
-    datasetMongoService.addRecord(idDataset, (MongoRecord) record);
+    datasetMongoService.addRecord(datasetId, (MongoRecord) record);
   }
 
   @Override
   public void addRecords(Collection<Record> records) {
-    datasetMongoService.addRecords(idDataset,
+    datasetMongoService.addRecords(datasetId,
       records.stream().map(r -> (MongoRecord) r).collect(Collectors.toList()));
   }
 
   @Override
   public Optional<Record> getRecord(RecordId id) {
-    return cast(datasetMongoService.getRecord(idDataset, id));
+    return cast(datasetMongoService.getRecord(datasetId, id));
   }
 
   public Optional<Record> getRecord(String uniqueId) {
@@ -75,12 +68,12 @@ public class DatabaseBlockedDataSet implements BlockedDataSet {
 
   @Override
   public Collection<Record> getAllRecords() {
-    return datasetMongoService.getAllRecords(idDataset);
+    return datasetMongoService.getAllRecords(datasetId);
   }
 
   @Override
   public Collection<Record> getRecordsBySource(String sourceName) {
-    return datasetMongoService.getRecordsBySource(idDataset, sourceName);
+    return datasetMongoService.getRecordsBySource(datasetId, sourceName);
   }
 
   @Override
@@ -100,10 +93,20 @@ public class DatabaseBlockedDataSet implements BlockedDataSet {
 
   @Override
   public long size() {
-    return datasetMongoService.size(idDataset);
+    return datasetMongoService.size(datasetId);
   }
 
   public void deleteAll() {
-    datasetMongoService.deleteAll(idDataset);
+    datasetMongoService.deleteAll(datasetId);
+  }
+
+  @Override
+  public void setTagTable(TagTable tagTable) {
+    throw new NotImplementedException();
+  }
+
+  @Override
+  public Optional<TagTable> getTagTable() {
+    throw new NotImplementedException();
   }
 }

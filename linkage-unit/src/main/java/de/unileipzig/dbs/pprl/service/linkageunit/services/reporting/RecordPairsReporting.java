@@ -12,6 +12,7 @@ import tech.tablesaw.api.LongColumn;
 import tech.tablesaw.api.Row;
 import tech.tablesaw.api.StringColumn;
 import tech.tablesaw.api.Table;
+import tech.tablesaw.joining.JoinType;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -65,7 +66,12 @@ public class RecordPairsReporting {
     tableAll.column("count").setName("countAll");
     Table tableActive = getGroupedCounts(activeRecordPairs, groupBy, keyName);
     tableActive.column("count").setName("countActive");
-    Table joinedTable = tableAll.joinOn(keyName).fullOuter(tableActive);
+    Table joinedTable = tableAll
+            .joinOn(keyName)
+            .allowDuplicateColumnNames(false)
+            .type(JoinType.FULL_OUTER)
+            .with(tableActive)
+            .join();
     joinedTable.forEach(r -> {
       if (r.isMissing("countAll")) {
         r.setLong("countAll", 0);

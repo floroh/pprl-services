@@ -44,7 +44,7 @@ public abstract class Analyzer {
       .getSimpleName();
   }
 
-  protected void addDescriptiveStatisticMetrics(Result result, DescriptiveStatistics stats,
+  protected static void addDescriptiveStatisticMetrics(Result result, DescriptiveStatistics stats,
     List<String> metricNames) {
     for (String metricName : metricNames) {
       if (stats.getN() == 0) {
@@ -81,7 +81,6 @@ public abstract class Analyzer {
       try {
         result.addMetric(metricName, new BigDecimal(value, mc));
       } catch (Exception e) {
-        logger.warn("Could not parse as BigDecimal: " + stats.getPercentile(50));
         result.addMetric(metricName, BigDecimal.valueOf(-1));
       }
     }

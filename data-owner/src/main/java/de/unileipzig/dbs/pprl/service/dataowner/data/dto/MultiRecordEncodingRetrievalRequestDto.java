@@ -22,7 +22,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Schema(description = "Request description for encoding multiple records from the same dataset " +
-  "with the same encoding. No record-specific secret is required or possible.")
+        "with the same encoding. No record-specific secret is required or possible.")
 public class MultiRecordEncodingRetrievalRequestDto {
 
   @NonNull
@@ -31,7 +31,8 @@ public class MultiRecordEncodingRetrievalRequestDto {
   @Schema(description = "List of record ids to encode. If empty, all records of the dataset are encoded.")
   private List<RecordIdDto> recordIds;
 
-  private int datasetId;
+  private long datasetId;
 
+  private String datasetSource;
 
 }

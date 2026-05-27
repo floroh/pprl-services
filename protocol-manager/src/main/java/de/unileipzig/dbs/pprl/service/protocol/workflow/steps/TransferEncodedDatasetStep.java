@@ -47,23 +47,25 @@ public class TransferEncodedDatasetStep extends ProcessingStep {
   @Override
   public void execute(MultiLayerProtocolRunner runner) {
     super.execute(runner);
-    int plaintextDatasetId = runner.getProtocol().getPlaintextDatasetId();
+    long plaintextDatasetId = runner.getProtocol().getPlaintextDatasetId();
     String encodingMethod = runner.getProtocol().getLayers().getFirst().getEncodingMethod();
-    int encodedDatasetId = ProtocolService.getEncodedDatasetId(plaintextDatasetId,
-      encodingMethod
-    );
+    if (runner.getProtocol().getInitialDatasetId() == null) {
+      long initialDatasetId = runner.getProtocolService().getLinkageUnitService().getDatasetIdService().generateDatasetId();
+      runner.getProtocol().setInitialDatasetId(initialDatasetId);
+    }
+    long encodedDatasetId = runner.getProtocol().getInitialDatasetId();
     List<DatasetDto> datasetDescriptions = runner.getMatcher().getDatasetDescriptions();
     Optional<DatasetDto> first = datasetDescriptions.stream()
       .filter(dto -> dto.getPlaintextDatasetId() == plaintextDatasetId)
       .filter(dto -> dto.getDatasetId() == encodedDatasetId)
       .findFirst();
     if (first.isEmpty()) {
-      runner.getProtocolService().addEncodedDataset(plaintextDatasetId, encodingMethod);
+      runner.getProtocolService().addEncodedDataset(plaintextDatasetId, encodedDatasetId,
+              encodingMethod, runner.getProtocol().getLinkageProject());
     } else {
       getProperties().put("cached", "True");
     }
-    getProperties().put("plaintextDatasetId", String.valueOf(plaintextDatasetId));
-    getProperties().put("encodedDatasetId", String.valueOf(encodedDatasetId));
+    getProperties().put("encodingMethod", encodingMethod);
     setProjectId(runner.getProtocol().getLayers().getFirst().getProjectId());
     phaseProgress.setProgress(1.0);
     phaseProgress.setDone(true);

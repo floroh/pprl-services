@@ -1,12 +1,13 @@
 package de.unileipzig.dbs.pprl.service.protocol.service;
 
+import de.unileipzig.dbs.pprl.service.common.modifier.JsonModifier;
+import de.unileipzig.dbs.pprl.service.common.services.DatasetIdService;
 import de.unileipzig.dbs.pprl.service.linkageunit.config.LinkSelectionStrategy;
 import de.unileipzig.dbs.pprl.service.linkageunit.data.dto.BatchMatchProjectDto;
 import de.unileipzig.dbs.pprl.service.linkageunit.data.dto.MatchingDto;
 import de.unileipzig.dbs.pprl.service.protocol.api.MatcherApi;
 import de.unileipzig.dbs.pprl.service.protocol.model.mongo.Layer;
 import de.unileipzig.dbs.pprl.service.protocol.model.mongo.MultiLayerProtocol;
-import de.unileipzig.dbs.pprl.service.protocol.utils.JsonModifier;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +16,9 @@ import org.bson.types.ObjectId;
 
 import java.util.LinkedHashMap;
 
+import static de.unileipzig.dbs.pprl.service.common.Constants.DUMMY_LINKAGE_PROJECT;
 import static de.unileipzig.dbs.pprl.service.linkageunit.services.LinkImprovementService.*;
+import static de.unileipzig.dbs.pprl.service.linkageunit.services.MatcherModificationService.CONFIG_REPLACE_ONLY_CHANGED_PAIRS_ON_RECLASSIFICATION;
 import static de.unileipzig.dbs.pprl.service.linkageunit.services.ProjectService.CONFIG_RECORD_PAIR_LIMIT;
 
 @Slf4j
@@ -45,7 +48,10 @@ public class MultiLayerProjectCreator {
 
   private final ProtocolService protocolService;
 
-  public MultiLayerProjectCreator(ProtocolService protocolService) {
+  private final DatasetIdService datasetIdService;
+
+  public MultiLayerProjectCreator(DatasetIdService datasetIdService, ProtocolService protocolService) {
+    this.datasetIdService = datasetIdService;
     this.protocolService = protocolService;
   }
 
@@ -54,14 +60,26 @@ public class MultiLayerProjectCreator {
   }
 
   public MultiLayerProtocol initMultiLayerProtocol(MultiLayerProtocol protocol) {
+    if (protocol.getLinkageProject() == null || protocol.getLinkageProject().isBlank()) {
+      protocol.setLinkageProject(DUMMY_LINKAGE_PROJECT);
+    }
     boolean useRBF = protocol.getLayerByName("RBF").isPresent();
     boolean useABF = protocol.getLayerByName("ABF").isPresent();
     boolean usePPCR = protocol.getLayerByName("PPCR").isPresent();
+    int recordPairLimit = 0;
+    if (protocol.getLayers().size() > 1) {
+      recordPairLimit = 100000;
+    }
 //    if (!useRBF) {
 //      throw new RuntimeException("Missing RBF layer not supported");
 //    }
     BatchMatchProjectDto previousProject = null;
     BatchMatchProjectDto rbfProject = null;
+    Long initialDatasetId = protocol.getInitialDatasetId();
+    if (initialDatasetId == null || initialDatasetId == 0) {
+      initialDatasetId = datasetIdService.generateDatasetId();
+      protocol.setInitialDatasetId(initialDatasetId);
+    }
     if (useRBF) {
       Layer rbfLayer = protocol.getLayerByName("RBF").get();
       rbfLayer.setMatcherMethod(addMatcherCopy(rbfLayer.getMatcherMethod()));
@@ -75,9 +93,13 @@ public class MultiLayerProjectCreator {
         wishMethod = ppcrLayer.getEncodingMethod();
       }
       rbfProject = createProject(
-        protocol.getInitialDatasetId(),
-        rbfLayer.getMatcherMethod(),
-        wishMethod
+              initialDatasetId,
+              rbfLayer.getMatcherMethod(),
+              null,
+              wishMethod,
+              rbfLayer.getLinkSelectionStrategy(),
+              true,
+              recordPairLimit
       );
       rbfLayer.setProject(rbfProject);
       previousProject = rbfProject;
@@ -97,13 +119,17 @@ public class MultiLayerProjectCreator {
           rbfProject,
           abfLayer.getMatcherMethod(),
           wishMethod,
-          LinkSelectionStrategy.SORTED
+          abfLayer.getLinkSelectionStrategy()
         );
       } else {
         abfProject = createProject(
-          protocol.getInitialDatasetId(),
-          abfLayer.getMatcherMethod(),
-          wishMethod
+                initialDatasetId,
+                abfLayer.getMatcherMethod(),
+                null,
+                wishMethod,
+                abfLayer.getLinkSelectionStrategy(),
+                false,
+                recordPairLimit
         );
       }
       abfLayer.setProject(abfProject);
@@ -122,25 +148,16 @@ public class MultiLayerProjectCreator {
         null, null
       );
       ppcrLayer.setProject(ppcrProject);
-
-      // Update batchsize according to the budget
-//      int ppcrBatchSize = switch (ppcrLayer.getBudget()) {
-//        case 100 -> 10;
-//        case 200 -> 20;
-//        case 300 -> 30;
-//        default -> 10;
-//      };
-//      ppcrLayer.setBatchSize(ppcrBatchSize);
     }
     return protocol;
   }
 
   public BatchMatchProjectDto addSubProject(BatchMatchProjectDto superProjectDto, String method,
     String wishMethod, LinkSelectionStrategy linkSelectionStrategy) {
-    int idDataset =
+    long datasetId =
       superProjectDto.getDatasetId() + new ObjectId(superProjectDto.getProjectId()).getTimestamp();
-    BatchMatchProjectDto subProjectDto = createProject(idDataset, method, superProjectDto.getProjectId(),
-      wishMethod, linkSelectionStrategy
+    BatchMatchProjectDto subProjectDto = createProject(datasetId, method, superProjectDto.getProjectId(),
+      wishMethod, linkSelectionStrategy, false, 0
     );
     log.debug("Created sub project: " + subProjectDto);
     return subProjectDto;
@@ -190,16 +207,10 @@ public class MultiLayerProjectCreator {
     return newMethod;
   }
 
-  public BatchMatchProjectDto createProject(int datasetId, String method) {
-    return createProject(datasetId, method, null);
-  }
-
-  public BatchMatchProjectDto createProject(int datasetId, String method, String wishMethod) {
-    return createProject(datasetId, method, null, wishMethod, null);
-  }
-
-  public BatchMatchProjectDto createProject(int datasetId, String method, String projectIdToReportTo,
-    String wishMethod, LinkSelectionStrategy linkSelectionStrategy) {
+  public BatchMatchProjectDto createProject(long datasetId, String method, String projectIdToReportTo,
+    String wishMethod, LinkSelectionStrategy linkSelectionStrategy,
+                                            Boolean replaceOnlyChangedPairsOnReclassification,
+                                            int recordPairLimit) {
     log.debug("Creating project...");
     BatchMatchProjectDto.BatchMatchProjectDtoBuilder builder = BatchMatchProjectDto.builder()
       .datasetId(datasetId)
@@ -215,7 +226,12 @@ public class MultiLayerProjectCreator {
     if (linkSelectionStrategy != null) {
       builder.config(CONFIG_LINK_SELECTION_STRATEGY, linkSelectionStrategy.name());
     }
-    builder.config(CONFIG_RECORD_PAIR_LIMIT, Integer.toString(50000));
+    if (replaceOnlyChangedPairsOnReclassification != null) {
+      builder.config(CONFIG_REPLACE_ONLY_CHANGED_PAIRS_ON_RECLASSIFICATION, replaceOnlyChangedPairsOnReclassification.toString());
+    }
+    if (recordPairLimit > 0) {
+      builder.config(CONFIG_RECORD_PAIR_LIMIT, Integer.toString(recordPairLimit));
+    }
     BatchMatchProjectDto project = addProjectDto(builder.build());
     log.info("Created project {}", project);
     return project;

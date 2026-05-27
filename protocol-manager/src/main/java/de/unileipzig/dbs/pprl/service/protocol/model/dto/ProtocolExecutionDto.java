@@ -15,6 +15,7 @@ public class ProtocolExecutionDto {
 
   private String protocolId;
 
+  @Builder.Default
   private int numberOfSteps = -1;
 
   private String stepToStop;
