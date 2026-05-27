@@ -15,6 +15,7 @@ data generator unit [localhost:8086](http://localhost:8086)
 )
 with MongoDB in docker:
 ```bash
+cp default.env .env
 export DOCKER_BUILDKIT=1
 export COMPOSE_DOCKER_CLI_BUILD=1
 docker network create pprl-services-net

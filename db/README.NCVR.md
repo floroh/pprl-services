@@ -17,7 +17,7 @@ The database of Panse requires a MongoDB instance which can be run using the doc
 
 ### Import
 
-1. Unzip the nctestdata-modX.zip files to `nctestdata/`
+1. Unzip the nctestdata-modX.zip files to `us-data/nc`
 (Adapt the paths in docker-compose.yml if the original files and the MongoDB database are located elsewhere)
 
 2. Run MongoDB:
@@ -50,7 +50,7 @@ docker-compose down
 
 3. Prepare new docker bind mounts
 - Change mount paths in docker-compose 
-- Copy dumped collection to `nctestdata/dump`
+- Copy dumped collection to `us-data/nc/dump`
 
 4. Start MongoDB
 ```
@@ -62,11 +62,4 @@ docker-compose up -d
 docker exec -it us-mongo-db bash /importdata/nc/mongorestore-clean.sh
 ```
 
-6. Delete dump files in `nctestdata/dump`
-
-## Usage
-1. Adapt and run [NcvrGenerator.main()](src/main/java/de/unileipzig/dbs/pprl/service/generator/selection/scripts/nc/NcvrGenerator.java)
-
-## Authors and acknowledgment
-- Martin Franke (Main author)
-- Florens Rohde (Installation helpers)
+6. Delete dump files in `us-data/nc/dump`
