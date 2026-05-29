@@ -12,8 +12,6 @@ The database of Panse requires a MongoDB instance which can be run using the doc
 - Install docker and docker-compose
 - Make sure to have enough free disk space for the unpacked json import files ("Data Size") and the MongoDB database ("Storage Size").
   - raw import: Data Size 326 GB, Storage Size 73.2 GB
-  - with cleaned collection: Data Size 363 GB, Storage Size 81.7 GB
-  - cleaned collection only: Data Size 37 GB, Storage Size 8.5 GB
 
 ### Import
 
@@ -29,37 +27,3 @@ docker compose -f docker-compose.ncvr-db.yml up -d
 ```
 docker exec -it us-mongo-db bash /importdata/nc/mongoimport-all.sh
 ```
-
-4. Run the cleaning by executing [NcvrCleaner.main()](src/main/java/de/unileipzig/dbs/pprl/service/generator/selection/services/nc/NcvrCleaner.java)
-
-### Optional: Move cleaned collection
-The huge imported collection `2-testdata` is no longer needed so it can be deleted.
-If the MongoDB storage location for the import process was an external drive,
-it might be a good idea to move the much smaller cleaned collection `2-testdata-clean`
-to an internal SSD for faster access.
-
-1. Dump collection
-```
-docker exec -it us-mongo-db bash /importdata/nc/mongodump-clean.sh
-```
-
-2. Stop MongoDB
-```
-docker-compose down
-```
-
-3. Prepare new docker bind mounts
-- Change mount paths in docker-compose 
-- Copy dumped collection to `us-data/nc/dump`
-
-4. Start MongoDB
-```
-docker-compose up -d
-```
-
-5. Restore collection
-```
-docker exec -it us-mongo-db bash /importdata/nc/mongorestore-clean.sh
-```
-
-6. Delete dump files in `us-data/nc/dump`

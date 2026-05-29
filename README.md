@@ -1,5 +1,48 @@
 # PPRL services
 
+## Background
+Record linkage aims at linking records that refer to the same real-world entity,
+such as persons. Typically, there is a lack of global identifiers, therefore the
+linkage can only be achieved by comparing available quasi-identifiers, such as name,
+address or date of birth. However, in many cases, data owners are only willing
+or allowed to provide their data for such data integration if there is sufficient
+protection of sensitive information to ensure the privacy of persons,
+such as patients or customers.
+**Privacy Preserving Record Linkage (PPRL)** addresses this problem by providing
+techniques to match records while preserving their privacy allowing the combination
+of data from different sources for improved data analysis and research.
+For this purpose, the linkage of person-related records is based on encoded values
+of the quasi-identifiers and the data needed for analysis (e.g., health data) is
+separated from these quasi-identifiers. The relevant data can be provided to a
+researcher without the identifying data.
+
+![Linkage approach](./docs/linkage_motivation.jpg)
+
+The **data owner services** irreversibly transform the original plaintext to an encoded representation before
+sharing this encoded data with a third party for linkage.
+A popular encoding technique is based on Bloom filter data structures which is also the focus of this implementation.
+
+The **linkage unit service** receives the encoded records and applies a matching algorithm
+to determine entity clusters. The service supports multiple configurable classification models which allows
+the execution of conventional plaintext linkage algorithms as well. Intermediate and final linkage
+results including pairs are managed per project, separate from the records themselves, which allows
+to efficiently test multiple linkage approaches on the same (encoded) dataset.
+
+See also the [pprl-goodall repository](https://github.com/floroh/pprl-goodall) for more information on how to use these
+services to run PPRL experiments.
+
+
+## Modules
+The project is structured in maven modules as follows:
+- **common**: Shared data models and (analytical) utilities
+- **data-generator**: Service for creating datasets based on synthetic generation or selection from existing
+record clusters, see also our [respective paper](https://dbs.uni-leipzig.de/files/research/publications/2025-9/pdf/qdb2025_PPRL_published.pdf).
+- **data-owner**: Service for encoding plaintext datasets. Includes also a corruption module to derive further linkage
+problems under different data quality assumptions.
+- **linkage-unit**: Service for matching encoded datastes.
+- **protocol-manager**: Service that orchestrates the data flow between the other components.
+- **pprl-core**: Core functionality for encoding, matching and dataset analytics
+
 ## Prerequisites
 - Docker
 - OR
@@ -33,7 +76,7 @@ docker compose up mongo pprl-do
 
 ## Data generation requirements
 For usage of the data generation based on the North Carolina Voter Registry (NCVR),
-the respective data must be provided either:
+the respective data must be provided either by:
 
 ### Importing it from the MongoDB database provided by [Panse et al.](https://doi.org/10.5441/002/edbt.2021.67)
 - see also the [respective README](db/README.NCVR.md)
@@ -46,7 +89,7 @@ curl --request POST \
   --data '{}'
 ```
 ### Direct import of the parsed record clusters
-- put the `ncvr_cluster.gz` in the directory `db/dumps`
+- Put the `ncvr_cluster.gz` (available on request) in the directory `db/dumps`
 ```bash
 docker exec -it pprl-services-mongo /data/dumps/mongorestore.sh
 ```
